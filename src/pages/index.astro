@@ -1,0 +1,56 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Inicio | gomflo.github.io"
+  description="Sitio personal con herramientas útiles"
+>
+  <main class="main">
+    <p class="subtitle">Herramientas simples y funcionales.</p>
+    <div class="links">
+      <a href="/formatear-json" class="link">Formatear JSON</a>
+      <a href="/decodificar-jwt" class="link">Decodificar JWT</a>
+      <a href="/base64-archivo" class="link">Base64 ↔ Archivo</a>
+      <a href="/contar-caracteres" class="link">Contar caracteres</a>
+      <a href="/remover-acentos" class="link">Remover acentos</a>
+      <a href="/ordenar-lista" class="link">Ordenar lista</a>
+      <a href="/user-agent" class="link">Mi User Agent</a>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .subtitle {
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    margin: 0 0 2rem;
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .link {
+    font-family: var(--font-sans);
+    display: inline-block;
+    padding: 0.5rem 0;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 0.5px solid var(--color-border);
+    font-size: 1rem;
+  }
+
+  .link:hover {
+    border-bottom-color: var(--color-text);
+  }
+</style>

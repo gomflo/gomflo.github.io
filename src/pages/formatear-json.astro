@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JsonFormatter from '../components/JsonFormatter';
+---
+
+<Layout title="Formatear JSON | gomflo.github.io" description="Formatea o minifica JSON">
+  <main class="container">
+    <h1 class="title">Formatear JSON</h1>
+    <JsonFormatter client:load />
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+
+</style>

@@ -1,0 +1,30 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Base64FileConverter from "../components/Base64FileConverter";
+---
+
+<Layout
+  title="Base64 ↔ Archivo | gomflo.github.io"
+  description="Convierte archivos a Base64 y Base64 a archivo descargable"
+>
+  <main class="container">
+    <h1 class="title">Base64 ↔ Archivo</h1>
+    <Base64FileConverter client:load />
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+</style>

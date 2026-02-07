@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ListSorter from '../components/ListSorter';
+---
+
+<Layout title="Ordenar lista | gomflo.github.io" description="Ordena una lista de texto alfabéticamente, A–Z o Z–A">
+  <main class="container">
+    <h1 class="title">Ordenar lista</h1>
+    <ListSorter client:load />
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+
+</style>

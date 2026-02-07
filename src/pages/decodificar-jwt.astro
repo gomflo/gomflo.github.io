@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JwtDecoder from '../components/JwtDecoder';
+---
+
+<Layout title="Decodificar JWT | gomflo.github.io" description="Decodifica el header y payload de un JWT">
+  <main class="container">
+    <h1 class="title">Decodificar JWT</h1>
+    <JwtDecoder client:load />
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+
+</style>

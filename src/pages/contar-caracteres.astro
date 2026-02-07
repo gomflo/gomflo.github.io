@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CharacterCounter from '../components/CharacterCounter';
+---
+
+<Layout title="Contar caracteres | gomflo.github.io" description="Cuenta caracteres, palabras y líneas de tu texto en tiempo real">
+  <main class="container">
+    <h1 class="title">Contar caracteres</h1>
+    <CharacterCounter client:load />
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+</style>

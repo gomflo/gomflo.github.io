@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AccentRemover from '../components/AccentRemover';
+---
+
+<Layout title="Remover acentos | gomflo.github.io" description="Quita acentos, tildes y diacríticos del texto en tiempo real">
+  <main class="container">
+    <h1 class="title">Remover acentos</h1>
+    <AccentRemover client:load />
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+
+</style>
