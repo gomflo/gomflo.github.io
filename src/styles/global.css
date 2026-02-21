@@ -10,10 +10,13 @@
   --color-border: #333;
   --color-bg: #fff;
   --font-serif: Georgia, "Times New Roman", serif;
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Helvetica", "Segoe UI", sans-serif;
+  --font-sans: "Figtree", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+  --font-display: "Figtree", var(--font-sans);
   --font-code: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Liberation Mono", Consolas, monospace;
   --max-width: 720px;
   --radius: 0;
+  --home-accent: #b8942e;
+  --json-result-accent: oklch(0.45 0.12 250);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -61,6 +64,17 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @theme inline {
@@ -105,6 +119,11 @@ body {
 }
 
 .dark {
+  color-scheme: dark;
+  --color-bg: #0f0f0f;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a3a3a3;
+  --color-border: rgba(255, 255, 255, 0.1);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -136,6 +155,51 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --json-result-accent: oklch(0.65 0.15 250);
+  --home-accent: #e5c158;
+}
+
+.json-formatter-result-accent {
+  border-left-color: var(--json-result-accent);
+}
+
+@keyframes json-formatter-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.json-formatter [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.jwt-decoder [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.base64-converter [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.character-counter [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.accent-remover [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.list-sorter [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.user-agent-view [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
 }
 
 @layer base {
@@ -145,8 +209,19 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  main {
+    scroll-margin-top: 2rem;
+  }
+  main h1 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
 }
 
 .font-code {
   font-family: var(--font-code);
+}
+
+.font-display {
+  font-family: var(--font-display);
 }

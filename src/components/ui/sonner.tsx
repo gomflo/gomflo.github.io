@@ -5,7 +5,16 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
+
+type Theme = "light" | "dark"
+
+const getThemeFromDOM = (): Theme =>
+  typeof document !== "undefined" &&
+  document.documentElement.classList.contains("dark")
+    ? "dark"
+    : "light"
 
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
@@ -32,4 +41,27 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
-export { Toaster }
+const ThemeAwareToaster = (props: ToasterProps) => {
+  const [theme, setTheme] = useState<Theme>("light")
+
+  useEffect(() => {
+    setTheme(getThemeFromDOM())
+    const handleThemeChange = (e: CustomEvent<{ theme: Theme }>) => {
+      setTheme(e.detail.theme)
+    }
+    window.addEventListener(
+      "themechange",
+      handleThemeChange as EventListener
+    )
+    return () => {
+      window.removeEventListener(
+        "themechange",
+        handleThemeChange as EventListener
+      )
+    }
+  }, [])
+
+  return <Toaster theme={theme} {...props} />
+}
+
+export { Toaster, ThemeAwareToaster }

@@ -4,9 +4,15 @@ import JwtDecoder from '../components/JwtDecoder';
 ---
 
 <Layout title="Decodificar JWT | gomflo.github.io" description="Decodifica el header y payload de un JWT">
-  <main class="container">
-    <h1 class="title">Decodificar JWT</h1>
-    <JwtDecoder client:load />
+  <main id="main-content" class="container" tabindex="-1">
+    <header class="page-header">
+      <h1 class="title">Decodificar JWT</h1>
+      <p class="lead">Pega un JWT y obtén el header y payload decodificados en JSON.</p>
+    </header>
+    <section aria-labelledby="decodificar-jwt-heading">
+      <h2 id="decodificar-jwt-heading" class="sr-only">Decodificador JWT</h2>
+      <JwtDecoder client:load />
+    </section>
   </main>
 </Layout>
 
@@ -14,15 +20,43 @@ import JwtDecoder from '../components/JwtDecoder';
   .container {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: clamp(2rem, 5vw, 4rem) 1.5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
   }
 
   .title {
-    font-family: var(--font-sans);
-    font-size: 2rem;
-    font-weight: 400;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
     margin: 0 0 0.5rem;
     color: var(--color-text);
+    text-wrap: balance;
   }
 
+  .lead {
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 42ch;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 </style>

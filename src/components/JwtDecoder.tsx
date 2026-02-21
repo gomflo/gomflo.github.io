@@ -20,6 +20,8 @@ type DecodedResult = {
 const JwtDecoder = () => {
   const [input, setInput] = useState("");
   const [decoded, setDecoded] = useState<DecodedResult>(null);
+  const [isCopyingHeader, setIsCopyingHeader] = useState(false);
+  const [isCopyingPayload, setIsCopyingPayload] = useState(false);
 
   const handleDecode = () => {
     const trimmed = input.trim();
@@ -52,85 +54,132 @@ const JwtDecoder = () => {
 
   const handleCopyHeader = async () => {
     if (!decoded) return;
+    setIsCopyingHeader(true);
     try {
       await navigator.clipboard.writeText(decoded.header);
       toast.success("Header copiado al portapapeles");
     } catch {
       toast.error("No se pudo copiar al portapapeles");
+    } finally {
+      setIsCopyingHeader(false);
     }
   };
 
   const handleCopyPayload = async () => {
     if (!decoded) return;
+    setIsCopyingPayload(true);
     try {
       await navigator.clipboard.writeText(decoded.payload);
       toast.success("Payload copiado al portapapeles");
     } catch {
       toast.error("No se pudo copiar al portapapeles");
+    } finally {
+      setIsCopyingPayload(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      <Textarea
-        id="jwt-input"
-        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        rows={6}
-        spellCheck={false}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        aria-label="JWT de entrada"
-        className="font-code text-sm"
-      />
+    <div
+      className="jwt-decoder grid gap-8"
+      role="region"
+      aria-label="Decodificador JWT"
+    >
+      <section
+        className="grid gap-3"
+        data-reveal
+        style={{ animationDelay: "0ms" }}
+      >
+        <label
+          htmlFor="jwt-input"
+          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+        >
+          JWT
+        </label>
+        <Textarea
+          id="jwt-input"
+          name="jwt-input"
+          placeholder="Pega aquí tu JWT (header.payload.firma)…"
+          rows={6}
+          spellCheck={false}
+          autoComplete="off"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          aria-label="JWT de entrada"
+          className="font-code min-w-0 resize-y text-sm transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
+        />
+      </section>
 
-      <div className="flex gap-2" role="group" aria-label="Acciones">
+      <div
+        className="flex flex-wrap items-center gap-2"
+        data-reveal
+        role="group"
+        aria-label="Acciones"
+        style={{ animationDelay: "80ms" }}
+      >
         <Button
           variant="outline"
           onClick={handleDecode}
           aria-label="Decodificar JWT"
+          className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5"
         >
           Decodificar
         </Button>
       </div>
 
       {decoded && (
-        <div className="space-y-4">
-          <Card>
+        <div className="grid gap-6" aria-live="polite">
+          <Card
+            data-reveal
+            style={{ animationDelay: "120ms" }}
+            className="transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-base font-medium">Header</CardTitle>
+              <CardTitle id="jwt-header-label" className="text-base font-medium">
+                Header
+              </CardTitle>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleCopyHeader}
-                aria-label="Copiar header al portapapeles"
+                disabled={isCopyingHeader}
+                aria-label={isCopyingHeader ? "Copiando…" : "Copiar header al portapapeles"}
+                className="min-h-[44px] min-w-[44px] cursor-pointer disabled:opacity-50"
               >
-                Copiar
+                {isCopyingHeader ? "Copiando…" : "Copiar"}
               </Button>
             </CardHeader>
             <CardContent>
               <pre className="m-0 overflow-auto">
-                <code className="font-code text-sm whitespace-pre-wrap break-all">
+                <code className="font-code text-sm whitespace-pre-wrap wrap-break-word">
                   {decoded.header}
                 </code>
               </pre>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card
+            data-reveal
+            style={{ animationDelay: "160ms" }}
+            className="transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-base font-medium">Payload</CardTitle>
+              <CardTitle id="jwt-payload-label" className="text-base font-medium">
+                Payload
+              </CardTitle>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleCopyPayload}
-                aria-label="Copiar payload al portapapeles"
+                disabled={isCopyingPayload}
+                aria-label={isCopyingPayload ? "Copiando…" : "Copiar payload al portapapeles"}
+                className="min-h-[44px] min-w-[44px] cursor-pointer disabled:opacity-50"
               >
-                Copiar
+                {isCopyingPayload ? "Copiando…" : "Copiar"}
               </Button>
             </CardHeader>
             <CardContent>
               <pre className="m-0 overflow-auto">
-                <code className="font-code text-sm whitespace-pre-wrap break-all">
+                <code className="font-code text-sm whitespace-pre-wrap wrap-break-word">
                   {decoded.payload}
                 </code>
               </pre>
