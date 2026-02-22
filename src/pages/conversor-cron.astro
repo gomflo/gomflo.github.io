@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CronConverter from '../components/CronConverter';
+---
+
+<Layout
+  title="Conversor de Cron | gomflo.dev"
+  description="Genera expresiones cron (ej. 0 0 * * *) con el constructor visual y traduce cualquier cron a lenguaje natural en español. Sin registro, gratis."
+>
+  <main id="main-content" class="container" tabindex="-1">
+    <header class="page-header">
+      <h1 class="title">Conversor de Cron</h1>
+      <p class="lead">Genera expresiones cron y descubre en lenguaje natural cuándo se ejecutarán (cada hora, todos los días a las 9:00, lunes a viernes, etc.).</p>
+    </header>
+    <section aria-labelledby="conversor-cron-heading">
+      <h2 id="conversor-cron-heading" class="sr-only">Constructor y explicador de expresiones Cron</h2>
+      <CronConverter client:load />
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem) 1.5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .lead {
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 42ch;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

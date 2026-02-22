@@ -202,6 +202,10 @@ body {
   animation: json-formatter-in 0.3s ease-out both;
 }
 
+.cron-converter [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

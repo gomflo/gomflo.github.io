@@ -3,8 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-
-type Base64Mode = "base64-to-file" | "file-to-base64";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MIME_TO_EXT: Record<string, string> = {
   "image/png": "png",
@@ -47,15 +46,11 @@ const getDefaultDownloadFilename = (mime: string | null): string => {
 };
 
 const Base64FileConverter = () => {
-  const [mode, setMode] = useState<Base64Mode>("base64-to-file");
   const [fileToBase64Result, setFileToBase64Result] = useState("");
   const [base64ToFileInput, setBase64ToFileInput] = useState("");
   const [downloadFilename, setDownloadFilename] = useState("");
   const [isCopying, setIsCopying] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleModeBase64ToFile = () => setMode("base64-to-file");
-  const handleModeFileToBase64 = () => setMode("file-to-base64");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -146,158 +141,143 @@ const Base64FileConverter = () => {
       role="region"
       aria-label="Conversor Base64 y archivo"
     >
-      <div
-        className="flex flex-wrap gap-2"
-        data-reveal
-        role="group"
-        aria-label="Modo de conversión"
-        style={{ animationDelay: "0ms" }}
-      >
-        <Button
-          type="button"
-          variant={mode === "base64-to-file" ? "default" : "outline"}
-          size="sm"
-          onClick={handleModeBase64ToFile}
-          aria-label="Base64 a Archivo"
-          aria-pressed={mode === "base64-to-file"}
-          className="min-h-[44px] cursor-pointer"
-        >
-          Base64 a Archivo
-        </Button>
-        <Button
-          type="button"
-          variant={mode === "file-to-base64" ? "default" : "outline"}
-          size="sm"
-          onClick={handleModeFileToBase64}
-          aria-label="Archivo a Base64"
-          aria-pressed={mode === "file-to-base64"}
-          className="min-h-[44px] cursor-pointer"
-        >
-          Archivo a Base64
-        </Button>
-      </div>
-
-      {mode === "base64-to-file" && (
-        <Card
+      <Tabs defaultValue="base64-to-file" className="w-full">
+        <TabsList
+          className="w-full sm:w-auto"
+          aria-label="Modo de conversión"
           data-reveal
-          style={{ animationDelay: "80ms" }}
-          className="transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
+          style={{ animationDelay: "0ms" }}
         >
-          <CardContent className="pt-6 space-y-4">
-            <div className="grid gap-3">
-              <label
-                htmlFor="base64-to-file-input"
-                className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
-              >
-                Base64 o URL data:
-              </label>
-              <Textarea
-                id="base64-to-file-input"
-                name="base64-to-file-input"
-                placeholder="Pega aquí Base64 o una URL data: (ej. data:image/png;base64,…)"
-                rows={8}
-                spellCheck={false}
-                autoComplete="off"
-                value={base64ToFileInput}
-                onChange={handleBase64InputChange}
-                aria-label="Base64 o URL data: para convertir a archivo"
-                className="font-code min-w-0 max-h-80 resize-y text-sm transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
-              />
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <label
-                htmlFor="download-filename"
-                className="text-sm text-muted-foreground"
-              >
-                Nombre del archivo (opcional):
-              </label>
-              <input
-                id="download-filename"
-                name="download-filename"
-                type="text"
-                autoComplete="off"
-                value={downloadFilename}
-                onChange={(e) => setDownloadFilename(e.target.value)}
-                placeholder="archivo.png"
-                className="flex h-10 min-h-[44px] w-full max-w-xs rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                aria-label="Nombre del archivo a descargar"
-              />
-            </div>
-            <Button
-              variant="outline"
-              onClick={handleDownload}
-              disabled={!base64ToFileInput.trim()}
-              aria-label="Descargar archivo desde Base64"
-              className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5 disabled:opacity-50"
-            >
-              Descargar archivo
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+          <TabsTrigger value="base64-to-file" id="tab-base64-to-file">
+            Base64 a Archivo
+          </TabsTrigger>
+          <TabsTrigger value="file-to-base64" id="tab-file-to-base64">
+            Archivo a Base64
+          </TabsTrigger>
+        </TabsList>
 
-      {mode === "file-to-base64" && (
-        <Card
-          data-reveal
-          style={{ animationDelay: "80ms" }}
-          className="transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
-        >
-          <CardContent className="pt-6 space-y-4">
-            <div data-reveal style={{ animationDelay: "100ms" }}>
-              <input
-                ref={fileInputRef}
-                id="file-to-base64-input"
-                type="file"
-                onChange={handleFileChange}
-                className="sr-only"
-                aria-label="Seleccionar archivo para convertir a Base64"
-              />
-              <label
-                htmlFor="file-to-base64-input"
-                tabIndex={0}
-                role="button"
-                onKeyDown={handleLabelKeyDown}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                aria-label="Elegir archivo para convertir a Base64"
-              >
-                Elegir archivo
-              </label>
-            </div>
-            {fileToBase64Result && (
-              <div
-                className="grid gap-3"
-                data-reveal
-                style={{ animationDelay: "120ms" }}
-                aria-live="polite"
-              >
-                <span className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider">
-                  Resultado Base64
-                </span>
+        <TabsContent value="base64-to-file" aria-labelledby="tab-base64-to-file">
+          <Card
+            data-reveal
+            style={{ animationDelay: "80ms" }}
+            className="mt-6 transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
+          >
+            <CardContent className="pt-6 space-y-4">
+              <div className="grid gap-3">
+                <label
+                  htmlFor="base64-to-file-input"
+                  className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+                >
+                  Base64 o URL data:
+                </label>
                 <Textarea
-                  id="file-to-base64-output"
-                  name="file-to-base64-output"
+                  id="base64-to-file-input"
+                  name="base64-to-file-input"
+                  placeholder="Pega aquí Base64 o una URL data: (ej. data:image/png;base64,…)"
                   rows={8}
                   spellCheck={false}
-                  value={fileToBase64Result}
-                  readOnly
-                  aria-label="Resultado Base64 del archivo"
-                  className="font-code min-w-0 max-h-80 resize-y text-sm wrap-break-word transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
+                  autoComplete="off"
+                  value={base64ToFileInput}
+                  onChange={handleBase64InputChange}
+                  aria-label="Base64 o URL data: para convertir a archivo"
+                  className="font-code min-w-0 max-h-80 resize-y text-sm transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
                 />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyBase64}
-                  disabled={isCopying}
-                  aria-label={isCopying ? "Copiando…" : "Copiar Base64 al portapapeles"}
-                  className="min-h-[44px] min-w-[44px] cursor-pointer disabled:opacity-50"
-                >
-                  {isCopying ? "Copiando…" : "Copiar"}
-                </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <label
+                  htmlFor="download-filename"
+                  className="text-sm text-muted-foreground"
+                >
+                  Nombre del archivo (opcional):
+                </label>
+                <input
+                  id="download-filename"
+                  name="download-filename"
+                  type="text"
+                  autoComplete="off"
+                  value={downloadFilename}
+                  onChange={(e) => setDownloadFilename(e.target.value)}
+                  placeholder="archivo.png"
+                  className="flex h-10 min-h-[44px] w-full max-w-xs rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label="Nombre del archivo a descargar"
+                />
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleDownload}
+                disabled={!base64ToFileInput.trim()}
+                aria-label="Descargar archivo desde Base64"
+                className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5 disabled:opacity-50"
+              >
+                Descargar archivo
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="file-to-base64" aria-labelledby="tab-file-to-base64">
+          <Card
+            data-reveal
+            style={{ animationDelay: "80ms" }}
+            className="mt-6 transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
+          >
+            <CardContent className="pt-6 space-y-4">
+              <div data-reveal style={{ animationDelay: "100ms" }}>
+                <input
+                  ref={fileInputRef}
+                  id="file-to-base64-input"
+                  type="file"
+                  onChange={handleFileChange}
+                  className="sr-only"
+                  aria-label="Seleccionar archivo para convertir a Base64"
+                />
+                <label
+                  htmlFor="file-to-base64-input"
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={handleLabelKeyDown}
+                  className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label="Elegir archivo para convertir a Base64"
+                >
+                  Elegir archivo
+                </label>
+              </div>
+              {fileToBase64Result && (
+                <div
+                  className="grid gap-3"
+                  data-reveal
+                  style={{ animationDelay: "120ms" }}
+                  aria-live="polite"
+                >
+                  <span className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider">
+                    Resultado Base64
+                  </span>
+                  <Textarea
+                    id="file-to-base64-output"
+                    name="file-to-base64-output"
+                    rows={8}
+                    spellCheck={false}
+                    value={fileToBase64Result}
+                    readOnly
+                    aria-label="Resultado Base64 del archivo"
+                    className="font-code min-w-0 max-h-80 resize-y text-sm wrap-break-word transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyBase64}
+                    disabled={isCopying}
+                    aria-label={isCopying ? "Copiando…" : "Copiar Base64 al portapapeles"}
+                    className="min-h-[44px] min-w-[44px] cursor-pointer disabled:opacity-50"
+                  >
+                    {isCopying ? "Copiando…" : "Copiar"}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
