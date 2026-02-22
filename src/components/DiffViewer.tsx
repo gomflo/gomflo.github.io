@@ -5,7 +5,7 @@ import { diffLines, type DiffLine } from "@/lib/diff";
 import { GitCompare } from "lucide-react";
 
 const inputBaseClass =
-  "font-code min-h-[44px] w-full rounded-md border-[0.5px] border-solid border-[#333] bg-transparent px-3 py-2 text-xs shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-[#111]/30 focus-visible:border-[#111] dark:bg-input/30 dark:border-[#333] dark:focus-visible:ring-[#111]/30 resize-y min-w-0";
+  "font-code min-h-[44px] w-full rounded-md border-[0.5px] border-solid border-border bg-transparent px-3 py-2 text-xs shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring dark:bg-input/30 dark:focus-visible:ring-ring/50 resize-y min-w-0";
 
 export default function DiffViewer() {
   const [textLeft, setTextLeft] = useState("");
@@ -102,7 +102,7 @@ export default function DiffViewer() {
               </p>
             </div>
             <div
-              className="diff-output overflow-x-auto rounded-md border border-[#333] bg-(--diff-bg) dark:border-[#333]"
+              className="diff-output overflow-x-auto rounded-md border border-border bg-(--diff-bg)"
               role="figure"
               aria-label="Resultado del diff"
             >

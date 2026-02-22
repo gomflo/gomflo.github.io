@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { Copy, Clock } from "lucide-react";
 
 const inputBaseClass =
-  "font-code min-h-[44px] w-full rounded-md border-[0.5px] border-solid border-[#333] bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-[#111]/30 focus-visible:border-[#111] dark:bg-input/30 dark:border-[#333] dark:focus-visible:ring-[#111]/30";
+  "font-code min-h-[44px] w-full rounded-md border-[0.5px] border-solid border-border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring dark:bg-input/30 dark:focus-visible:ring-ring/50";
 
 const INITIAL_FIELDS: CronFields = {
   minute: "0",
