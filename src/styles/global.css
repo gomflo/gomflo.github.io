@@ -17,6 +17,12 @@
   --radius: 0;
   --home-accent: #b8942e;
   --json-result-accent: oklch(0.45 0.12 250);
+  --diff-accent: oklch(0.45 0.12 250);
+  --diff-bg: oklch(0.98 0 0);
+  --diff-add: oklch(0.45 0.15 145);
+  --diff-add-bg: oklch(0.92 0.06 145 / 0.35);
+  --diff-remove: oklch(0.55 0.2 25);
+  --diff-remove-bg: oklch(0.95 0.05 25 / 0.35);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -157,6 +163,12 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
   --json-result-accent: oklch(0.65 0.15 250);
   --home-accent: #e5c158;
+  --diff-accent: oklch(0.65 0.15 250);
+  --diff-bg: oklch(0.16 0 0);
+  --diff-add: oklch(0.65 0.15 145);
+  --diff-add-bg: oklch(0.28 0.08 145 / 0.4);
+  --diff-remove: oklch(0.65 0.2 25);
+  --diff-remove-bg: oklch(0.28 0.08 25 / 0.4);
 }
 
 .json-formatter-result-accent {
@@ -203,6 +215,10 @@ body {
 }
 
 .cron-converter [data-reveal] {
+  animation: json-formatter-in 0.3s ease-out both;
+}
+
+.diff-viewer [data-reveal] {
   animation: json-formatter-in 0.3s ease-out both;
 }
 
