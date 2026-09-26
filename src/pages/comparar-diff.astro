@@ -1,67 +1,22 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import DiffViewer from '../components/DiffViewer';
+import ToolLayout from "../layouts/ToolLayout.astro";
+import DiffViewer from "../components/DiffViewer";
+
+const faq = [
+  { q: "¿Cómo comparo dos textos?", a: "Pega la versión original en el primer campo y la nueva en el segundo. Las líneas agregadas se marcan en verde y las eliminadas en rojo." },
+  { q: "¿Puedo comparar dos JSON?", a: "Sí. Para que la comparación sea útil, formatea ambos JSON antes con la misma sangría; así cada cambio aparece en su propia línea." },
+  { q: "¿Los textos se envían a un servidor?", a: "No. La comparación se hace en tu navegador, así que puedes comparar configuraciones o datos privados." },
+];
 ---
 
-<Layout
-  title="Comparar texto o JSON (Diff) | gomflo.dev"
-  description="Compara dos bloques de texto o JSON y visualiza las diferencias línea por línea. Herramienta de diff online para ver cambios entre versiones."
+<ToolLayout
+  slug="comparar-diff"
+  metaTitle={"Comparar texto o JSON (Diff) | gomflo.dev"}
+  description={"Compara dos bloques de texto o JSON y visualiza las diferencias línea por línea. Herramienta de diff online para ver cambios entre versiones."}
+  heading={"Comparar texto (Diff)"}
+  lead={"Pega dos bloques de texto o JSON y revisa las diferencias línea por línea. Sirve para configuraciones, respuestas de API o cualquier texto."}
+  sectionLabel={"Comparador de diferencias"}
+  faq={faq}
 >
-  <main id="main-content" class="container" tabindex="-1">
-    <header class="page-header">
-      <h1 class="title">Comparar texto (Diff)</h1>
-      <p class="lead">
-        Pega dos bloques de texto o JSON y revisa las diferencias línea por línea. Ideal para comparar configuraciones, respuestas de API o cualquier texto.
-      </p>
-    </header>
-    <section aria-labelledby="comparar-diff-heading">
-      <h2 id="comparar-diff-heading" class="sr-only">Comparador de diferencias</h2>
-      <DiffViewer client:load />
-    </section>
-  </main>
-</Layout>
-
-<style>
-  .container {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: clamp(2rem, 5vw, 4rem) 1.5rem;
-    scroll-margin-top: 2rem;
-  }
-
-  .page-header {
-    margin-bottom: 2.5rem;
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 5vw, 2.25rem);
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.2;
-    margin: 0 0 0.5rem;
-    color: var(--color-text);
-    text-wrap: balance;
-  }
-
-  .lead {
-    font-family: var(--font-sans);
-    color: var(--color-text-muted);
-    font-size: 1rem;
-    line-height: 1.6;
-    margin: 0;
-    max-width: 52ch;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-</style>
+  <DiffViewer client:load />
+</ToolLayout>

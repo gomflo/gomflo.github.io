@@ -137,7 +137,7 @@ const Base64FileConverter = () => {
 
   return (
     <div
-      className="base64-converter grid gap-8"
+      className="base64-converter grid gap-5"
       role="region"
       aria-label="Conversor Base64 y archivo"
     >
@@ -166,7 +166,7 @@ const Base64FileConverter = () => {
               <div className="grid gap-3">
                 <label
                   htmlFor="base64-to-file-input"
-                  className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+                  className="text-muted-foreground text-sm font-semibold"
                 >
                   Base64 o URL data:
                 </label>
@@ -198,16 +198,15 @@ const Base64FileConverter = () => {
                   value={downloadFilename}
                   onChange={(e) => setDownloadFilename(e.target.value)}
                   placeholder="archivo.png"
-                  className="flex h-10 min-h-[44px] w-full max-w-xs rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="flex h-10 min-h-[44px] w-full max-w-xs rounded-xl border border-input bg-card px-3 py-2 text-sm shadow-xs transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="Nombre del archivo a descargar"
                 />
               </div>
               <Button
-                variant="outline"
                 onClick={handleDownload}
                 disabled={!base64ToFileInput.trim()}
                 aria-label="Descargar archivo desde Base64"
-                className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5 disabled:opacity-50"
+                className="min-h-[44px] cursor-pointer disabled:opacity-50"
               >
                 Descargar archivo
               </Button>
@@ -236,7 +235,7 @@ const Base64FileConverter = () => {
                   tabIndex={0}
                   role="button"
                   onKeyDown={handleLabelKeyDown}
-                  className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full border border-input bg-card px-4 py-2 text-sm font-medium ring-offset-background transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="Elegir archivo para convertir a Base64"
                 >
                   Elegir archivo
@@ -249,7 +248,7 @@ const Base64FileConverter = () => {
                   style={{ animationDelay: "120ms" }}
                   aria-live="polite"
                 >
-                  <span className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider">
+                  <span className="text-muted-foreground text-sm font-semibold">
                     Resultado Base64
                   </span>
                   <Textarea

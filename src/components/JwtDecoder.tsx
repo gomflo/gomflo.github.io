@@ -80,7 +80,7 @@ const JwtDecoder = () => {
 
   return (
     <div
-      className="jwt-decoder grid gap-8"
+      className="jwt-decoder grid gap-5"
       role="region"
       aria-label="Decodificador JWT"
     >
@@ -91,7 +91,7 @@ const JwtDecoder = () => {
       >
         <label
           htmlFor="jwt-input"
-          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+          className="text-muted-foreground text-sm font-semibold"
         >
           JWT
         </label>
@@ -117,10 +117,9 @@ const JwtDecoder = () => {
         style={{ animationDelay: "80ms" }}
       >
         <Button
-          variant="outline"
           onClick={handleDecode}
           aria-label="Decodificar JWT"
-          className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5"
+          className="min-h-[44px] cursor-pointer"
         >
           Decodificar
         </Button>

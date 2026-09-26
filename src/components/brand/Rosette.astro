@@ -1,0 +1,235 @@
+---
+/**
+ * Rosetón de talavera del inicio. Los pétalos giran con el puntero, los ojos
+ * lo siguen (src/scripts/character.ts) y un clic lo hace girar.
+ */
+const petals = Array.from({ length: 8 }, (_, i) => i * 45);
+const dots = Array.from({ length: 24 }, (_, i) => i * 15);
+const corners = [
+  { x: 8, y: 8, r: 0 },
+  { x: 392, y: 8, r: 90 },
+  { x: 392, y: 392, r: 180 },
+  { x: 8, y: 392, r: 270 },
+];
+---
+
+<button type="button" class="rosette-button" aria-label="Girar el rosetón" data-rosette>
+  <svg class="rosette" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="rosette-clip">
+        <rect x="8" y="8" width="384" height="384" rx="28" />
+      </clipPath>
+    </defs>
+
+    <rect class="r-tile" x="8" y="8" width="384" height="384" rx="28" />
+
+    <g clip-path="url(#rosette-clip)">
+      {corners.map((c, i) => (
+        <g class="r-corner" transform={`translate(${c.x} ${c.y}) rotate(${c.r})`} style={`--i:${i}`}>
+          <path class="r-corner-arc" d="M0 72A72 72 0 0 0 72 0" />
+          <path class="r-corner-fill" d="M0 40A40 40 0 0 0 40 0L0 0Z" />
+          <circle class="r-corner-dot" cx="52" cy="52" r="5" />
+        </g>
+      ))}
+    </g>
+
+    <g class="r-ring" data-rosette-ring>
+      {dots.map((deg, i) => (
+        <circle
+          class:list={["r-dot", { "r-dot--accent": i % 3 === 0 }]}
+          cx="200"
+          cy="36"
+          r={i % 3 === 0 ? 6 : 3.5}
+          transform={`rotate(${deg} 200 200)`}
+          style={`--i:${i}`}
+        />
+      ))}
+    </g>
+
+    <circle class="r-orbit" cx="200" cy="200" r="146" pathLength="1" />
+
+    <g class="r-petals" data-rosette-petals>
+      {petals.map((deg, i) => (
+        <g transform={`rotate(${deg} 200 200)`}>
+          <g class="r-petal" style={`--i:${i}`}>
+            <path class="r-petal-body" d="M200 136C170 114 172 84 200 58C228 84 230 114 200 136Z" />
+            <path class="r-petal-vein" d="M200 124V76" />
+            <circle class="r-petal-seed" cx="200" cy="44" r="4" transform="rotate(22.5 200 200)" />
+          </g>
+        </g>
+      ))}
+    </g>
+
+    <g class="r-face" data-eyes data-eye-range="6">
+      <circle class="r-face-halo" cx="200" cy="200" r="70" />
+      <circle class="r-face-disc" cx="200" cy="200" r="58" />
+      <g class="eye">
+        <ellipse class="eye-white" cx="180" cy="196" rx="12" ry="15" />
+        <circle class="eye-pupil" cx="180" cy="196" r="6.5" data-pupil />
+      </g>
+      <g class="eye">
+        <ellipse class="eye-white" cx="220" cy="196" rx="12" ry="15" />
+        <circle class="eye-pupil" cx="220" cy="196" r="6.5" data-pupil />
+      </g>
+      <g class="eye-happy">
+        <path d="M168 200q12-16 24 0" />
+        <path d="M208 200q12-16 24 0" />
+      </g>
+    </g>
+  </svg>
+</button>
+
+<style>
+  .rosette-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    border-radius: 2rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .rosette-button:focus-visible {
+    outline: 3px solid var(--yolk);
+    outline-offset: 6px;
+  }
+
+  .rosette {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .rosette * {
+    transform-box: view-box;
+  }
+
+  .r-tile {
+    fill: var(--glaze-raised);
+    stroke: var(--cobalt);
+    stroke-width: 3;
+  }
+
+  .r-corner-arc {
+    fill: none;
+    stroke: var(--cobalt);
+    stroke-width: 3;
+  }
+  .r-corner-fill {
+    fill: var(--cobalt);
+  }
+  .r-corner-dot {
+    fill: var(--yolk);
+  }
+
+  .r-dot {
+    fill: var(--cobalt);
+  }
+  .r-dot--accent {
+    fill: var(--yolk);
+  }
+
+  .r-orbit {
+    fill: none;
+    stroke: var(--cobalt);
+    stroke-width: 2;
+    stroke-dasharray: 0.004 0.012;
+    stroke-linecap: round;
+  }
+
+  .r-petal-body {
+    fill: var(--cobalt);
+  }
+  .r-petal-vein {
+    fill: none;
+    stroke: var(--yolk);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+  .r-petal-seed {
+    fill: var(--yolk);
+  }
+
+  .r-face-halo {
+    fill: var(--glaze-raised);
+    stroke: var(--yolk);
+    stroke-width: 4;
+  }
+  .r-face-disc {
+    fill: var(--cobalt);
+  }
+  .eye-white {
+    fill: #fff;
+  }
+  .eye-pupil {
+    fill: var(--ink-deep);
+  }
+  .eye-happy {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 6;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+
+  .eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.09s ease-in;
+  }
+  :global(.is-blinking) .eye {
+    transform: scaleY(0.08);
+  }
+  :global(.is-happy) .eye {
+    opacity: 0;
+  }
+  :global(.is-happy) .eye-happy {
+    opacity: 1;
+  }
+
+  /* Un solo momento orquestado: el rosetón se ensambla al cargar. */
+  @media (prefers-reduced-motion: no-preference) {
+    .r-tile {
+      animation: r-fade 0.5s var(--ease-out) both;
+    }
+    .r-corner {
+      animation: r-fade 0.5s var(--ease-out) both;
+      animation-delay: calc(0.1s + var(--i) * 60ms);
+    }
+    .r-petal {
+      transform-origin: 200px 200px;
+      animation: r-petal-in 0.7s var(--ease-spring) both;
+      animation-delay: calc(0.25s + var(--i) * 55ms);
+    }
+    .r-dot {
+      animation: r-fade 0.3s var(--ease-out) both;
+      animation-delay: calc(0.55s + var(--i) * 18ms);
+    }
+    .r-orbit {
+      animation: r-fade 0.8s var(--ease-out) 0.4s both;
+    }
+    .r-face {
+      transform-origin: 200px 200px;
+      animation: r-face-in 0.6s var(--ease-spring) 0.7s both;
+    }
+  }
+
+  @keyframes r-fade {
+    from { opacity: 0; }
+  }
+  @keyframes r-petal-in {
+    from {
+      opacity: 0;
+      transform: scale(0.2) rotate(-40deg);
+    }
+  }
+  @keyframes r-face-in {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+</style>

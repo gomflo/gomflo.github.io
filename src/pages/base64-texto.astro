@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import Base64Text from "../components/Base64Text";
+
+const faq = [
+  { q: "¿Qué es Base64?", a: "Es una forma de representar datos con 64 caracteres de texto (A–Z, a–z, 0–9, + y /). Se usa para incluir datos en JSON, correos, cabeceras HTTP o URLs data:. No es cifrado: cualquiera puede decodificarlo." },
+  { q: "¿Por qué mi texto con acentos sale mal en otras herramientas?", a: "Muchas usan btoa directamente, que solo acepta caracteres latinos básicos. Aquí el texto se convierte primero a UTF-8, así que á, ñ y los emojis se codifican y decodifican sin errores." },
+  { q: "¿Qué es Base64 seguro para URL?", a: "Es la variante Base64URL: cambia + por - y / por _ y quita el relleno =. Es la que usan los JWT y los parámetros de URL. Al decodificar se aceptan las dos variantes." },
+];
+---
+
+<ToolLayout
+  slug="base64-texto"
+  metaTitle={"Codificar y decodificar Base64 online | gomflo.dev"}
+  description={"Convierte texto a Base64 y decodifica Base64 a texto legible. Compatible con acentos, ñ y emojis (UTF-8) y con la variante Base64URL que usan los JWT."}
+  heading={"Base64 de texto"}
+  lead={"Codifica texto en Base64 o decodifica una cadena Base64 para leerla. Funciona con acentos, emojis y la variante segura para URL."}
+  sectionLabel={"Codificador y decodificador Base64"}
+  faq={faq}
+>
+  <Base64Text client:load />
+</ToolLayout>

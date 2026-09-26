@@ -1,0 +1,378 @@
+/*
+ * Motivos animados de las herramientas (src/components/brand/Motif.astro).
+ * Reposo → "en juego" cuando un ancestro `.motif-trigger` recibe hover,
+ * focus-visible o el atributo `data-play`.
+ */
+
+.motif {
+  display: block;
+  overflow: visible;
+}
+
+.motif * {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.motif .m-accent {
+  stroke: var(--yolk);
+}
+
+.motif .m-accent-fill {
+  fill: var(--yolk);
+}
+
+.motif .m-line,
+.motif .m-tally,
+.motif .m-strike {
+  stroke-dasharray: 1;
+}
+
+/* ---------- Formatear JSON: las llaves se abren y aparecen líneas ---------- */
+.motif[data-motif="formatear-json"] .m-brace {
+  transition: transform 0.45s var(--ease-spring);
+}
+.motif[data-motif="formatear-json"] .m-line {
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.3s var(--ease-out);
+}
+.motif[data-motif="formatear-json"] .m-dots {
+  transition: opacity 0.2s var(--ease-out);
+}
+
+/* ---------- Decodificar JWT: el token se parte en tres ---------- */
+.motif[data-motif="decodificar-jwt"] .m-seg {
+  transition:
+    transform 0.45s var(--ease-spring),
+    fill 0.25s var(--ease-out);
+}
+.motif[data-motif="decodificar-jwt"] .m-sep {
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    opacity 0.2s var(--ease-out),
+    transform 0.3s var(--ease-spring);
+}
+
+/* ---------- Base64: el texto del archivo se vuelve bloques ---------- */
+.motif[data-motif="base64-archivo"] .m-text {
+  transition: opacity 0.2s var(--ease-out);
+}
+.motif[data-motif="base64-archivo"] .m-bit {
+  transform: scale(0);
+  transition: transform 0.3s var(--ease-spring);
+  transition-delay: calc(var(--i) * 35ms);
+}
+
+/* ---------- Contar caracteres: se trazan las marcas de conteo ---------- */
+.motif[data-motif="contar-caracteres"] .m-tally,
+.motif[data-motif="contar-caracteres"] .m-strike {
+  stroke-dashoffset: 0;
+}
+
+/* ---------- Remover acentos: la tilde sale volando ---------- */
+.motif[data-motif="remover-acentos"] .m-tilde {
+  transition:
+    transform 0.5s var(--ease-out),
+    opacity 0.35s var(--ease-out);
+}
+
+/* ---------- Ordenar lista: las barras se acomodan por tamaño ---------- */
+.motif[data-motif="ordenar-lista"] .m-bar {
+  transition: transform 0.5s var(--ease-spring);
+}
+.motif[data-motif="ordenar-lista"] .m-bar-2,
+.motif[data-motif="ordenar-lista"] .m-bar-3 {
+  transition-delay: 40ms;
+}
+
+/* ---------- Cron: la manecilla da la vuelta y suena la campana ---------- */
+.motif[data-motif="conversor-cron"] .m-hand,
+.motif[data-motif="conversor-cron"] .m-hand-short {
+  transform-box: view-box;
+  transform-origin: 32px 35px;
+}
+
+/* ---------- Comparar texto: se marcan las diferencias ---------- */
+.motif[data-motif="comparar-diff"] .m-hl {
+  opacity: 0.2;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s var(--ease-out);
+}
+.motif[data-motif="comparar-diff"] .m-hl-r {
+  opacity: 0.55;
+  transition-delay: 80ms;
+}
+.motif[data-motif="comparar-diff"] .m-line {
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.3s var(--ease-out) 0.15s;
+}
+
+/* ---------- User Agent: una línea escanea la ventana ---------- */
+.motif[data-motif="user-agent"] .m-scan {
+  opacity: 0;
+}
+
+/* ---------- Contraseñas: el candado se cierra y aparecen los dígitos ---------- */
+.motif[data-motif="generador-contrasenas"] .m-shackle {
+  transform: translateY(-5px);
+  transition: transform 0.45s var(--ease-spring);
+}
+.motif[data-motif="generador-contrasenas"] .m-pin {
+  opacity: 0.35;
+  transform: scale(0.55);
+  transition:
+    transform 0.3s var(--ease-spring),
+    opacity 0.2s var(--ease-out);
+  transition-delay: calc(0.2s + var(--i) * 70ms);
+}
+
+/* ---------- UUID: el dado rueda y cambia de cara ---------- */
+.motif[data-motif="generador-uuid"] .m-face-b {
+  opacity: 0;
+}
+
+/* ---------- Mayúsculas: la A y la a intercambian tamaño ---------- */
+.motif[data-motif="convertir-mayusculas-minusculas"] .m-cap,
+.motif[data-motif="convertir-mayusculas-minusculas"] .m-low {
+  transform-origin: center bottom;
+  transition:
+    transform 0.45s var(--ease-spring),
+    stroke 0.25s var(--ease-out);
+}
+
+/* ---------- Codificar URL: los eslabones se separan y aparece el % ---------- */
+.motif[data-motif="codificar-url"] :is(.m-link-l, .m-link-r) {
+  transition: transform 0.45s var(--ease-spring);
+}
+.motif[data-motif="codificar-url"] .m-link-mid {
+  transition: opacity 0.15s var(--ease-out);
+}
+.motif[data-motif="codificar-url"] .m-pct {
+  opacity: 0;
+  transform: scale(0.3) rotate(-45deg);
+  transition:
+    transform 0.4s var(--ease-spring) 0.1s,
+    opacity 0.2s var(--ease-out) 0.1s;
+}
+
+/* ---------- Base64 de texto: las líneas se vuelven bloques ---------- */
+.motif[data-motif="base64-texto"] .m-row {
+  stroke-dasharray: 40 0;
+  transition: stroke-dasharray 0.45s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.motif[data-motif="base64-texto"] .m-pad {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    transform 0.35s var(--ease-spring) 0.25s,
+    opacity 0.2s var(--ease-out) 0.25s;
+}
+
+/* ---------- Timestamp: la hoja del calendario da vuelta ---------- */
+.motif[data-motif="timestamp-unix"] .m-sheet {
+  transform-origin: center top;
+}
+.motif[data-motif="timestamp-unix"] .m-day {
+  transition: opacity 0.1s linear 0.25s;
+}
+.motif[data-motif="timestamp-unix"] .m-day-b {
+  opacity: 0;
+}
+
+/* ---------- Hash: las líneas se revuelven y sale un resumen ---------- */
+.motif[data-motif="generador-hash"] .m-digest {
+  transform: scale(0);
+  transition: transform 0.35s var(--ease-spring) 0.3s;
+}
+
+/* ---------- Números a letras: los dígitos se escriben a mano ---------- */
+.motif[data-motif="numeros-a-letras"] .m-script {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.7s var(--ease-in-out) 0.1s;
+}
+.motif[data-motif="numeros-a-letras"] .m-digits {
+  transition: transform 0.4s var(--ease-spring);
+}
+
+/* ---------- Colores: el muestrario se abre en abanico ---------- */
+.motif[data-motif="conversor-colores"] .m-chip {
+  transform-box: view-box;
+  transform-origin: 32px 44px;
+  transition: transform 0.5s var(--ease-spring);
+}
+.motif[data-motif="conversor-colores"] .m-chip-1 {
+  transform: rotate(-20deg);
+}
+.motif[data-motif="conversor-colores"] .m-chip-3 {
+  transform: rotate(20deg);
+}
+
+/* ================= Estado en juego ================= */
+
+:is(.motif-trigger:hover, .motif-trigger:focus-visible, [data-play]) .motif {
+  /* formatear-json */
+  & .m-brace-l { transform: translateX(-9px); }
+  & .m-brace-r { transform: translateX(9px); }
+  & .m-dots { opacity: 0; }
+  & .m-line-1 { stroke-dashoffset: 0; transition-delay: 0.1s; }
+  & .m-line-2 { stroke-dashoffset: 0; transition-delay: 0.17s; }
+  & .m-line-3 { stroke-dashoffset: 0; transition-delay: 0.24s; }
+
+  /* decodificar-jwt */
+  & .m-seg-1 { transform: translate(3px, -14px); }
+  & .m-seg-2 { fill: var(--yolk); }
+  & .m-seg-3 { transform: translate(-3px, 14px); }
+  & .m-sep { opacity: 1; transform: scale(1); transition-delay: 0.15s; }
+
+  /* base64-archivo */
+  & .m-text { opacity: 0; }
+  & .m-bit { transform: scale(1); }
+
+  /* contar-caracteres */
+  & .m-tally,
+  & .m-strike {
+    animation: motif-draw 0.3s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 90ms);
+  }
+
+  /* remover-acentos */
+  & .m-tilde { transform: translate(16px, -12px) rotate(70deg); opacity: 0; }
+  & .m-letter { animation: motif-bounce 0.5s var(--ease-out) 0.12s; }
+
+  /* ordenar-lista */
+  & .m-bar-1 { transform: translateY(20px); }
+  & .m-bar-2 { transform: translateY(-10px); }
+  & .m-bar-3 { transform: translateY(10px); }
+  & .m-bar-4 { transform: translateY(-20px); }
+
+  /* conversor-cron */
+  & .m-hand { animation: motif-spin 0.9s var(--ease-in-out) both; }
+  & .m-hand-short { animation: motif-spin-slow 0.9s var(--ease-in-out) both; }
+  & .m-bell { animation: motif-ring 0.5s var(--ease-out) 0.8s both; }
+
+  /* comparar-diff */
+  & .m-hl { transform: scaleX(1); }
+  & .m-line { stroke-dashoffset: 0; }
+
+  /* user-agent */
+  & .m-scan { animation: motif-scan 1.1s var(--ease-in-out) both; }
+  & .m-ua-text { animation: motif-flicker 1.1s linear both; }
+
+  /* generador-contrasenas */
+  & .m-shackle { transform: translateY(0); }
+  & .m-pin { opacity: 1; transform: scale(1); }
+
+  /* generador-uuid */
+  & .m-dice { animation: motif-roll 0.7s var(--ease-out) both; }
+  & .m-face-a { opacity: 0; transition: opacity 0.1s linear 0.25s; }
+  & .m-face-b { opacity: 1; transition: opacity 0.1s linear 0.25s; }
+
+  /* convertir-mayusculas-minusculas */
+  & .m-cap { transform: scale(0.6); }
+  & .m-low { transform: scale(1.55); stroke: var(--yolk); }
+
+  /* codificar-url */
+  & .m-link-l { transform: translate(-5px, 5px); }
+  & .m-link-r { transform: translate(5px, -5px); }
+  & .m-link-mid { opacity: 0; }
+  & .m-pct { opacity: 1; transform: scale(1) rotate(0deg); }
+
+  /* base64-texto */
+  & .m-row { stroke-dasharray: 2 5; }
+  & .m-pad { opacity: 1; transform: translateX(0); }
+
+  /* timestamp-unix */
+  & .m-sheet { animation: motif-flip 0.5s var(--ease-in-out) both; }
+  & .m-day-a { opacity: 0; }
+  & .m-day-b { opacity: 1; }
+
+  /* generador-hash */
+  & .m-hv-1 { animation: motif-shuffle-y 0.45s var(--ease-in-out) both; }
+  & .m-hv-2 { animation: motif-shuffle-y 0.45s var(--ease-in-out) reverse both; }
+  & .m-hh-1 { animation: motif-shuffle-x 0.45s var(--ease-in-out) both; }
+  & .m-hh-2 { animation: motif-shuffle-x 0.45s var(--ease-in-out) reverse both; }
+  & .m-digest { transform: scale(1); }
+
+  /* numeros-a-letras */
+  & .m-script { stroke-dashoffset: 0; }
+  & .m-digits { transform: translateY(-3px); }
+
+  /* conversor-colores */
+  & .m-chip-1 { transform: rotate(-40deg); }
+  & .m-chip-3 { transform: rotate(40deg); }
+}
+
+@keyframes motif-roll {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(120deg) scale(0.86); }
+  100% { transform: rotate(180deg) scale(1); }
+}
+
+@keyframes motif-flip {
+  0%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(0.05); }
+}
+
+@keyframes motif-shuffle-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes motif-shuffle-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+@keyframes motif-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes motif-bounce {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-4px) scaleY(1.04); }
+  65% { transform: translateY(1px) scaleY(0.97); }
+}
+
+@keyframes motif-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes motif-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(30deg); }
+}
+
+@keyframes motif-ring {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.6) rotate(-12deg); }
+  60% { transform: scale(1.2) rotate(10deg); }
+  100% { transform: scale(1); }
+}
+
+@keyframes motif-scan {
+  0% { opacity: 0; transform: translateY(0); }
+  12% { opacity: 1; }
+  50% { transform: translateY(20px); }
+  88% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(0); }
+}
+
+@keyframes motif-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motif *,
+  :is(.motif-trigger:hover, .motif-trigger:focus-visible, [data-play]) .motif * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}

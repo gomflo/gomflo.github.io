@@ -41,7 +41,7 @@ const UserAgent = () => {
 
   return (
     <div
-      className="user-agent-view grid gap-8"
+      className="user-agent-view grid gap-5"
       role="region"
       aria-label="User Agent del navegador"
     >
@@ -53,7 +53,7 @@ const UserAgent = () => {
         aria-busy={!userAgent}
       >
         <CardContent className="pt-6">
-          <span className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider">
+          <span className="text-muted-foreground text-sm font-semibold">
             User Agent
           </span>
           <div

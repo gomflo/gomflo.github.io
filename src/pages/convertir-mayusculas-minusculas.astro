@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import CaseConverter from "../components/CaseConverter";
+
+const faq = [
+  { q: "¿Cómo quito las mayúsculas de un texto?", a: "Pega el texto y elige minúsculas. Si quieres conservar la mayúscula al inicio de cada oración, usa Tipo oración: es útil para textos que se escribieron con el bloqueo de mayúsculas activado." },
+  { q: "¿Respeta los acentos y la ñ?", a: "Sí. La conversión usa las reglas del español, así que ÁRBOL pasa a árbol y niño a NIÑO. En Tipo oración también reconoce los signos ¿ y ¡ al inicio de una pregunta o exclamación." },
+  { q: "¿Para qué sirven camelCase, snake_case y kebab-case?", a: "Son convenciones para nombrar variables, columnas y URLs. camelCase es común en JavaScript, snake_case en Python y bases de datos, y kebab-case en URLs y clases CSS. Cada línea se convierte por separado, así que puedes transformar una lista completa." },
+];
+---
+
+<ToolLayout
+  slug="convertir-mayusculas-minusculas"
+  metaTitle={"Convertir mayúsculas a minúsculas y viceversa | gomflo.dev"}
+  description={"Convierte texto a MAYÚSCULAS, minúsculas, tipo oración o Cada Palabra, y a camelCase, snake_case o kebab-case. Respeta acentos, la ñ y los signos ¿ y ¡."}
+  heading={"Mayúsculas y minúsculas"}
+  lead={"Cambia un texto a mayúsculas, minúsculas o tipo oración, o conviértelo a estilos de nombres de código como camelCase y snake_case."}
+  sectionLabel={"Convertidor de mayúsculas y minúsculas"}
+  faq={faq}
+>
+  <CaseConverter client:load />
+</ToolLayout>

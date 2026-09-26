@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import UrlEncoder from "../components/UrlEncoder";
+
+const faq = [
+  { q: "¿Qué es la codificación de URL?", a: "Es la forma de escribir caracteres que no pueden ir tal cual en una URL. Cada uno se reemplaza por % seguido de su código en hexadecimal: el espacio es %20 y la é es %C3%A9." },
+  { q: "¿Cuándo uso Parámetro y cuándo URL completa?", a: "Usa Parámetro para valores que van dentro de la query string, como un término de búsqueda: también codifica / ? & = y #. Usa URL completa cuando quieras conservar la estructura de la dirección y solo codificar espacios y caracteres especiales." },
+  { q: "¿Por qué aparece + en lugar de espacios?", a: "Los formularios HTML envían los espacios como +. Al decodificar, esta herramienta convierte los + en espacios automáticamente." },
+];
+---
+
+<ToolLayout
+  slug="codificar-url"
+  metaTitle={"Codificar y decodificar URL (URL encode) | gomflo.dev"}
+  description={"Codifica y decodifica URLs y parámetros con porcentaje (%20, %C3%A9). Si pegas una URL, ves su dominio, ruta y cada parámetro de la query string por separado."}
+  heading={"Codificar y decodificar URL"}
+  lead={"Convierte texto a formato URL (percent-encoding) y de vuelta. Si pegas una dirección completa, verás sus partes y parámetros por separado."}
+  sectionLabel={"Codificador y decodificador de URL"}
+  faq={faq}
+>
+  <UrlEncoder client:load />
+</ToolLayout>

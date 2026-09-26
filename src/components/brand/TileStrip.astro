@@ -1,0 +1,38 @@
+---
+/** Cenefa: la franja de azulejo que remata el pie de página. */
+---
+
+<svg class="tile-strip" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="tile-strip-pattern" width="48" height="28" patternUnits="userSpaceOnUse">
+      <path class="ts-arc" d="M0 28A24 24 0 0 1 48 28" />
+      <path class="ts-fill" d="M13 28A11 11 0 0 1 35 28Z" />
+      <circle class="ts-seed" cx="0" cy="7" r="3.5" />
+      <circle class="ts-seed" cx="48" cy="7" r="3.5" />
+      <circle class="ts-dot" cx="24" cy="23" r="2" />
+    </pattern>
+  </defs>
+  <rect width="100%" height="28" fill="url(#tile-strip-pattern)" />
+</svg>
+
+<style>
+  .tile-strip {
+    display: block;
+    width: 100%;
+    height: 28px;
+  }
+  .ts-arc {
+    fill: none;
+    stroke: var(--cobalt);
+    stroke-width: 2.5;
+  }
+  .ts-fill {
+    fill: var(--cobalt);
+  }
+  .ts-seed {
+    fill: var(--yolk);
+  }
+  .ts-dot {
+    fill: var(--glaze);
+  }
+</style>

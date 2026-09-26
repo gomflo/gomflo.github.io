@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import ColorConverter from "../components/ColorConverter";
+
+const faq = [
+  { q: "¿Cómo convierto un color HEX a RGB?", a: "Cada par de dígitos del HEX es un canal en hexadecimal: en #2340B8, 23 es el rojo (35), 40 el verde (64) y B8 el azul (184), así que equivale a rgb(35, 64, 184). Pega el HEX y copia el formato que necesites." },
+  { q: "¿Qué es OKLCH y por qué usarlo?", a: "Es un espacio de color de CSS moderno basado en cómo percibimos la luz. A diferencia de HSL, dos colores con la misma luminosidad en OKLCH se ven igual de claros, lo que facilita crear paletas y estados hover coherentes." },
+  { q: "¿Qué contraste necesita un texto para ser accesible?", a: "WCAG 2.2 pide al menos 4.5:1 para texto normal (nivel AA) y 3:1 para texto grande, de 24 px o 18.66 px en negritas. El nivel AAA pide 7:1 para texto normal." },
+];
+---
+
+<ToolLayout
+  slug="conversor-colores"
+  metaTitle={"Conversor de colores HEX a RGB, HSL y OKLCH | gomflo.dev"}
+  description={"Convierte colores entre HEX, RGB, HSL y OKLCH y revisa su contraste con blanco y negro según WCAG. Acepta nombres CSS y el selector de color de tu sistema."}
+  heading={"Conversor de colores"}
+  lead={"Pega un color en cualquier formato y obtén su equivalente en HEX, RGB, HSL y OKLCH, junto con su contraste para texto."}
+  sectionLabel={"Conversor de colores"}
+  faq={faq}
+>
+  <ColorConverter client:load />
+</ToolLayout>

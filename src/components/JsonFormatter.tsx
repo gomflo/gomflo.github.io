@@ -1,76 +1,94 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 const JsonFormatter = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const [value, setValue] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
   const [isCopying, setIsCopying] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleFormat = () => {
-    const trimmed = input.trim();
-    if (!trimmed) {
-      setOutput("");
-      return;
-    }
-    try {
-      const parsed = JSON.parse(trimmed);
-      const formatted = JSON.stringify(parsed, null, 2);
-      setOutput(formatted);
-    } catch (e) {
-      const err = e instanceof Error ? e : new Error(String(e));
-      toast.error(`JSON inválido: ${err.message}. Revisa la sintaxis (comillas, comas, llaves) y vuelve a intentar.`);
-      setOutput("");
-    }
-  };
+  const applyTransform = useCallback(
+    (transformer: (parsed: unknown) => string) => {
+      const trimmed = value.trim();
+      if (!trimmed) return;
+      try {
+        const parsed = JSON.parse(trimmed);
+        const result = transformer(parsed);
+        if (result === value) return;
 
-  const handleMinify = () => {
-    const trimmed = input.trim();
-    if (!trimmed) {
-      setOutput("");
-      return;
-    }
-    try {
-      const parsed = JSON.parse(trimmed);
-      const minified = JSON.stringify(parsed);
-      setOutput(minified);
-    } catch (e) {
-      const err = e instanceof Error ? e : new Error(String(e));
-      toast.error(`JSON inválido: ${err.message}. Revisa la sintaxis (comillas, comas, llaves) y vuelve a intentar.`);
-      setOutput("");
-    }
-  };
+        const doUpdate = () => {
+          setHistory((prev) => [...prev, value]);
+          setValue(result);
+          // Auto-resize: scroll to top after transform
+          requestAnimationFrame(() => {
+            if (textareaRef.current) {
+              textareaRef.current.scrollTop = 0;
+            }
+          });
+        };
 
-  const handleCopy = async () => {
-    if (!output) return;
+        // Use View Transitions if available
+        if (typeof document !== "undefined" && "startViewTransition" in document) {
+          (document as any).startViewTransition(doUpdate);
+        } else {
+          doUpdate();
+        }
+      } catch (e) {
+        const err = e instanceof Error ? e : new Error(String(e));
+        toast.error(
+          `JSON inválido: ${err.message}. Revisa la sintaxis y vuelve a intentar.`
+        );
+      }
+    },
+    [value]
+  );
+
+  const handleFormat = useCallback(
+    () => applyTransform((parsed) => JSON.stringify(parsed, null, 2)),
+    [applyTransform]
+  );
+
+  const handleMinify = useCallback(
+    () => applyTransform((parsed) => JSON.stringify(parsed)),
+    [applyTransform]
+  );
+
+  const handleUndo = useCallback(() => {
+    if (history.length === 0) return;
+    const doUndo = () => {
+      const prev = history[history.length - 1];
+      setHistory((h) => h.slice(0, -1));
+      setValue(prev);
+    };
+
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      (document as any).startViewTransition(doUndo);
+    } else {
+      doUndo();
+    }
+  }, [history]);
+
+  const handleCopy = useCallback(async () => {
+    if (!value.trim()) return;
     setIsCopying(true);
     try {
-      await navigator.clipboard.writeText(output);
+      await navigator.clipboard.writeText(value);
       toast.success("Copiado al portapapeles");
     } catch {
       toast.error("No se pudo copiar al portapapeles");
     } finally {
       setIsCopying(false);
     }
-  };
+  }, [value]);
 
-  const handleResultKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      const range = document.createRange();
-      range.selectNodeContents(e.currentTarget);
-      const sel = window.getSelection();
-      if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
-    }
-  };
+  const hasContent = value.trim().length > 0;
+  const canUndo = history.length > 0;
 
   return (
     <div
-      className="json-formatter grid gap-8"
+      className="json-formatter grid gap-5"
       role="region"
       aria-label="Formateador JSON"
     >
@@ -81,21 +99,23 @@ const JsonFormatter = () => {
       >
         <label
           htmlFor="json-input"
-          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+          className="text-muted-foreground text-sm font-semibold"
         >
-          Entrada
+          JSON
         </label>
         <Textarea
+          ref={textareaRef}
           id="json-input"
           name="json-input"
-          placeholder='{"ejemplo": "pega aquí tu JSON"}…'
-          rows={10}
+          placeholder='{"clave": "valor"}'
+          rows={12}
           spellCheck={false}
           autoComplete="off"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          aria-label="JSON de entrada"
-          className="font-code min-h-48 min-w-0 resize-y text-sm transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          aria-label="JSON"
+          style={{ viewTransitionName: "json-editor" }}
+          className="font-code min-w-0 resize-y text-sm transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
         />
       </section>
 
@@ -107,10 +127,9 @@ const JsonFormatter = () => {
         style={{ animationDelay: "80ms" }}
       >
         <Button
-          variant="outline"
           onClick={handleFormat}
           aria-label="Formatear JSON con indentación"
-          className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5"
+          className="min-h-[44px] cursor-pointer"
         >
           Formatear
         </Button>
@@ -118,51 +137,32 @@ const JsonFormatter = () => {
           variant="outline"
           onClick={handleMinify}
           aria-label="Minificar JSON en una línea"
-          className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5"
+          className="min-h-[44px] cursor-pointer"
         >
           Minificar
         </Button>
-        <Button
-          variant="outline"
-          onClick={handleCopy}
-          disabled={!output || isCopying}
-          aria-label={isCopying ? "Copiando…" : "Copiar resultado al portapapeles"}
-          className="min-h-[44px] cursor-pointer hover:border-(--json-result-accent)/50 hover:bg-(--json-result-accent)/5 disabled:opacity-50"
-        >
-          {isCopying ? "Copiando…" : "Copiar"}
-        </Button>
+        {canUndo && (
+          <Button
+            variant="ghost"
+            onClick={handleUndo}
+            aria-label="Deshacer último cambio"
+            className="min-h-[44px] cursor-pointer"
+          >
+            Deshacer
+          </Button>
+        )}
+        {hasContent && (
+          <Button
+            variant="ghost"
+            onClick={handleCopy}
+            disabled={isCopying}
+            aria-label={isCopying ? "Copiando…" : "Copiar al portapapeles"}
+            className="min-h-[44px] cursor-pointer ml-auto"
+          >
+            {isCopying ? "Copiando…" : "Copiar"}
+          </Button>
+        )}
       </div>
-
-      {output && (
-        <section
-          className="grid gap-3"
-          data-reveal
-          style={{ animationDelay: "160ms" }}
-          aria-live="polite"
-          aria-label="Resultado"
-        >
-          <span
-            id="json-result-label"
-            className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
-          >
-            Resultado
-          </span>
-          <div
-            role="region"
-            tabIndex={0}
-            aria-labelledby="json-result-label"
-            aria-label="Resultado JSON. Enter o espacio para seleccionar todo"
-            className="json-formatter-result-accent min-h-16 w-full cursor-text select-all border-[0.5px] border-solid border-(--color-border) border-l-[3px] bg-muted/40 px-4 py-3 shadow-sm transition-shadow duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--json-result-accent)/30 focus-visible:ring-offset-2"
-            onKeyDown={handleResultKeyDown}
-          >
-            <pre className="m-0 overflow-auto">
-              <code className="font-code text-sm whitespace-pre-wrap wrap-break-word">
-                {output}
-              </code>
-            </pre>
-          </div>
-        </section>
-      )}
     </div>
   );
 };

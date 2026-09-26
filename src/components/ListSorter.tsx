@@ -55,7 +55,7 @@ const ListSorter = () => {
 
   return (
     <div
-      className="list-sorter grid gap-8"
+      className="list-sorter grid gap-5"
       role="region"
       aria-label="Ordenador de lista"
     >
@@ -66,7 +66,7 @@ const ListSorter = () => {
       >
         <label
           htmlFor="list-sorter-input"
-          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+          className="text-muted-foreground text-sm font-semibold"
         >
           Lista (un elemento por línea)
         </label>

@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import HashGenerator from "../components/HashGenerator";
+
+const faq = [
+  { q: "¿Para qué sirve un hash?", a: "Un hash es una huella de tamaño fijo de cualquier contenido: si cambia un solo byte, el hash cambia por completo. Se usa para verificar que una descarga no se corrompió ni se alteró, detectar archivos duplicados y como llave de caché." },
+  { q: "¿Cómo verifico el checksum de un archivo descargado?", a: "Elige Archivo, selecciona el archivo y pega en Verificar el hash que publica el sitio oficial. Si coincide con alguno de los algoritmos, el contenido es idéntico al original." },
+  { q: "¿Puedo usar MD5 o SHA-256 para guardar contraseñas?", a: "No. MD5 y SHA-1 ya no resisten colisiones, y cualquier hash rápido, incluido SHA-256, se puede atacar por fuerza bruta. Para contraseñas usa algoritmos lentos diseñados para eso, como Argon2, bcrypt o scrypt." },
+];
+---
+
+<ToolLayout
+  slug="generador-hash"
+  metaTitle={"Generador de hash MD5, SHA-1 y SHA-256 online | gomflo.dev"}
+  description={"Calcula el hash MD5, SHA-1, SHA-256 y SHA-512 de un texto o archivo y verifica el checksum de una descarga. Los archivos no se suben: todo pasa en tu navegador."}
+  heading={"Generador de hash"}
+  lead={"Calcula MD5, SHA-1, SHA-256 y SHA-512 de un texto o archivo, y compara el resultado con un checksum publicado."}
+  sectionLabel={"Generador de hash"}
+  faq={faq}
+>
+  <HashGenerator client:load />
+</ToolLayout>

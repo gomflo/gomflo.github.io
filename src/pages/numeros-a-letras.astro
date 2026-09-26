@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import NumberToWords from "../components/NumberToWords";
+
+const faq = [
+  { q: "¿Cómo se escribe una cantidad en pesos con letra?", a: "Se escribe la parte entera con letra, seguida de la palabra pesos, los centavos como fracción de 100 y las siglas M.N. (moneda nacional). Por ejemplo, 1,234.56 se escribe MIL DOSCIENTOS TREINTA Y CUATRO PESOS 56/100 M.N." },
+  { q: "¿Se escribe un millón de pesos o un millón pesos?", a: "Cuando la cantidad son millones exactos se agrega de: UN MILLÓN DE PESOS o DOS MILLONES DE PESOS. Si hay más cifras después, no se usa: UN MILLÓN QUINIENTOS MIL PESOS." },
+  { q: "¿Por qué dice veintiún pesos y no veintiuno pesos?", a: "Antes de un sustantivo, uno se acorta a un: un peso, veintiún pesos, treinta y un mil. En el formato Número, sin moneda, se escribe completo: veintiuno." },
+];
+---
+
+<ToolLayout
+  slug="numeros-a-letras"
+  metaTitle={"Convertir números a letras (pesos M.N.) | gomflo.dev"}
+  description={"Convierte cantidades a letras para cheques, facturas y pagarés: MIL DOSCIENTOS PESOS 50/100 M.N. También en dólares, en euros o como número sin moneda."}
+  heading={"Números a letras"}
+  lead={"Escribe cualquier cantidad con letra, en el formato que se usa en cheques, facturas y pagarés, o como número simple."}
+  sectionLabel={"Convertidor de números a letras"}
+  faq={faq}
+>
+  <NumberToWords client:load />
+</ToolLayout>

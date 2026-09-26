@@ -1,0 +1,367 @@
+---
+import { existsSync } from "node:fs";
+import Layout from "./Layout.astro";
+import Motif from "@/components/brand/Motif.astro";
+import { getCategory, getTool, toolsIn, type ToolSlug } from "@/lib/tools";
+
+export interface Faq {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  slug: ToolSlug;
+  /** Título del documento (pestaña y buscadores). */
+  metaTitle: string;
+  description: string;
+  heading: string;
+  lead: string;
+  /** Nombre accesible de la sección de la herramienta. */
+  sectionLabel: string;
+  /** Preguntas frecuentes: se muestran y se publican como FAQPage. */
+  faq?: Faq[];
+}
+
+const { slug, metaTitle, description, heading, lead, sectionLabel, faq = [] } = Astro.props;
+const tool = getTool(slug);
+const category = getCategory(tool.category);
+const related = toolsIn(tool.category).filter((t) => t.slug !== slug);
+const headingId = `${slug}-heading`;
+
+const imagePath = `/img/${slug}.jpeg`;
+const image = existsSync(new URL(`../../public${imagePath}`, import.meta.url)) ? imagePath : undefined;
+
+const pageURL = new URL(Astro.url.pathname, Astro.site).href;
+const siteURL = new URL("/", Astro.site).href;
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: heading,
+    url: pageURL,
+    description,
+    inLanguage: "es",
+    applicationCategory: tool.category === "codigo" ? "DeveloperApplication" : "UtilitiesApplication",
+    operatingSystem: "Web",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Herramientas", item: siteURL },
+      { "@type": "ListItem", position: 2, name: heading, item: pageURL },
+    ],
+  },
+  ...(faq.length
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faq.map(({ q, a }) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        },
+      ]
+    : []),
+];
+const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
+---
+
+<Layout title={metaTitle} description={description} image={image}>
+  <main id="main-content" class="tool-page" tabindex="-1">
+    <a href="/" class="back-link">
+      <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <path d="M10 3L5 8l5 5" />
+      </svg>
+      Todas las herramientas
+    </a>
+
+    <header class="tool-head">
+      <div class="tool-stage azulejo" data-motif-stage>
+        <Motif slug={slug} class="tool-stage-motif" />
+      </div>
+      <div class="tool-head-text">
+        <h1 class="tool-title">{heading}</h1>
+        <p class="tool-lead">{lead}</p>
+      </div>
+    </header>
+
+    <section class="tool-body" aria-labelledby={headingId}>
+      <h2 id={headingId} class="sr-only">{sectionLabel}</h2>
+      <slot />
+    </section>
+
+    {faq.length > 0 && (
+      <section class="faq" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" class="section-title">Preguntas frecuentes</h2>
+        <div class="faq-list">
+          {faq.map(({ q, a }) => (
+            <details class="faq-item">
+              <summary>
+                <span>{q}</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M3 8h10M8 3v10" />
+                </svg>
+              </summary>
+              <p>{a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <nav class="more" aria-labelledby="more-heading">
+      <h2 id="more-heading" class="section-title">Más herramientas de {category.title.toLowerCase()}</h2>
+      <ul class="more-list" role="list">
+        {related.map((t) => (
+          <li>
+            <a href={t.href} class="more-item motif-trigger">
+              <span class="more-icon">
+                <Motif slug={t.slug} />
+              </span>
+              <span class="more-name">{t.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .tool-page {
+    width: 100%;
+    max-width: calc(var(--tool-width) + 2 * var(--gutter));
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 2rem) var(--gutter) 0;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+  }
+  .back-link svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s var(--ease-out);
+  }
+  .back-link:hover {
+    color: var(--cobalt);
+  }
+  .back-link:hover svg {
+    transform: translateX(-3px);
+  }
+
+  .tool-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: clamp(1.25rem, 4vw, 2.25rem);
+    margin: 1.25rem 0 clamp(2rem, 5vw, 3rem);
+  }
+
+  .tool-stage {
+    --orn-r: 22px;
+    --seed-r: 5px;
+    --orn-w: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: clamp(6rem, 18vw, 8.5rem);
+    aspect-ratio: 1;
+    border-radius: 1.25rem;
+    border: 2px solid var(--cobalt);
+    color: var(--cobalt);
+  }
+
+  .tool-stage :global(.tool-stage-motif) {
+    width: 64%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .tool-title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
+    font-weight: 800;
+    font-variation-settings: "wdth" 80;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .tool-lead {
+    margin: 0;
+    max-width: 52ch;
+    color: var(--ink-muted);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 520px) {
+    .tool-head {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    .tool-stage {
+      width: 5.5rem;
+      border-radius: 1rem;
+    }
+  }
+
+  .faq,
+  .more {
+    margin-top: clamp(4rem, 9vw, 6rem);
+  }
+
+  .faq + .more {
+    margin-top: clamp(3rem, 6vw, 4rem);
+  }
+
+  .section-title {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-variation-settings: "wdth" 85;
+    letter-spacing: -0.01em;
+  }
+
+  .more-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14.5rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .more-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.5rem;
+    padding: 0.5rem 0.875rem 0.5rem 0.5rem;
+    border-radius: 0.875rem;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease-out);
+  }
+
+  .more-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.625rem;
+    background: var(--glaze-sunk);
+    color: var(--cobalt);
+    transition:
+      background-color 0.2s var(--ease-out),
+      color 0.2s var(--ease-out);
+  }
+
+  .more-icon :global(.motif) {
+    width: 1.625rem;
+    height: 1.625rem;
+    stroke-width: 4.5;
+  }
+
+  .more-item:hover,
+  .more-item:focus-visible {
+    background: var(--glaze-sunk);
+  }
+
+  .more-item:hover .more-icon,
+  .more-item:focus-visible .more-icon {
+    background: var(--cobalt);
+    color: var(--on-cobalt);
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--grout);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--grout);
+  }
+
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.5rem;
+    padding: 0.875rem 0.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+    cursor: pointer;
+    list-style: none;
+    border-radius: 0.5rem;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    color: var(--cobalt);
+  }
+
+  .faq-item summary:focus-visible {
+    outline: 2px solid var(--cobalt);
+    outline-offset: 2px;
+  }
+
+  .faq-item summary svg {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0.125rem;
+    border-radius: 999px;
+    background: var(--glaze-sunk);
+    fill: none;
+    stroke: var(--cobalt);
+    stroke-width: 2;
+    stroke-linecap: round;
+    transition: transform 0.3s var(--ease-spring), background-color 0.2s var(--ease-out);
+  }
+
+  .faq-item[open] summary svg {
+    transform: rotate(45deg);
+    background: var(--yolk);
+    stroke: var(--yolk-ink);
+  }
+
+  .faq-item p {
+    margin: 0;
+    padding: 0 2.5rem 1.25rem 0.25rem;
+    max-width: 65ch;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+</style>

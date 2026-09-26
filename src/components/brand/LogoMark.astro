@@ -1,0 +1,49 @@
+---
+/** Marca de gomflo: un azulejo cobalto con ojos que siguen al puntero. */
+---
+
+<svg class="logo-mark" viewBox="0 0 36 36" aria-hidden="true" focusable="false">
+  <rect class="lm-tile" x="1" y="1" width="34" height="34" rx="9" />
+  <path class="lm-corner" d="M1 12A11 11 0 0 0 12 1H10A9 9 0 0 1 1 10Z" />
+  <circle class="lm-seed" cx="29" cy="29" r="2.5" />
+  <g data-eyes data-eye-range="1.6">
+    <g class="eye">
+      <ellipse class="lm-white" cx="13" cy="18" rx="4.2" ry="5" />
+      <circle class="lm-pupil" cx="13" cy="18" r="2.2" data-pupil />
+    </g>
+    <g class="eye">
+      <ellipse class="lm-white" cx="23" cy="18" rx="4.2" ry="5" />
+      <circle class="lm-pupil" cx="23" cy="18" r="2.2" data-pupil />
+    </g>
+  </g>
+</svg>
+
+<style>
+  .logo-mark {
+    display: block;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: none;
+  }
+  .lm-tile {
+    fill: var(--cobalt);
+  }
+  .lm-corner,
+  .lm-seed {
+    fill: var(--yolk);
+  }
+  .lm-white {
+    fill: #fff;
+  }
+  .lm-pupil {
+    fill: var(--ink-deep);
+  }
+  .eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.09s ease-in;
+  }
+  :global(.is-blinking) .eye {
+    transform: scaleY(0.08);
+  }
+</style>

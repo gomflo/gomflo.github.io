@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { Copy, Clock } from "lucide-react";
 
 const inputBaseClass =
-  "font-code min-h-[44px] w-full rounded-md border-[0.5px] border-solid border-border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring dark:bg-input/30 dark:focus-visible:ring-ring/50";
+  "font-code min-h-[44px] w-full rounded-xl border border-solid border-input bg-card px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring dark:bg-input/30 dark:focus-visible:ring-ring/50";
 
 const INITIAL_FIELDS: CronFields = {
   minute: "0",
@@ -97,7 +97,7 @@ export default function CronConverter() {
 
   return (
     <div
-      className="cron-converter grid gap-8"
+      className="cron-converter grid gap-5"
       role="region"
       aria-label="Conversor de expresiones Cron"
     >
@@ -121,7 +121,7 @@ export default function CronConverter() {
             data-reveal
             style={{ animationDelay: "0ms" }}
           >
-            <h2 id="cron-presets-heading" className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider">
+            <h2 id="cron-presets-heading" className="text-muted-foreground text-sm font-semibold">
               Plantillas
             </h2>
             <Select
@@ -162,7 +162,7 @@ export default function CronConverter() {
             data-reveal
             style={{ animationDelay: "60ms" }}
           >
-            <h2 id="cron-fields-heading" className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider">
+            <h2 id="cron-fields-heading" className="text-muted-foreground text-sm font-semibold">
               Campos (minuto hora día-mes mes día-semana)
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -260,14 +260,14 @@ export default function CronConverter() {
           </section>
 
           <Card
-            className="mt-12 w-full border-l-4 border-l-(--json-result-accent)"
+            className="mt-12 w-full "
             data-reveal
             style={{ animationDelay: "120ms" }}
           >
             <CardContent className="pt-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1">
-                  <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wider">
+                  <p className="text-muted-foreground mb-1 text-sm font-semibold">
                     Expresión cron
                   </p>
                   <p
@@ -281,7 +281,7 @@ export default function CronConverter() {
                 <CopyButton text={cronExpression} label="Copiar expresión cron" />
               </div>
               {parseCron(cronExpression) && (
-                <div className="mt-4 flex items-start gap-3 rounded-md bg-muted/50 p-3">
+                <div className="mt-4 flex items-start gap-3 rounded-xl bg-muted p-3">
                   <Clock className="size-5 shrink-0 text-muted-foreground" aria-hidden />
                   <p className="text-sm leading-relaxed" aria-live="polite">
                     {humanExplanation}
@@ -321,12 +321,12 @@ export default function CronConverter() {
 
           {explainInput.trim() && (
             <Card
-              className="border-l-4 border-l-(--json-result-accent)"
+              className=""
               data-reveal
               style={{ animationDelay: "80ms" }}
             >
               <CardContent className="pt-6">
-                <p className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-wider">
+                <p className="text-muted-foreground mb-2 text-sm font-semibold">
                   Explicación
                 </p>
                 <p
