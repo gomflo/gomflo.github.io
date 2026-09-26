@@ -20,30 +20,46 @@ npm run preview   # Preview production build locally
 - **TypeScript** - Strict mode, path alias `@/*` -> `src/*`
 - **shadcn/ui** - Component library (new-york style, lucide icons)
 - **Sonner** - Toast notifications
-- **next-themes** - Light/dark theme toggle
+- **Tema claro/oscuro** - clase `.dark` en `<html>`, script inline en `Layout.astro` + `ThemeToggle.tsx` (no se usa next-themes)
 
 ## Project Structure
 
 ```
 src/
 ├── components/          # React components (tool implementations)
+│   ├── brand/           # Identidad en Astro: Motif (SVG por herramienta), Rosette, LogoMark, TileStrip
+│   ├── tool-kit.tsx     # Piezas compartidas: CopyButton, ResultRow, Segmented, Checkbox, InlineError, clases de campos
 │   └── ui/              # shadcn/ui primitives (button, card, select, tabs, textarea, sonner)
-├── lib/                 # Utility functions (cn(), diff algorithm, cron parser)
+├── lib/
+│   ├── tools.ts         # Catálogo único de herramientas y categorías (fuente de verdad)
+│   ├── utils.ts         # cn()
+│   └── *.ts             # Lógica pura por herramienta (diff, cron, md5, color, case, random, numeros-letras)
 ├── layouts/
-│   └── Layout.astro     # Root layout (header, theme toggle, toaster)
+│   ├── Layout.astro     # Root layout (header con LogoMark, theme toggle, toaster, cenefa, script de personaje)
+│   └── ToolLayout.astro # Plantilla de herramienta: motivo, título, FAQ, JSON-LD, herramientas relacionadas
 ├── pages/               # Astro file-based routes (one per tool)
+├── scripts/
+│   └── character.ts     # Ojos que siguen el puntero, parpadeo, giro del rosetón, reproducción de motivos
 └── styles/
-    └── global.css       # Design system: OKLCH colors, CSS custom properties, animations
-public/                  # Static assets (favicon, robots.txt)
+    ├── global.css       # Tokens "Azulejo", mapeo a tokens shadcn, utilidad .azulejo
+    └── motifs.css       # Animaciones de los motivos SVG (reposo → en juego)
+public/                  # Static assets (favicon, robots.txt, img/ para og:image)
 ```
 
 ## Architecture Patterns
 
 ### Astro Pages
-- Each page wraps a React component in `Layout.astro` with `title` and `description` props
-- React components use `client:load` (immediate) or `client:visible` (lazy) hydration directives
+- Cada página de herramienta usa `ToolLayout.astro` con `slug`, `metaTitle` (≤ 60 caracteres), `description` (140–160), `heading`, `lead`, `sectionLabel` y `faq` (3 preguntas) y envuelve un componente React con `client:load`
+- `ToolLayout` genera JSON-LD (WebApplication, BreadcrumbList, FAQPage) y agrega `og:image` solo si existe `public/img/<slug>.jpeg`
+- El inicio (`index.astro`) arma un panel de azulejos por categoría a partir de `src/lib/tools.ts` y publica WebSite + ItemList
 - Pages use semantic HTML (`<main>`, `<section>`, `<header>`, `<nav>`)
-- Scoped styles via `<style>` blocks
+
+### Agregar una herramienta
+1. Lógica pura en `src/lib/<nombre>.ts`
+2. Componente en `src/components/<Nombre>.tsx` con raíz `className="tool-view grid gap-5"` y secciones `data-reveal`; usa `tool-kit.tsx`
+3. Entrada en `tools` de `src/lib/tools.ts` (con `category`); mantén cada categoría en múltiplos de 3 para que el panel quede completo
+4. Motivo SVG en `components/brand/Motif.astro` (viewBox 64×64, `currentColor` + `.m-accent`) y sus estados en `styles/motifs.css`; usa clases `m-*` únicas para no chocar con otros motivos
+5. Página en `src/pages/<slug>.astro` con `ToolLayout` y FAQ
 
 ### React Components
 - Functional components with hooks (`useState`, `useCallback`, `useEffect`, `useMemo`)
@@ -53,13 +69,14 @@ public/                  # Static assets (favicon, robots.txt)
 - Minimum touch target: 44px height
 
 ### Styling
-- OKLCH color space for theme variables in `global.css`
-- Border radius: 0 (sharp corners throughout)
-- Fonts: "Figtree" (display), "JetBrains Mono" (code)
-- Responsive spacing with `clamp()` functions
-- Max content width: 720px
-- Entry animation: `[data-reveal]` fade+translate pattern
-- Respects `prefers-reduced-motion`
+- Identidad "Azulejo" (talavera): tokens de marca `--glaze`, `--glaze-raised`, `--glaze-sunk`, `--cobalt`, `--ink`, `--ink-muted`, `--grout`, `--yolk`; los tokens shadcn (`--primary`, `--border`…) apuntan a ellos. Tema oscuro "noche" en `.dark`
+- Utilidades Tailwind de marca: `bg-cobalt`, `bg-yolk`, `text-ink`…
+- Radios: azulejos 1.25–1.75rem, campos `rounded-xl`, botones y pestañas `rounded-full`
+- Fonts: "Bricolage Grotesque" (display y texto, eje `wdth` 78–85 en titulares), "Martian Mono" (código, `.font-code`)
+- Easing: `--ease-out`, `--ease-in-out`, `--ease-spring`
+- Max width: `--max-width` 70rem (inicio), `--tool-width` 52rem (herramientas); gutter `--gutter`
+- Entry animation: `[data-reveal]` dentro de las clases raíz listadas en `global.css` (incluye `.tool-view`)
+- Respects `prefers-reduced-motion` (motivos y rosetón incluidos)
 
 ### Utilities
 - `cn()` from `src/lib/utils.ts` - merges classes via `clsx` + `tailwind-merge`
@@ -67,7 +84,7 @@ public/                  # Static assets (favicon, robots.txt)
 
 ## Conventions
 
-- **Language**: All UI text is in Spanish (es-ES)
+- **Language**: All UI text is in Spanish (es-MX); copy en tono directo, sin mayúsculas sostenidas en etiquetas
 - **Commits**: Conventional commits format - `type(scope): description`
 - **Error handling**: Always use `toast.error()` with descriptive messages; type-guard errors with `e instanceof Error`
 - **Accessibility**: Required - ARIA labels, keyboard nav, screen reader support, semantic HTML
@@ -77,20 +94,31 @@ public/                  # Static assets (favicon, robots.txt)
 ## CI/CD
 
 GitHub Actions deploys on push to `main`:
-1. Node 20 + `npm ci`
+1. Node 22 + `npm ci`
 2. `npm run build`
 3. Deploy `./dist/` to GitHub Pages
 
 ## Available Tools (Pages)
 
-| Route | Component | Purpose |
+La lista completa y sus categorías viven en `src/lib/tools.ts`.
+
+| Route | Component | Categoría |
 |---|---|---|
-| `/formatear-json` | JsonFormatter | JSON format/minify |
-| `/decodificar-jwt` | JwtDecoder | JWT decode |
-| `/base64-archivo` | Base64FileConverter | Base64 file conversion |
-| `/contar-caracteres` | CharacterCounter | Character/word count |
-| `/remover-acentos` | AccentRemover | Remove diacritics |
-| `/ordenar-lista` | ListSorter | Sort text lines |
-| `/conversor-cron` | CronConverter | Cron expression helper |
-| `/comparar-diff` | DiffViewer | Text diff comparison |
-| `/user-agent` | UserAgent | Browser UA display |
+| `/contar-caracteres` | CharacterCounter | texto |
+| `/convertir-mayusculas-minusculas` | CaseConverter | texto |
+| `/remover-acentos` | AccentRemover | texto |
+| `/ordenar-lista` | ListSorter | texto |
+| `/comparar-diff` | DiffViewer | texto |
+| `/numeros-a-letras` | NumberToWords | texto |
+| `/formatear-json` | JsonFormatter | codigo |
+| `/decodificar-jwt` | JwtDecoder | codigo |
+| `/base64-texto` | Base64Text | codigo |
+| `/base64-archivo` | Base64FileConverter | codigo |
+| `/codificar-url` | UrlEncoder | codigo |
+| `/timestamp-unix` | UnixTimestamp | codigo |
+| `/generador-contrasenas` | PasswordGenerator | generadores |
+| `/generador-uuid` | UuidGenerator | generadores |
+| `/generador-hash` | HashGenerator | generadores |
+| `/conversor-colores` | ColorConverter | generadores |
+| `/conversor-cron` | CronConverter | generadores |
+| `/user-agent` | UserAgent | generadores |
