@@ -1,62 +1,22 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import UserAgentView from '../components/UserAgent';
+import ToolLayout from "../layouts/ToolLayout.astro";
+import UserAgentView from "../components/UserAgent";
+
+const faq = [
+  { q: "¿Qué es el User Agent?", a: "Es un texto que el navegador envía en cada petición para identificar su nombre, versión y sistema operativo. Los sitios lo usan para estadísticas y para resolver problemas de compatibilidad." },
+  { q: "¿Para qué necesito saber mi User Agent?", a: "Para reportar un error a soporte técnico, reproducir un problema en otro navegador o configurar reglas en un servidor o firewall." },
+  { q: "¿Por qué casi todos los User Agent empiezan con Mozilla/5.0?", a: "Por compatibilidad histórica: en los noventa muchos sitios solo servían su versión moderna a Netscape, cuyo nombre interno era Mozilla. Los demás navegadores empezaron a imitarlo y la costumbre se quedó." },
+];
 ---
 
-<Layout title="Mi User Agent | gomflo.dev" description="Consulta el User Agent de tu navegador">
-  <main id="main-content" class="container" tabindex="-1">
-    <header class="page-header">
-      <h1 class="title">Mi User Agent</h1>
-      <p class="lead">Consulta el User Agent que envía tu navegador en las peticiones web.</p>
-    </header>
-    <section aria-labelledby="user-agent-heading">
-      <h2 id="user-agent-heading" class="sr-only">User Agent del navegador</h2>
-      <UserAgentView client:load />
-    </section>
-  </main>
-</Layout>
-
-<style>
-  .container {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: clamp(2rem, 5vw, 4rem) 1.5rem;
-    scroll-margin-top: 2rem;
-  }
-
-  .page-header {
-    margin-bottom: 2.5rem;
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 5vw, 2.25rem);
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.2;
-    margin: 0 0 0.5rem;
-    color: var(--color-text);
-    text-wrap: balance;
-  }
-
-  .lead {
-    font-family: var(--font-sans);
-    color: var(--color-text-muted);
-    font-size: 1rem;
-    line-height: 1.6;
-    margin: 0;
-    max-width: 42ch;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-</style>
+<ToolLayout
+  slug="user-agent"
+  metaTitle={"¿Cuál es mi User Agent? | gomflo.dev"}
+  description={"Consulta el User Agent de tu navegador: la cadena que identifica tu navegador y sistema operativo en cada petición web. Cópiala para reportes y pruebas."}
+  heading={"Mi User Agent"}
+  lead={"Consulta el User Agent que envía tu navegador en cada petición web."}
+  sectionLabel={"User Agent del navegador"}
+  faq={faq}
+>
+  <UserAgentView client:load />
+</ToolLayout>

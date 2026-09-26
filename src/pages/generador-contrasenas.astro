@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import PasswordGenerator from "../components/PasswordGenerator";
+
+const faq = [
+  { q: "¿Qué tan segura es una contraseña generada aquí?", a: "Se usa crypto.getRandomValues, el generador criptográfico del navegador, sin sesgo entre caracteres. Una contraseña de 16 caracteres con los cuatro tipos tiene unos 100 bits de entropía: adivinarla por fuerza bruta no es viable con ningún equipo actual." },
+  { q: "¿Se guarda o se envía la contraseña a algún servidor?", a: "No. Se genera en tu navegador y nunca viaja por la red. Al cerrar la pestaña desaparece, así que cópiala a tu gestor de contraseñas antes de salir." },
+  { q: "¿Qué longitud de contraseña debo usar?", a: "Para cuentas en línea, al menos 14 a 16 caracteres. Para llaves de cifrado, bases de datos o cuentas críticas, 20 o más. Con un gestor de contraseñas no necesitas recordarla, así que más larga siempre es mejor." },
+];
+---
+
+<ToolLayout
+  slug="generador-contrasenas"
+  metaTitle={"Generador de contraseñas seguras online | gomflo.dev"}
+  description={"Crea contraseñas seguras y aleatorias al instante. Elige la longitud y si lleva mayúsculas, números y símbolos. Se generan en tu navegador y no se guardan."}
+  heading={"Generador de contraseñas"}
+  lead={"Crea contraseñas aleatorias y seguras. Ajusta la longitud y los caracteres; cada una se genera en tu navegador con criptografía segura."}
+  sectionLabel={"Generador de contraseñas seguras"}
+  faq={faq}
+>
+  <PasswordGenerator client:load />
+</ToolLayout>

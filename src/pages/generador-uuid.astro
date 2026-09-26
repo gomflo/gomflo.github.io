@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import UuidGenerator from "../components/UuidGenerator";
+
+const faq = [
+  { q: "¿Cuál es la diferencia entre UUID v4 y UUID v7?", a: "El v4 es completamente aleatorio. El v7 (RFC 9562) empieza con la fecha en milisegundos, así que los identificadores quedan ordenados por momento de creación; eso mejora el rendimiento de los índices en bases de datos como PostgreSQL o MySQL." },
+  { q: "¿Un UUID se puede repetir?", a: "En la práctica, no. Un UUID v4 tiene 122 bits aleatorios: tendrías que generar miles de millones por segundo durante décadas para tener una probabilidad apreciable de colisión." },
+  { q: "¿UUID y GUID son lo mismo?", a: "Sí. GUID es el nombre que usa Microsoft para el mismo formato de 128 bits. En .NET suele escribirse en mayúsculas y entre llaves; activa esas opciones para obtenerlo así." },
+];
+---
+
+<ToolLayout
+  slug="generador-uuid"
+  metaTitle={"Generador de UUID v4 y v7 online | gomflo.dev"}
+  description={"Genera UUID v4 aleatorios o UUID v7 ordenados por fecha, uno o hasta 500 a la vez. Con o sin guiones, en mayúsculas o como GUID entre llaves para .NET."}
+  heading={"Generador de UUID"}
+  lead={"Genera identificadores únicos UUID v4 o v7. Copia uno o una lista completa para pruebas, migraciones o datos de ejemplo."}
+  sectionLabel={"Generador de UUID"}
+  faq={faq}
+>
+  <UuidGenerator client:load />
+</ToolLayout>

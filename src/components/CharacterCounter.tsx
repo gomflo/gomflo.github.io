@@ -60,7 +60,7 @@ const CharacterCounter = () => {
 
   return (
     <div
-      className="character-counter grid gap-8"
+      className="character-counter grid gap-5"
       role="region"
       aria-label="Contador de caracteres"
     >
@@ -71,7 +71,7 @@ const CharacterCounter = () => {
       >
         <label
           htmlFor="character-counter-input"
-          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+          className="text-muted-foreground text-sm font-semibold"
         >
           Texto
         </label>

@@ -5,7 +5,7 @@ import { diffLines, type DiffLine } from "@/lib/diff";
 import { GitCompare } from "lucide-react";
 
 const inputBaseClass =
-  "font-code min-h-[44px] w-full rounded-md border-[0.5px] border-solid border-border bg-transparent px-3 py-2 text-xs shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring dark:bg-input/30 dark:focus-visible:ring-ring/50 resize-y min-w-0";
+  "font-code min-h-[44px] w-full rounded-xl border border-solid border-input bg-card px-3 py-2 text-xs shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring dark:bg-input/30 dark:focus-visible:ring-ring/50 resize-y min-w-0";
 
 export default function DiffViewer() {
   const [textLeft, setTextLeft] = useState("");
@@ -29,7 +29,7 @@ export default function DiffViewer() {
 
   return (
     <div
-      className="diff-viewer grid gap-8"
+      className="diff-viewer grid gap-5"
       role="region"
       aria-label="Comparar texto o JSON"
     >
@@ -41,7 +41,7 @@ export default function DiffViewer() {
       >
         <h2
           id="diff-inputs-heading"
-          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider sm:col-span-2"
+          className="text-muted-foreground text-sm font-semibold sm:col-span-2"
         >
           Bloques a comparar
         </h2>
@@ -81,15 +81,15 @@ export default function DiffViewer() {
         </div>
       </section>
 
-      {diffResult.length > 0 && (
+      {diffResult.length > 0 && (textLeft !== "" || textRight !== "") && (
         <Card
-          className="border-l-4 border-l-(--diff-accent)"
+          className=""
           data-reveal
           style={{ animationDelay: "120ms" }}
         >
           <CardContent className="pt-6">
             <div className="mb-3 flex flex-wrap items-center gap-3">
-              <span className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wider">
+              <span className="flex items-center gap-2 text-muted-foreground text-sm">
                 <GitCompare className="size-4" aria-hidden />
                 Diferencias línea por línea
               </span>
@@ -102,7 +102,7 @@ export default function DiffViewer() {
               </p>
             </div>
             <div
-              className="diff-output overflow-x-auto rounded-md border border-border bg-(--diff-bg)"
+              className="diff-output overflow-x-auto rounded-xl border border-border bg-(--diff-bg)"
               role="figure"
               aria-label="Resultado del diff"
             >

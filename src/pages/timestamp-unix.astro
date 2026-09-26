@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import UnixTimestamp from "../components/UnixTimestamp";
+
+const faq = [
+  { q: "¿Qué es un timestamp Unix?", a: "Es la cantidad de segundos transcurridos desde el 1 de enero de 1970 a las 00:00 UTC, fecha conocida como epoch. Como no depende de la zona horaria, es la forma más común de guardar fechas en bases de datos y APIs." },
+  { q: "¿Cómo sé si mi timestamp está en segundos o en milisegundos?", a: "Por la cantidad de dígitos. Hoy un timestamp en segundos tiene 10 dígitos y uno en milisegundos tiene 13. JavaScript usa milisegundos; PHP, Python y la mayoría de las bases de datos usan segundos." },
+  { q: "¿Qué pasa con los timestamps en el año 2038?", a: "Los sistemas que guardan el timestamp en un entero de 32 bits con signo se desbordan el 19 de enero de 2038 a las 03:14:07 UTC. Los sistemas de 64 bits no tienen ese problema." },
+];
+---
+
+<ToolLayout
+  slug="timestamp-unix"
+  metaTitle={"Timestamp Unix a fecha (y fecha a timestamp) | gomflo.dev"}
+  description={"Convierte un timestamp Unix (epoch) a fecha en tu zona horaria y en UTC, o una fecha a timestamp en segundos y milisegundos. Detecta la unidad automáticamente."}
+  heading={"Timestamp Unix"}
+  lead={"Convierte un timestamp Unix a fecha y hora, o una fecha a timestamp. Detecta si está en segundos, milisegundos, microsegundos o nanosegundos."}
+  sectionLabel={"Conversor de timestamp Unix"}
+  faq={faq}
+>
+  <UnixTimestamp client:load />
+</ToolLayout>

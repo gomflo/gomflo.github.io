@@ -41,7 +41,7 @@ const AccentRemover = () => {
 
   return (
     <div
-      className="accent-remover grid gap-8"
+      className="accent-remover grid gap-5"
       role="region"
       aria-label="Removedor de acentos"
     >
@@ -52,7 +52,7 @@ const AccentRemover = () => {
       >
         <label
           htmlFor="accent-remover-input"
-          className="text-muted-foreground font-display text-xs font-medium uppercase tracking-wider"
+          className="text-muted-foreground text-sm font-semibold"
         >
           Texto con acentos
         </label>

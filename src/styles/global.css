@@ -1,98 +1,133 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./motifs.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Identidad "Azulejo": cobalto sobre esmalte, con acentos yema.
+ * Tokens de marca primero; los tokens semánticos (shadcn y legado) los usan.
+ */
 :root {
-  --color-text: oklch(0.145 0 0);
-  --color-text-muted: oklch(0.45 0 0);
-  --color-border: oklch(0.25 0 0);
-  --color-bg: oklch(1 0 0);
-  --font-serif: Georgia, "Times New Roman", serif;
-  --font-sans: "Figtree", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
-  --font-display: "Figtree", var(--font-sans);
-  --font-code: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Liberation Mono", Consolas, monospace;
-  --max-width: 720px;
-  --radius: 0;
-  --home-accent: #b8942e;
-  --json-result-accent: oklch(0.45 0.12 250);
-  --diff-accent: oklch(0.45 0.12 250);
-  --diff-bg: oklch(0.98 0 0);
+  /* Marca */
+  --glaze: #f5f7fc;
+  --glaze-raised: #ffffff;
+  --glaze-sunk: #e8edf9;
+  --cobalt: #2340b8;
+  --cobalt-strong: #1a3196;
+  --on-cobalt: #ffffff;
+  --ink: #111a4a;
+  --ink-deep: #0b1233;
+  --ink-muted: #4a5584;
+  --grout: #d3daf0;
+  --grout-strong: #b9c3e6;
+  --yolk: #f2b01e;
+  --yolk-ink: #2b1f00;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Tipografía */
+  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-sans);
+  --font-code: "Martian Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Layout */
+  --max-width: 70rem;
+  --tool-width: 52rem;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --radius: 0.75rem;
+
+  /* Legado (componentes existentes) */
+  --color-text: var(--ink);
+  --color-text-muted: var(--ink-muted);
+  --color-border: var(--grout);
+  --color-bg: var(--glaze);
+  --home-accent: var(--cobalt);
+  --json-result-accent: var(--cobalt);
+  --diff-accent: var(--cobalt);
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --diff-bg: var(--glaze-raised);
   --diff-add: oklch(0.45 0.15 145);
-  --diff-add-bg: oklch(0.92 0.06 145 / 0.35);
-  --diff-remove: oklch(0.55 0.2 25);
-  --diff-remove-bg: oklch(0.95 0.05 25 / 0.35);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --diff-add-bg: oklch(0.92 0.06 145 / 0.45);
+  --diff-remove: oklch(0.52 0.2 25);
+  --diff-remove-bg: oklch(0.94 0.05 25 / 0.5);
+
+  /* Semánticos (shadcn) */
+  --background: var(--glaze);
+  --foreground: var(--ink);
+  --card: var(--glaze-raised);
+  --card-foreground: var(--ink);
+  --popover: var(--glaze-raised);
+  --popover-foreground: var(--ink);
+  --primary: var(--cobalt);
+  --primary-foreground: var(--on-cobalt);
+  --secondary: var(--glaze-sunk);
+  --secondary-foreground: var(--ink);
+  --muted: var(--glaze-sunk);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--glaze-sunk);
+  --accent-foreground: var(--ink);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.25 0 0);
-  --ring-offset: oklch(1 0 0);
-  --input: oklch(0.25 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: var(--grout);
+  --input: var(--grout-strong);
+  --ring: var(--cobalt);
+  --ring-offset: var(--glaze);
+  --chart-1: var(--cobalt);
+  --chart-2: var(--yolk);
+  --chart-3: #5b74d6;
+  --chart-4: #9fb0ea;
+  --chart-5: #c98a00;
+  --sidebar: var(--glaze-raised);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--cobalt);
+  --sidebar-primary-foreground: var(--on-cobalt);
+  --sidebar-accent: var(--glaze-sunk);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--grout);
+  --sidebar-ring: var(--cobalt);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+.dark {
+  color-scheme: dark;
+  --glaze: #0b1130;
+  --glaze-raised: #121a42;
+  --glaze-sunk: #1a2354;
+  --cobalt: #8aa4ff;
+  --cobalt-strong: #a9bcff;
+  --on-cobalt: #0b1233;
+  --ink: #e8ecff;
+  --ink-muted: #a7b1da;
+  --grout: #27306a;
+  --grout-strong: #3a4585;
+  --yolk: #ffc53d;
 
-body {
-  margin: 0;
-  padding: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.6;
-  touch-action: manipulation;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  --diff-add: oklch(0.72 0.15 145);
+  --diff-add-bg: oklch(0.32 0.08 145 / 0.45);
+  --diff-remove: oklch(0.72 0.17 25);
+  --diff-remove-bg: oklch(0.32 0.09 25 / 0.45);
+  --destructive: oklch(0.704 0.191 22.216);
 }
 
 @theme inline {
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  --radius-2xl: 0;
-  --radius-3xl: 0;
-  --radius-4xl: 0;
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-4xl: 2.5rem;
+  --color-cobalt: var(--cobalt);
+  --color-yolk: var(--yolk);
+  --color-ink: var(--ink);
+  --color-glaze: var(--glaze);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -128,60 +163,133 @@ body {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-.dark {
-  color-scheme: dark;
-  --color-bg: #0f0f0f;
-  --color-text: #f5f5f5;
-  --color-text-muted: #a3a3a3;
-  --color-border: oklch(1 0 0 / 10%);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --ring-offset: oklch(0.145 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-  --json-result-accent: oklch(0.65 0.15 250);
-  --home-accent: #e5c158;
-  --diff-accent: oklch(0.65 0.15 250);
-  --diff-bg: oklch(0.16 0 0);
-  --diff-add: oklch(0.65 0.15 145);
-  --diff-add-bg: oklch(0.28 0.08 145 / 0.4);
-  --diff-remove: oklch(0.65 0.2 25);
-  --diff-remove-bg: oklch(0.28 0.08 25 / 0.4);
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--glaze);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-optical-sizing: auto;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
+    transition:
+      background-color 0.3s var(--ease-out),
+      color 0.3s var(--ease-out);
+  }
+
+  main {
+    flex: 1;
+    scroll-margin-top: 2rem;
+  }
+
+  main h1 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--yolk);
+    color: var(--yolk-ink);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--cobalt);
+    outline-offset: 3px;
+    border-radius: 0.375rem;
+  }
 }
 
-.json-formatter-result-accent {
-  border-left-color: var(--json-result-accent);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-@keyframes json-formatter-in {
+.font-code {
+  font-family: var(--font-code);
+  font-variation-settings: "wdth" 87.5;
+  letter-spacing: -0.01em;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 85;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Transiciones de las herramientas ---------- */
+
+::view-transition-old(json-editor),
+::view-transition-new(json-editor) {
+  animation-duration: 0.25s;
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(json-editor) {
+  animation-name: vt-fade-out;
+}
+
+::view-transition-new(json-editor) {
+  animation-name: vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-0.25rem); }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(0.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(json-editor),
+  ::view-transition-new(json-editor) {
+    animation: none;
+  }
+}
+
+@keyframes tool-reveal {
   from {
     opacity: 0;
     transform: translateY(0.5rem);
@@ -192,62 +300,54 @@ body {
   }
 }
 
-.json-formatter [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
+:is(
+    .json-formatter,
+    .jwt-decoder,
+    .base64-converter,
+    .character-counter,
+    .accent-remover,
+    .list-sorter,
+    .user-agent-view,
+    .cron-converter,
+    .diff-viewer,
+    .tool-view
+  )
+  [data-reveal] {
+  animation: tool-reveal 0.35s var(--ease-out) both;
 }
 
-.jwt-decoder [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
+/*
+ * Azulejo: superficie con ornamentos de esquina. Cuando varios azulejos se
+ * tocan, los cuartos de círculo se unen en rosetones.
+ */
+.azulejo {
+  --tile-bg: var(--glaze-raised);
+  --orn: color-mix(in oklab, var(--cobalt) 18%, transparent);
+  --orn-seed: var(--yolk);
+  --orn-r: 30px;
+  --orn-w: 2.5px;
+  --seed-r: 7px;
+  background:
+    radial-gradient(circle at 0 0, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
+    radial-gradient(circle at 100% 0, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
+    radial-gradient(circle at 100% 100%, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
+    radial-gradient(circle at 0 100%, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
+    radial-gradient(circle at 0 0, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
+    radial-gradient(circle at 100% 0, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
+    radial-gradient(circle at 100% 100%, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
+    radial-gradient(circle at 0 100%, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
+    var(--tile-bg);
 }
 
-.base64-converter [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
+/* Registradas para poder animar el esmalte del azulejo. */
+@property --tile-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
 }
 
-.character-counter [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
-}
-
-.accent-remover [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
-}
-
-.list-sorter [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
-}
-
-.user-agent-view [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
-}
-
-.cron-converter [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
-}
-
-.diff-viewer [data-reveal] {
-  animation: json-formatter-in 0.3s ease-out both;
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  main {
-    scroll-margin-top: 2rem;
-  }
-  main h1 {
-    font-family: var(--font-display);
-    text-wrap: balance;
-  }
-}
-
-.font-code {
-  font-family: var(--font-code);
-}
-
-.font-display {
-  font-family: var(--font-display);
+@property --orn {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
 }

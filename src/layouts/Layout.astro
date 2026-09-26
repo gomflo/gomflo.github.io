@@ -2,16 +2,24 @@
 import "../styles/global.css";
 import { ThemeAwareToaster } from "@/components/ui/sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import LogoMark from "@/components/brand/LogoMark.astro";
+import TileStrip from "@/components/brand/TileStrip.astro";
 
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
-const { title = "gomflo.dev", description = "Sitio personal" } =
-  Astro.props;
+const {
+  title = "gomflo.dev",
+  description = "Herramientas pequeñas para el día a día del desarrollo.",
+  image,
+} = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+const imageURL = image ? new URL(image, Astro.site).href : undefined;
+const isHome = Astro.url.pathname === "/";
 ---
 
 <!doctype html>
@@ -20,7 +28,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#f5f7fc" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Open Graph -->
@@ -29,99 +37,106 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:locale" content="es" />
+    {imageURL && <meta property="og:image" content={imageURL} />}
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    {imageURL && <meta name="twitter:image" content={imageURL} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Martian+Mono:wdth,wght@75..112.5,400..600&display=swap"
       rel="stylesheet"
     />
     <title>{title}</title>
     <script is:inline>
       (function () {
-        const stored = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const isDark = stored === "dark" || (!stored && prefersDark);
-        if (isDark) {
-          document.documentElement.classList.add("dark");
-          var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) meta.setAttribute("content", "#0f0f0f");
-        } else {
-          document.documentElement.classList.remove("dark");
-          var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) meta.setAttribute("content", "#ffffff");
-        }
+        var stored = localStorage.getItem("theme");
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var isDark = stored === "dark" || (!stored && prefersDark);
+        document.documentElement.classList.toggle("dark", isDark);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", isDark ? "#0b1130" : "#f5f7fc");
       })();
     </script>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Ir al contenido principal</a>
-    <header class="header">
-      <div class="header-inner">
-        <a href="/" class="header-title" aria-label="Ir al inicio">gomflo</a>
-        <ThemeToggle client:visible />
-      </div>
+    <header class="site-header">
+      <a href="/" class="brand" aria-label="gomflo, ir al inicio" aria-current={isHome ? "page" : undefined}>
+        <LogoMark />
+        <span class="brand-word">gomflo</span>
+      </a>
+      <ThemeToggle client:load />
     </header>
+
     <slot />
-    <ThemeAwareToaster client:visible />
+
+    <footer class="site-footer">
+      <TileStrip />
+    </footer>
+
+    <ThemeAwareToaster client:idle />
+    <script>
+      import "../scripts/character";
+    </script>
   </body>
 </html>
 
-<style is:global>
+<style>
   .skip-link {
     position: absolute;
     left: -9999px;
     z-index: 999;
-    padding: 0.75rem 1.5rem;
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-size: 0.875rem;
-    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    background: var(--cobalt);
+    color: var(--on-cobalt);
+    font-weight: 600;
     text-decoration: none;
-    border: 1px solid var(--color-border);
+    border-radius: 999px;
   }
   .skip-link:focus-visible {
     left: 1rem;
     top: 1rem;
-    outline: 2px solid var(--color-text);
+    outline: 3px solid var(--yolk);
     outline-offset: 2px;
   }
 
-  .header {
-    border-bottom: 0.5px solid var(--color-border);
-    padding: 1rem 0;
-  }
-
-  .header-inner {
+  .site-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     width: 100%;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 1.25rem var(--gutter);
   }
 
-  .header-title {
-    display: inline-block;
-    padding-left: 0;
-    font-family: var(--font-display);
-    color: var(--color-text-muted);
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--ink);
     text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: color 0.15s ease;
+    border-radius: 0.75rem;
   }
 
-  .header-title:hover,
-  .header-title:focus-visible {
-    color: var(--color-text);
-    outline: none;
+  .brand-word {
+    font-size: 1.375rem;
+    font-weight: 750;
+    font-variation-settings: "wdth" 80;
+    letter-spacing: -0.02em;
+    line-height: 1;
   }
-  .header-title:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 4px;
+
+  .brand:hover .brand-word {
+    color: var(--cobalt);
   }
+
+  .site-footer {
+    margin-top: clamp(4rem, 10vw, 7rem);
+  }
+
 </style>
