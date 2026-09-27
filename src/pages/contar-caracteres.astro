@@ -3,18 +3,18 @@ import ToolLayout from "../layouts/ToolLayout.astro";
 import CharacterCounter from "../components/CharacterCounter";
 
 const faq = [
-  { q: "¿Los espacios cuentan como caracteres?", a: "Depende de la plataforma, por eso se muestran los dos totales: con espacios y sin espacios. Usa el que pida tu formulario o red social." },
+  { q: "¿Los espacios cuentan como caracteres?", a: "Depende de la plataforma, por eso se muestran los dos totales: con espacios y sin espacios. X (Twitter), Instagram y los SMS cuentan los espacios; algunos formularios y concursos piden el total sin espacios." },
   { q: "¿Cuántos caracteres debe tener una meta description?", a: "Google suele mostrar entre 150 y 160 caracteres. Para el título de una página, lo recomendable es quedarse por debajo de 60." },
-  { q: "¿Cómo se cuentan las palabras?", a: "Se cuentan los grupos de caracteres separados por espacios o saltos de línea. Así, sin embargo cuenta como dos palabras y correo@ejemplo.com como una." },
+  { q: "¿Un emoji cuenta como uno o dos caracteres?", a: "Aquí cuenta como uno, igual que lo ves. Algunos sistemas antiguos lo cuentan como dos porque internamente ocupa dos unidades de código; X, por ejemplo, cuenta cada emoji como dos caracteres de sus 280." },
 ];
 ---
 
 <ToolLayout
   slug="contar-caracteres"
   metaTitle={"Contador de caracteres y palabras online | gomflo.dev"}
-  description={"Cuenta caracteres con y sin espacios, palabras y líneas en tiempo real. Útil para límites de redes sociales, meta descriptions, SMS y formularios."}
-  heading={"Contar caracteres"}
-  lead={"Cuenta caracteres, palabras y líneas de tu texto en tiempo real."}
+  description={"Cuenta caracteres con y sin espacios, palabras y líneas al instante, y compáralos con los límites de X, Instagram, SMS y meta descriptions. Sin registro."}
+  heading={"Contador de caracteres"}
+  lead={"Cuenta caracteres con y sin espacios, palabras y líneas mientras escribes, y revisa si cabes en cada plataforma."}
   sectionLabel={"Contador de caracteres"}
   faq={faq}
 >

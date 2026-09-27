@@ -52,6 +52,9 @@ public/                  # Static assets (favicon, robots.txt, img/ para og:imag
 ### Astro Pages
 - Cada página de herramienta usa `ToolLayout.astro` con `slug`, `metaTitle` (≤ 60 caracteres), `description` (140–160), `heading`, `lead`, `sectionLabel` y `faq` (3 preguntas) y envuelve un componente React con `client:load`
 - `ToolLayout` genera JSON-LD (WebApplication, BreadcrumbList, FAQPage) y agrega `og:image` solo si existe `public/img/<slug>.jpeg`
+- Imágenes para compartir (1200×630): `npm run build && npm run og` las genera desde `dist/` con Chrome sin interfaz (`scripts/og-images.mjs`). Córrelo al agregar páginas y cada enero (días feriados lleva el año)
+- `trailingSlash: 'always'`: GitHub Pages redirige `/ruta` a `/ruta/` con 301, así que todos los enlaces internos llevan barra final
+- Páginas satélite (`variants` en `tools.ts`): reutilizan una herramienta para otra búsqueda (`/contador-de-palabras/`, `/dias-feriados/`). Usan `ToolLayout` con `variant`, no cuentan para el panel del inicio y se enlazan desde la herramienta madre
 - El inicio (`index.astro`) arma un panel de azulejos por categoría a partir de `src/lib/tools.ts` y publica WebSite + ItemList
 - Pages use semantic HTML (`<main>`, `<section>`, `<header>`, `<nav>`)
 
@@ -61,6 +64,7 @@ public/                  # Static assets (favicon, robots.txt, img/ para og:imag
 3. Entrada en `tools` de `src/lib/tools.ts` (con `category`); mantén cada categoría en múltiplos de 3 para que el panel quede completo
 4. Motivo SVG en `components/brand/Motif.astro` (viewBox 64×64, `currentColor` + `.m-accent`) y sus estados en `styles/motifs.css`; usa clases `m-*` únicas para no chocar con otros motivos
 5. Página en `src/pages/<slug>.astro` con `ToolLayout` y FAQ
+6. `npm run build && npm run og` para su imagen de Open Graph
 
 ### React Components
 - Functional components with hooks (`useState`, `useCallback`, `useEffect`, `useMemo`)
@@ -129,3 +133,5 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/numeros-romanos` | RomanNumerals | conversores |
 | `/codigo-morse` | MorseCode | conversores |
 | `/texto-a-binario` | TextBinary | conversores |
+| `/contador-de-palabras` | CharacterCounter (`focus="words"`) | variante de contar-caracteres |
+| `/dias-feriados` | HolidayCalendar (Astro) | variante de dias-habiles |
