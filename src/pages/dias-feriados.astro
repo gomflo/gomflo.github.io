@@ -1,0 +1,26 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import HolidayCalendar from "../components/HolidayCalendar.astro";
+
+// El año sale del build: cada despliegue actualiza el calendario.
+const year = new Date().getFullYear();
+
+const faq = [
+  { q: `¿Cuáles son los días feriados de ${year} en México?`, a: "Los descansos obligatorios de la Ley Federal del Trabajo son el 1 de enero, el primer lunes de febrero (Día de la Constitución), el tercer lunes de marzo (Natalicio de Benito Juárez), el 1 de mayo, el 16 de septiembre, el tercer lunes de noviembre (Revolución) y el 25 de diciembre. Cada seis años se suma el 1 de octubre, por el cambio de Poder Ejecutivo." },
+  { q: "¿Qué pasa si trabajo en un día feriado?", a: "Si el día es descanso obligatorio, tu patrón debe pagarte el salario doble por el servicio prestado, además del sueldo que ya te corresponde por ese día: en total, salario triple. Así lo marca el artículo 75 de la Ley Federal del Trabajo." },
+  { q: "¿El Jueves Santo, el 2 de noviembre y el 12 de diciembre son feriados?", a: "No son descanso obligatorio por ley, así que depende de cada empresa. Sí son días inhábiles bancarios: los bancos cierran por disposición de la CNBV, y muchas oficinas de gobierno tampoco abren." },
+];
+---
+
+<ToolLayout
+  slug="dias-habiles"
+  variant="dias-feriados"
+  metaTitle={`Días feriados ${year} en México y puentes | gomflo.dev`}
+  description={`Calendario de días feriados ${year} en México: descansos obligatorios de la Ley Federal del Trabajo, puentes, días inhábiles bancarios y el próximo feriado.`}
+  heading={`Días feriados ${year} en México`}
+  lead={"Los descansos obligatorios por ley, los puentes y los días en que cierran los bancos, con la fecha exacta de cada uno."}
+  sectionLabel={`Calendario de días feriados ${year}`}
+  faq={faq}
+>
+  <HolidayCalendar years={[year, year + 1]} />
+</ToolLayout>

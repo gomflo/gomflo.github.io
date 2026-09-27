@@ -1,0 +1,100 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Motif from "../components/brand/Motif.astro";
+import { categories, toolsIn } from "../lib/tools";
+---
+
+<Layout title="Página no encontrada | gomflo.dev" description="Esta página no existe o cambió de dirección. Elige una de las herramientas." noindex>
+  <main id="main-content" class="not-found" tabindex="-1">
+    <header class="nf-head">
+      <p class="nf-code">404</p>
+      <h1 class="nf-title">Esta página no existe</h1>
+      <p class="nf-lead">Puede que haya cambiado de dirección. Estas son todas las herramientas:</p>
+    </header>
+
+    {categories.map((category) => (
+      <section class="nf-group" aria-labelledby={`nf-${category.id}`}>
+        <h2 id={`nf-${category.id}`} class="nf-group-title">{category.title}</h2>
+        <ul class="nf-list" role="list">
+          {toolsIn(category.id).map((tool) => (
+            <li>
+              <a href={tool.href} class="nf-item motif-trigger">
+                <span class="nf-icon"><Motif slug={tool.slug} /></span>
+                {tool.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+</Layout>
+
+<style>
+  .not-found {
+    width: 100%;
+    max-width: calc(var(--tool-width) + 2 * var(--gutter));
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4rem) var(--gutter) 4rem;
+  }
+  .nf-code {
+    margin: 0;
+    color: var(--cobalt);
+    font-family: var(--font-code);
+    font-weight: 600;
+  }
+  .nf-title {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-weight: 800;
+    font-variation-settings: "wdth" 78;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .nf-lead {
+    margin: 1rem 0 0;
+    color: var(--ink-muted);
+    font-size: 1.125rem;
+  }
+  .nf-group {
+    margin-top: 2.5rem;
+  }
+  .nf-group-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .nf-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nf-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--grout);
+    border-radius: 0.875rem;
+    background: var(--glaze-raised);
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s var(--ease-out);
+  }
+  .nf-item:hover,
+  .nf-item:focus-visible {
+    border-color: var(--cobalt);
+  }
+  .nf-icon {
+    width: 1.75rem;
+    flex: none;
+    color: var(--cobalt);
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import CharacterCounter from "../components/CharacterCounter";
+
+const faq = [
+  { q: "¿Cómo se cuentan las palabras de un texto?", a: "Se cuentan los grupos de caracteres separados por espacios o saltos de línea. Así, sin embargo cuenta como dos palabras, y correo@ejemplo.com o 1,500.00 cuentan como una." },
+  { q: "¿Cuánto se tarda en leer 1,000 palabras?", a: "Unos 4 a 5 minutos en silencio, a un ritmo promedio de 220 palabras por minuto. En voz alta, como en una exposición o un discurso, se lee a unas 140 palabras por minuto: alrededor de 7 minutos." },
+  { q: "¿Cuántas palabras tiene una cuartilla?", a: "Una cuartilla tiene entre 250 y 300 palabras con letra de 12 puntos e interlineado de 1.5. A doble espacio baja a unas 250, y a espacio sencillo sube a unas 500." },
+];
+---
+
+<ToolLayout
+  slug="contar-caracteres"
+  variant="contador-de-palabras"
+  metaTitle={"Contador de palabras online y tiempo de lectura | gomflo.dev"}
+  description={"Cuenta las palabras de un texto al instante y calcula cuánto se tarda en leerlo en silencio o en voz alta. También muestra caracteres, párrafos y líneas."}
+  heading={"Contador de palabras"}
+  lead={"Pega tu texto para saber cuántas palabras tiene y cuánto tiempo toma leerlo o exponerlo."}
+  sectionLabel={"Contador de palabras"}
+  faq={faq}
+>
+  <CharacterCounter focus="words" client:load />
+</ToolLayout>

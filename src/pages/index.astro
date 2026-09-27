@@ -11,12 +11,12 @@ const jsonLd = JSON.stringify([
     "@type": "WebSite",
     name: "gomflo.dev",
     url: siteURL,
-    inLanguage: "es",
+    inLanguage: "es-MX",
   },
   {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Herramientas para desarrolladores",
+    name: "Herramientas online gratis",
     itemListElement: tools.map((tool, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -28,7 +28,9 @@ const jsonLd = JSON.stringify([
 ---
 
 <Layout
-  title="gomflo.dev | Herramientas online gratis para desarrolladores"
+  title="gomflo.dev | Herramientas online gratis en español"
+  image="/img/inicio.jpeg"
+  imageAlt="gomflo.dev: herramientas online gratis en español"
   description="Herramientas online gratis en español: validar CLABE, calculadora de IVA, días hábiles, números a letras, romanos, código morse, JSON, contraseñas y más."
 >
   <main id="main-content" class="home" tabindex="-1">

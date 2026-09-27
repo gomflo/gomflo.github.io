@@ -1,0 +1,133 @@
+---
+/**
+ * Calendario de días feriados en México para el año en curso y el siguiente.
+ * Se genera en el build: la lista es HTML estático y un script pequeño marca
+ * el próximo feriado según la fecha del visitante.
+ */
+import { aFecha, feriadosDe } from "@/lib/dias-habiles";
+
+interface Props {
+  years: number[];
+}
+
+const { years } = Astro.props;
+
+const formato = (iso: string, opciones: Intl.DateTimeFormatOptions) =>
+  aFecha(iso)!.toLocaleDateString("es-MX", { timeZone: "UTC", ...opciones });
+
+const calendarios = years.map((year) => ({
+  year,
+  dias: feriadosDe(year, true).map((f) => {
+    const dia = aFecha(f.fecha)!.getUTCDay();
+    return {
+      ...f,
+      diaSemana: formato(f.fecha, { weekday: "long" }),
+      fechaLarga: formato(f.fecha, { day: "numeric", month: "long" }),
+      puente: !f.bancario && (dia === 1 || dia === 5),
+      finDeSemana: dia === 0 || dia === 6,
+    };
+  }),
+}));
+---
+
+<div class="tool-view grid gap-8">
+  <p data-reveal class="next-holiday bg-yolk/25 m-0 rounded-2xl px-5 py-4 text-lg text-pretty" hidden data-next-holiday></p>
+
+  {calendarios.map(({ year, dias }, i) => (
+    <section data-reveal style={`animation-delay:${40 + i * 40}ms`} class="grid gap-3" aria-labelledby={`feriados-${year}`}>
+      <h3 id={`feriados-${year}`} class="text-xl font-bold">
+        Días feriados {year}
+      </h3>
+      <ol role="list" class="m-0 grid list-none gap-0 p-0">
+        {dias.map((f) => (
+          <li
+            class="holiday grid grid-cols-[6.5rem_1fr] items-baseline gap-x-4 gap-y-0.5 border-b border-dashed border-border py-3 sm:grid-cols-[9rem_1fr_auto]"
+            data-date={f.fecha}
+          >
+            <span class="font-semibold tabular-nums">{f.fechaLarga}</span>
+            <span>
+              {f.nombre}
+              <span class="text-muted-foreground block text-sm first-letter:uppercase">{f.diaSemana}</span>
+            </span>
+            <span class="col-start-2 flex flex-wrap gap-1.5 sm:col-start-3 sm:justify-end">
+              {f.bancario ? (
+                <span class="tag">Inhábil bancario</span>
+              ) : (
+                <span class="tag tag-strong">Descanso obligatorio</span>
+              )}
+              {f.puente && <span class="tag tag-yolk">Puente</span>}
+              {f.finDeSemana && <span class="tag">Cae en fin de semana</span>}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  ))}
+
+  <section data-reveal style="animation-delay:120ms" class="grid gap-2" aria-labelledby="feriados-notas">
+    <h3 id="feriados-notas" class="text-lg font-bold">Cómo leer el calendario</h3>
+    <ul class="text-muted-foreground m-0 grid gap-1.5 pl-5 text-sm text-pretty">
+      <li><strong class="text-foreground">Descanso obligatorio:</strong> lo marca el artículo 74 de la Ley Federal del Trabajo. Si trabajas ese día, te corresponde el salario doble además de tu sueldo.</li>
+      <li><strong class="text-foreground">Inhábil bancario:</strong> la CNBV cierra los bancos, pero no es descanso obligatorio para los demás trabajadores.</li>
+      <li><strong class="text-foreground">Puente:</strong> el feriado cae en lunes o viernes y se une al fin de semana.</li>
+    </ul>
+  </section>
+</div>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    padding: 0 0.625rem;
+    border-radius: 999px;
+    background: var(--muted);
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tag-strong {
+    background: color-mix(in oklab, var(--cobalt) 14%, transparent);
+    color: var(--cobalt);
+  }
+  :global(.dark) .tag-strong {
+    color: var(--foreground);
+  }
+  .tag-yolk {
+    background: var(--yolk);
+    color: var(--yolk-ink);
+  }
+  .holiday[data-past] {
+    opacity: 0.55;
+  }
+  .holiday[data-next] {
+    background: color-mix(in oklab, var(--yolk) 18%, transparent);
+    border-radius: 0.75rem;
+    padding-inline: 0.75rem;
+  }
+</style>
+
+<script>
+  const hoy = new Date();
+  const iso = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+  const filas = [...document.querySelectorAll<HTMLElement>(".holiday[data-date]")];
+  let siguiente: HTMLElement | undefined;
+  for (const fila of filas) {
+    const fecha = fila.dataset.date!;
+    if (fecha < iso) fila.dataset.past = "";
+    else if (!siguiente) siguiente = fila;
+  }
+  const aviso = document.querySelector<HTMLElement>("[data-next-holiday]");
+  if (siguiente && aviso) {
+    siguiente.dataset.next = "";
+    const fecha = new Date(`${siguiente.dataset.date}T00:00:00`);
+    const hoyLocal = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+    const dias = Math.round((fecha.getTime() - hoyLocal.getTime()) / 86_400_000);
+    const nombre = siguiente.querySelector("span:nth-child(2)")?.firstChild?.textContent?.trim() ?? "";
+    const cuando = fecha.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" });
+    const falta = dias === 0 ? "es hoy" : dias === 1 ? "es mañana" : `faltan ${dias} días`;
+    aviso.textContent = `El próximo feriado es ${nombre}, el ${cuando}: ${falta}.`;
+    aviso.hidden = false;
+  }
+</script>

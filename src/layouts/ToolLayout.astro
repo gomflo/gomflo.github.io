@@ -2,7 +2,7 @@
 import { existsSync } from "node:fs";
 import Layout from "./Layout.astro";
 import Motif from "@/components/brand/Motif.astro";
-import { getCategory, getTool, toolsIn, type ToolSlug } from "@/lib/tools";
+import { getCategory, getTool, toolsIn, variantsOf, type ToolSlug, type VariantSlug } from "@/lib/tools";
 
 export interface Faq {
   q: string;
@@ -10,7 +10,10 @@ export interface Faq {
 }
 
 interface Props {
+  /** Herramienta de la página: define el motivo, la categoría y las relacionadas. */
   slug: ToolSlug;
+  /** Si la página es una variante (página satélite) de la herramienta. */
+  variant?: VariantSlug;
   /** Título del documento (pestaña y buscadores). */
   metaTitle: string;
   description: string;
@@ -22,13 +25,23 @@ interface Props {
   faq?: Faq[];
 }
 
-const { slug, metaTitle, description, heading, lead, sectionLabel, faq = [] } = Astro.props;
+const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [] } = Astro.props;
 const tool = getTool(slug);
 const category = getCategory(tool.category);
-const related = toolsIn(tool.category).filter((t) => t.slug !== slug);
-const headingId = `${slug}-heading`;
+const pageSlug = variant ?? slug;
+// La madre enlaza a sus variantes y la variante a su madre, antes que al resto de la categoría.
+const siblings = variant
+  ? [{ slug, href: tool.href, title: tool.title }]
+  : variantsOf(slug).map((v) => ({ slug, href: v.href, title: v.title }));
+const related = [
+  ...siblings,
+  ...toolsIn(tool.category)
+    .filter((t) => t.slug !== slug)
+    .map((t) => ({ slug: t.slug, href: t.href, title: t.title })),
+];
+const headingId = `${pageSlug}-heading`;
 
-const imagePath = `/img/${slug}.jpeg`;
+const imagePath = `/img/${pageSlug}.jpeg`;
 const image = existsSync(new URL(`../../public${imagePath}`, import.meta.url)) ? imagePath : undefined;
 
 const pageURL = new URL(Astro.url.pathname, Astro.site).href;
@@ -40,7 +53,7 @@ const structuredData = [
     name: heading,
     url: pageURL,
     description,
-    inLanguage: "es",
+    inLanguage: "es-MX",
     applicationCategory: tool.category === "codigo" ? "DeveloperApplication" : "UtilitiesApplication",
     operatingSystem: "Web",
     isAccessibleForFree: true,
@@ -71,7 +84,7 @@ const structuredData = [
 const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 ---
 
-<Layout title={metaTitle} description={description} image={image}>
+<Layout title={metaTitle} description={description} image={image} imageAlt={heading}>
   <main id="main-content" class="tool-page" tabindex="-1">
     <a href="/" class="back-link">
       <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">

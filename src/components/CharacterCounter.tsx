@@ -1,127 +1,123 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { LIMITES, analizarTexto, formatearDuracion } from "@/lib/contar";
+import { labelClass, textareaClass } from "./tool-kit";
 
-type Stats = {
-  characters: number;
-  charactersNoSpaces: number;
-  words: number;
-  lines: number;
-};
+type Focus = "characters" | "words";
 
-const computeStats = (text: string): Stats => {
-  const characters = text.length;
-  const charactersNoSpaces = text.replace(/\s/g, "").length;
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const lines = text ? text.split("\n").length : 0;
-  return { characters, charactersNoSpaces, words, lines };
-};
-
-const StatCard = ({
-  label,
-  value,
-  ariaLabel,
-  id,
-}: {
-  label: string;
-  value: number;
-  ariaLabel: string;
-  id: string;
-}) => (
-  <Card
-    id={id}
-    aria-label={ariaLabel}
-    role="region"
-    className="flex flex-col transition-shadow duration-200 focus-within:ring-2 focus-within:ring-(--json-result-accent)/20 focus-within:ring-offset-2"
-  >
-    <CardContent className="flex flex-1 flex-col py-4">
-      <p className="text-muted-foreground mb-2 min-h-10 text-sm leading-tight">
-        {label}
-      </p>
-      <p
-        className="mt-auto text-xl font-medium tabular-nums"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {value}
-      </p>
-    </CardContent>
-  </Card>
+const Stat = ({ label, value, big }: { label: string; value: string; big?: boolean }) => (
+  <div className={cn("grid content-start gap-1 rounded-2xl px-4 py-3", big ? "bg-card border border-border shadow-xs" : "bg-muted/60")}>
+    <dt className="text-muted-foreground text-sm font-semibold">{label}</dt>
+    <dd className={cn("m-0 font-bold tabular-nums", big ? "text-3xl sm:text-4xl" : "text-xl")}>{value}</dd>
+  </div>
 );
 
-const CharacterCounter = () => {
+/**
+ * Contador de caracteres y palabras. `focus` decide qué cifras van primero:
+ * la página de caracteres muestra los límites por plataforma; la de palabras,
+ * el tiempo de lectura.
+ */
+const CharacterCounter = ({ focus = "characters" }: { focus?: Focus }) => {
   const [input, setInput] = useState("");
+  const s = useMemo(() => analizarTexto(input), [input]);
+  const n = (value: number) => value.toLocaleString("es-MX");
 
-  const stats = useMemo(() => computeStats(input), [input]);
+  const primary =
+    focus === "characters"
+      ? [
+          { label: "Caracteres", value: n(s.caracteres) },
+          { label: "Sin espacios", value: n(s.sinEspacios) },
+        ]
+      : [
+          { label: "Palabras", value: n(s.palabras) },
+          { label: "Tiempo de lectura", value: formatearDuracion(s.segundosLectura) },
+        ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-  };
+  const secondary =
+    focus === "characters"
+      ? [
+          { label: "Palabras", value: n(s.palabras) },
+          { label: "Líneas", value: n(s.lineas) },
+          { label: "Párrafos", value: n(s.parrafos) },
+          { label: "Lectura", value: formatearDuracion(s.segundosLectura) },
+        ]
+      : [
+          { label: "Caracteres", value: n(s.caracteres) },
+          { label: "Sin espacios", value: n(s.sinEspacios) },
+          { label: "Párrafos", value: n(s.parrafos) },
+          { label: "En voz alta", value: formatearDuracion(s.segundosVoz) },
+        ];
 
   return (
-    <div
-      className="character-counter grid gap-5"
-      role="region"
-      aria-label="Contador de caracteres"
-    >
-      <section
-        className="grid gap-3"
-        data-reveal
-        style={{ animationDelay: "0ms" }}
-      >
-        <label
-          htmlFor="character-counter-input"
-          className="text-muted-foreground text-sm font-semibold"
-        >
+    <div className="tool-view grid gap-5" role="region" aria-label={focus === "characters" ? "Contador de caracteres" : "Contador de palabras"}>
+      <section data-reveal className="grid gap-3">
+        <label htmlFor="counter-input" className={labelClass}>
           Texto
         </label>
         <Textarea
-          id="character-counter-input"
-          name="character-counter-input"
-          placeholder="Escribe o pega aquí tu texto…"
+          id="counter-input"
           rows={8}
-          spellCheck={true}
+          spellCheck
           autoComplete="off"
+          placeholder="Escribe o pega aquí tu texto…"
           value={input}
-          onChange={handleChange}
-          aria-label="Texto para contar caracteres"
-          className="font-code min-w-0 resize-y text-sm transition-[border-color,box-shadow] duration-200 focus-visible:ring-(--json-result-accent)/25"
+          onChange={(e) => setInput(e.target.value)}
+          className={textareaClass}
         />
       </section>
 
-      <div
-        className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        role="group"
-        aria-label="Estadísticas del texto"
-        aria-live="polite"
-        data-reveal
-        style={{ animationDelay: "80ms" }}
-      >
-        <StatCard
-          id="stat-characters"
-          label="Caracteres"
-          value={stats.characters}
-          ariaLabel={`${stats.characters} caracteres`}
-        />
-        <StatCard
-          id="stat-characters-no-spaces"
-          label="Caracteres (sin espacios)"
-          value={stats.charactersNoSpaces}
-          ariaLabel={`${stats.charactersNoSpaces} caracteres sin espacios`}
-        />
-        <StatCard
-          id="stat-words"
-          label="Palabras"
-          value={stats.words}
-          ariaLabel={`${stats.words} palabras`}
-        />
-        <StatCard
-          id="stat-lines"
-          label="Líneas"
-          value={stats.lines}
-          ariaLabel={`${stats.lines} líneas`}
-        />
-      </div>
+      <dl data-reveal style={{ animationDelay: "40ms" }} className="m-0 grid gap-3" aria-live="polite">
+        <div className="grid grid-cols-2 gap-3">
+          {primary.map((stat) => (
+            <Stat key={stat.label} {...stat} big />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {secondary.map((stat) => (
+            <Stat key={stat.label} {...stat} />
+          ))}
+        </div>
+      </dl>
+
+      {focus === "characters" && (
+        <section data-reveal style={{ animationDelay: "80ms" }} className="grid gap-3" aria-labelledby="counter-limits">
+          <h3 id="counter-limits" className="text-lg font-bold">
+            Límites de caracteres por plataforma
+          </h3>
+          <ul role="list" className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2 sm:gap-x-6">
+            {LIMITES.map((limite) => {
+              const usado = s.caracteres / limite.max;
+              const excedido = s.caracteres > limite.max;
+              return (
+                <li key={limite.nombre} className="grid gap-1.5 py-1">
+                  <div className="flex items-baseline justify-between gap-3 text-sm">
+                    <span className="font-semibold">{limite.nombre}</span>
+                    <span className={cn("tabular-nums", excedido ? "text-destructive font-semibold" : "text-muted-foreground")}>
+                      {excedido
+                        ? `${n(s.caracteres - limite.max)} de más`
+                        : `${n(limite.max - s.caracteres)} de ${n(limite.max)} libres`}
+                    </span>
+                  </div>
+                  <div
+                    className="bg-muted h-1.5 overflow-hidden rounded-full"
+                    role="meter"
+                    aria-label={`${limite.nombre}: ${n(s.caracteres)} de ${n(limite.max)} caracteres`}
+                    aria-valuemin={0}
+                    aria-valuemax={limite.max}
+                    aria-valuenow={Math.min(s.caracteres, limite.max)}
+                  >
+                    <div
+                      className={cn("h-full rounded-full transition-[width] duration-200", excedido ? "bg-destructive" : usado > 0.9 ? "bg-yolk" : "bg-primary")}
+                      style={{ width: `${Math.min(usado, 1) * 100}%` }}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
     </div>
   );
 };
