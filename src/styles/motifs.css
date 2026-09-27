@@ -211,6 +211,65 @@
   transform: rotate(20deg);
 }
 
+/* ---------- Validar CLABE: los dígitos se revisan y aparece la palomita ---------- */
+.motif[data-motif="validar-clabe"] .m-cl-badge {
+  transform: scale(0);
+  transition: transform 0.4s var(--ease-spring) 0.25s;
+}
+.motif[data-motif="validar-clabe"] .m-cl-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.25s var(--ease-out) 0.5s;
+}
+
+/* ---------- IVA: la etiqueta se balancea y el % se enciende ---------- */
+.motif[data-motif="calculadora-iva"] .m-iva-tag {
+  transform-box: view-box;
+  transform-origin: 46px 18px;
+}
+.motif[data-motif="calculadora-iva"] .m-iva-pct {
+  transition:
+    transform 0.4s var(--ease-spring),
+    stroke 0.25s var(--ease-out);
+}
+
+/* ---------- Días hábiles: se encienden los cinco días de la semana ---------- */
+.motif[data-motif="dias-habiles"] .m-wk-on {
+  fill: transparent;
+  transform-origin: center bottom;
+  transition: fill 0.2s var(--ease-out);
+  transition-delay: calc(var(--i) * 70ms);
+}
+.motif[data-motif="dias-habiles"] .m-wk-off {
+  stroke-dasharray: 2 4;
+  opacity: 0.5;
+}
+
+/* ---------- Números romanos: las letras saltan una tras otra ---------- */
+.motif[data-motif="numeros-romanos"] .m-ro {
+  transition: stroke 0.25s var(--ease-out);
+}
+
+/* ---------- Código morse: la señal parpadea de izquierda a derecha ---------- */
+.motif[data-motif="codigo-morse"] .m-mo {
+  transform-origin: center;
+}
+
+/* ---------- Texto a binario: la A se vuelve ceros y unos ---------- */
+.motif[data-motif="texto-a-binario"] .m-bin-a {
+  transition:
+    transform 0.35s var(--ease-out),
+    opacity 0.2s var(--ease-out);
+}
+.motif[data-motif="texto-a-binario"] .m-bin-bit {
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    transform 0.35s var(--ease-spring),
+    opacity 0.2s var(--ease-out);
+  transition-delay: calc(0.12s + var(--i) * 60ms);
+}
+
 /* ================= Estado en juego ================= */
 
 :is(.motif-trigger:hover, .motif-trigger:focus-visible, [data-play]) .motif {
@@ -304,6 +363,48 @@
   /* conversor-colores */
   & .m-chip-1 { transform: rotate(-40deg); }
   & .m-chip-3 { transform: rotate(40deg); }
+
+  /* validar-clabe */
+  & .m-cl-digits path { animation: motif-flicker 0.4s linear both; animation-delay: calc(var(--i, 0) * 70ms); }
+  & .m-cl-badge { transform: scale(1); }
+  & .m-cl-check { stroke-dashoffset: 0; }
+
+  /* calculadora-iva */
+  & .m-iva-tag { animation: motif-swing 0.8s var(--ease-out) both; }
+  & .m-iva-pct { transform: scale(1.2); stroke: var(--yolk); }
+
+  /* dias-habiles */
+  & .m-wk-on { fill: var(--yolk); animation: motif-hop 0.35s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+
+  /* numeros-romanos */
+  & .m-ro { animation: motif-hop 0.35s var(--ease-out) both; }
+  & .m-ro-2 { animation-delay: 90ms; }
+  & .m-ro-3 { animation-delay: 180ms; stroke: var(--yolk); }
+
+  /* codigo-morse */
+  & .m-mo { animation: motif-blink 0.3s var(--ease-out) both; animation-delay: calc(var(--i) * 120ms); }
+
+  /* texto-a-binario */
+  & .m-bin-a { transform: scale(0.5); opacity: 0; }
+  & .m-bin-bit { opacity: 1; transform: scale(1); }
+}
+
+@keyframes motif-swing {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-14deg); }
+  60% { transform: rotate(8deg); }
+  80% { transform: rotate(-3deg); }
+}
+
+@keyframes motif-hop {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-5px); }
+}
+
+@keyframes motif-blink {
+  0% { fill: currentColor; transform: scale(1); }
+  50% { fill: var(--yolk); transform: scale(1.18); }
+  100% { fill: var(--yolk); transform: scale(1); }
 }
 
 @keyframes motif-roll {

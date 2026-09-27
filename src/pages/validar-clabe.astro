@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import ClabeValidator from "../components/ClabeValidator";
+
+const faq = [
+  { q: "¿Cómo sé si una CLABE interbancaria es correcta?", a: "La CLABE tiene 18 dígitos y el último es un dígito de control. Se calcula multiplicando los primeros 17 dígitos por 3, 7 y 1 en ciclo, sumando las unidades de cada producto y restando a 10 la última cifra de esa suma (si da 10, el dígito es 0). Si no coincide con el dígito 18, la CLABE está mal escrita." },
+  { q: "¿Cómo saber de qué banco es una CLABE?", a: "Los tres primeros dígitos identifican a la institución: 002 es Banamex, 012 BBVA México, 014 Santander, 072 Banorte, 638 Nu México y 722 Mercado Pago, por ejemplo. Los tres siguientes son la plaza y los once que siguen, el número de cuenta." },
+  { q: "¿Si la CLABE es válida, la cuenta existe?", a: "No necesariamente. El dígito de control solo detecta errores de captura, como un número cambiado o dos invertidos. Si la cuenta existe y a nombre de quién está solo lo confirma el banco cuando haces la transferencia por SPEI." },
+];
+---
+
+<ToolLayout
+  slug="validar-clabe"
+  metaTitle={"Validar CLABE interbancaria y ver el banco | gomflo.dev"}
+  description={"Valida una CLABE interbancaria de 18 dígitos: revisa el dígito de control, identifica el banco, la plaza y la cuenta, o calcula el dígito que falta."}
+  heading={"Validar CLABE"}
+  lead={"Revisa si una CLABE está bien escrita antes de transferir y descubre a qué banco pertenece."}
+  sectionLabel={"Validador de CLABE interbancaria"}
+  faq={faq}
+>
+  <ClabeValidator client:load />
+</ToolLayout>

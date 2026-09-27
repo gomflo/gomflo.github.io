@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import IvaCalculator from "../components/IvaCalculator";
+
+const faq = [
+  { q: "¿Cómo se quita el IVA a un precio?", a: "Divide el precio entre 1.16. El resultado es el subtotal sin IVA, y la diferencia con el precio original es el IVA. Por ejemplo, 1,160 ÷ 1.16 = 1,000 de subtotal y 160 de IVA. En la región fronteriza, con tasa de 8 %, se divide entre 1.08." },
+  { q: "¿Cuánto IVA e ISR se retiene en una factura?", a: "Cuando una persona física factura honorarios o renta a una persona moral, esta le retiene dos terceras partes del IVA (10.6667 % del subtotal) y 10 % de ISR. Si la persona física tributa en RESICO, la retención de ISR es de 1.25 %." },
+  { q: "¿Dónde aplica el IVA de 8 %?", a: "En la región fronteriza norte y sur, para contribuyentes inscritos en el estímulo fiscal que venden bienes o servicios en esa zona. En el resto del país la tasa general es de 16 %." },
+];
+---
+
+<ToolLayout
+  slug="calculadora-iva"
+  metaTitle={"Calculadora de IVA: agregar o quitar el 16 % | gomflo.dev"}
+  description={"Calcula el IVA en México: agrega o quita el 16 % o el 8 % fronterizo, desglosa el subtotal y aplica las retenciones de IVA e ISR de honorarios o RESICO."}
+  heading={"Calculadora de IVA"}
+  lead={"Agrega o quita el IVA de cualquier precio y calcula el total de una factura con retenciones."}
+  sectionLabel={"Calculadora de IVA"}
+  faq={faq}
+>
+  <IvaCalculator client:load />
+</ToolLayout>
