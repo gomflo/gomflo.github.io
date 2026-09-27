@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import MorseCode from "../components/MorseCode";
+
+const faq = [
+  { q: "¿Cómo se escribe SOS en código morse?", a: "... --- ... : tres puntos, tres rayas y tres puntos, sin pausas entre letras. Es la señal de auxilio internacional porque es fácil de reconocer y transmitir." },
+  { q: "¿Cómo se separan las letras y las palabras en morse?", a: "Una raya dura tres puntos. Entre los símbolos de una letra hay un silencio de un punto, entre letras uno de tres puntos y entre palabras uno de siete. Por escrito se separan las letras con un espacio y las palabras con una diagonal." },
+  { q: "¿La ñ y los acentos tienen código morse?", a: "La Ñ sí tiene código propio: --.--. Las vocales con tilde no se usan en el morse internacional, así que se transmiten sin acento: á se envía como A." },
+];
+---
+
+<ToolLayout
+  slug="codigo-morse"
+  metaTitle={"Traductor de código morse a texto (con audio) | gomflo.dev"}
+  description={"Traduce texto a código morse y morse a texto en español, con Ñ y signos. Escucha el mensaje con sonido a la velocidad que elijas y consulta el alfabeto morse."}
+  heading={"Código morse"}
+  lead={"Traduce texto a morse y morse a texto, y escucha cómo suena el mensaje."}
+  sectionLabel={"Traductor de código morse"}
+  faq={faq}
+>
+  <MorseCode client:load />
+</ToolLayout>

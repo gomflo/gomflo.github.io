@@ -115,7 +115,7 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     )}
 
     <nav class="more" aria-labelledby="more-heading">
-      <h2 id="more-heading" class="section-title">Más herramientas de {category.title.toLowerCase()}</h2>
+      <h2 id="more-heading" class="section-title">Más herramientas de {category.title.charAt(0).toLowerCase() + category.title.slice(1)}</h2>
       <ul class="more-list" role="list">
         {related.map((t) => (
           <li>

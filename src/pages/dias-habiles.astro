@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import BusinessDays from "../components/BusinessDays";
+
+const faq = [
+  { q: "¿Qué días son inhábiles en México?", a: "Los sábados, domingos y los descansos obligatorios del artículo 74 de la Ley Federal del Trabajo: 1 de enero, primer lunes de febrero, tercer lunes de marzo, 1 de mayo, 16 de septiembre, tercer lunes de noviembre, 25 de diciembre y el 1 de octubre del año en que cambia el Poder Ejecutivo." },
+  { q: "¿Los bancos abren en Semana Santa y el 12 de diciembre?", a: "No. El calendario de la CNBV marca como inhábiles para los bancos, además de los feriados de ley, el Jueves y Viernes Santo, el 2 de noviembre y el 12 de diciembre. Activa el calendario bancario para contarlos." },
+  { q: "¿Desde qué día se cuenta un plazo en días hábiles?", a: "Por lo general desde el día hábil siguiente al de la notificación o el inicio. Así lo calcula esta herramienta. Revisa siempre la ley o el contrato que aplica, porque algunos trámites tienen reglas propias y días de elecciones o suspensiones oficiales." },
+];
+---
+
+<ToolLayout
+  slug="dias-habiles"
+  metaTitle={"Calcular días hábiles entre fechas en México | gomflo.dev"}
+  description={"Cuenta los días hábiles y naturales entre dos fechas con los feriados oficiales de México, calcula cuándo vence un plazo y usa el calendario bancario."}
+  heading={"Días hábiles"}
+  lead={"Cuenta días hábiles entre dos fechas o averigua cuándo vence un plazo, sin fines de semana ni feriados."}
+  sectionLabel={"Calculadora de días hábiles"}
+  faq={faq}
+>
+  <BusinessDays client:load />
+</ToolLayout>

@@ -267,4 +267,80 @@ const { slug, class: className } = Astro.props;
       <circle cx="32" cy="44" r="2.2" fill="var(--glaze-raised)" stroke="none" />
     </>
   )}
+
+  {slug === "validar-clabe" && (
+    <>
+      <rect x="6" y="13" width="50" height="36" rx="6" />
+      <rect x="13" y="21" width="10" height="8" rx="2" stroke-width="3" />
+      <g class="m-cl-digits" stroke-width="3">
+        <path d="M13 39h7" />
+        <path d="M24 39h7" style="--i:1" />
+        <path d="M35 39h4" style="--i:2" />
+      </g>
+      <g class="m-cl-badge">
+        <circle class="m-accent-fill" cx="49" cy="46" r="10" fill="currentColor" stroke="none" />
+        <path class="m-cl-check" pathLength="1" d="M44.5 46.5l3 3 6-6.5" stroke="var(--yolk-ink)" stroke-width="3" />
+      </g>
+    </>
+  )}
+
+  {slug === "calculadora-iva" && (
+    <g class="m-iva-tag">
+      <path d="M34 9h19a2 2 0 0 1 2 2v19L31 54a3 3 0 0 1-4.2 0L10 37.2a3 3 0 0 1 0-4.2z" />
+      <circle cx="46" cy="18" r="3" stroke-width="3" />
+      <g class="m-iva-pct" stroke-width="3">
+        <circle cx="26.5" cy="31.5" r="2.6" />
+        <circle cx="35.5" cy="40.5" r="2.6" />
+        <path d="M37 30L25 42" />
+      </g>
+    </g>
+  )}
+
+  {slug === "dias-habiles" && (
+    <>
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+        <rect
+          class:list={["m-wk", i < 5 ? "m-wk-on" : "m-wk-off"]}
+          x={3.5 + i * 8.5}
+          y={i < 5 ? 18 : 30}
+          width="6"
+          height={i < 5 ? 28 : 16}
+          rx="3"
+          stroke-width="2.5"
+          style={`--i:${i}`}
+        />
+      ))}
+      <path d="M3 53h58" stroke-width="2" stroke-dasharray="1 5" />
+    </>
+  )}
+
+  {slug === "numeros-romanos" && (
+    <>
+      <path d="M6 11h52M6 53h52" stroke-width="2" />
+      <path class="m-ro m-ro-1" d="M13 19v26M9 19h8M9 45h8" />
+      <path class="m-ro m-ro-2" d="M22 19l8 26l8-26" />
+      <path class="m-ro m-ro-3" d="M44 19l12 26M56 19l-12 26" />
+    </>
+  )}
+
+  {slug === "codigo-morse" && (
+    <g fill="currentColor" stroke="none">
+      <circle class="m-mo" cx="9" cy="32" r="4" style="--i:0" />
+      <rect class="m-mo" x="16" y="28" width="15" height="8" rx="4" style="--i:1" />
+      <circle class="m-mo" cx="38" cy="32" r="4" style="--i:2" />
+      <rect class="m-mo" x="45" y="28" width="15" height="8" rx="4" style="--i:3" />
+    </g>
+  )}
+
+  {slug === "texto-a-binario" && (
+    <>
+      <path class="m-bin-a" d="M19 50L32 14L45 50M23.5 38h17" />
+      <g class="m-bin-bits">
+        <path class="m-bin-bit" d="M16 15l5-3v18" style="--i:0" />
+        <rect class="m-bin-bit" x="33" y="12" width="12" height="18" rx="6" style="--i:1" />
+        <rect class="m-bin-bit m-accent" x="17" y="34" width="12" height="18" rx="6" style="--i:2" />
+        <path class="m-bin-bit" d="M38 37l5-3v18" style="--i:3" />
+      </g>
+    </>
+  )}
 </svg>

@@ -33,7 +33,8 @@ src/
 ├── lib/
 │   ├── tools.ts         # Catálogo único de herramientas y categorías (fuente de verdad)
 │   ├── utils.ts         # cn()
-│   └── *.ts             # Lógica pura por herramienta (diff, cron, md5, color, case, random, numeros-letras)
+│   └── *.ts             # Lógica pura por herramienta (diff, cron, md5, color, case, random, numeros-letras, clabe, iva, dias-habiles, romanos, morse, binario)
+│                        # bancos-clabe.ts: catálogo SPEI de Banxico (actualizar si cambian participantes)
 ├── layouts/
 │   ├── Layout.astro     # Root layout (header con LogoMark, theme toggle, toaster, cenefa, script de personaje)
 │   └── ToolLayout.astro # Plantilla de herramienta: motivo, título, FAQ, JSON-LD, herramientas relacionadas
@@ -122,3 +123,9 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/conversor-colores` | ColorConverter | generadores |
 | `/conversor-cron` | CronConverter | generadores |
 | `/user-agent` | UserAgent | generadores |
+| `/validar-clabe` | ClabeValidator | mexico |
+| `/calculadora-iva` | IvaCalculator | mexico |
+| `/dias-habiles` | BusinessDays | mexico |
+| `/numeros-romanos` | RomanNumerals | conversores |
+| `/codigo-morse` | MorseCode | conversores |
+| `/texto-a-binario` | TextBinary | conversores |

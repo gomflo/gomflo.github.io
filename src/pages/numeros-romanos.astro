@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import RomanNumerals from "../components/RomanNumerals";
+
+const faq = [
+  { q: "¿Cómo se escriben los números romanos?", a: "Se combinan siete letras: I (1), V (5), X (10), L (50), C (100), D (500) y M (1000). Se suman de izquierda a derecha, salvo cuando una letra menor va antes de una mayor, que se resta: IV es 4, IX es 9, XL es 40 y CM es 900." },
+  { q: "¿Cómo se escribe 2026 en números romanos?", a: "MMXXVI: MM (2000) + XX (20) + VI (6). Del mismo modo, 1994 se escribe MCMXCIV y 1999 se escribe MCMXCIX, no MIM." },
+  { q: "¿Cuál es el número romano más grande?", a: "En la forma estándar es 3,999, que se escribe MMMCMXCIX, porque una letra no se repite más de tres veces seguidas. Para números mayores los romanos usaban una raya encima de la letra, que multiplica su valor por mil. El cero no existe en números romanos." },
+];
+---
+
+<ToolLayout
+  slug="numeros-romanos"
+  metaTitle={"Convertir números romanos a números y viceversa | gomflo.dev"}
+  description={"Convierte números a números romanos y romanos a arábigos al instante, con el desglose de cada símbolo, la tabla del 1 al 100 y las reglas para escribirlos."}
+  heading={"Números romanos"}
+  lead={"Escribe un número o un romano y obtén la conversión al instante, con el desglose de cada símbolo."}
+  sectionLabel={"Convertidor de números romanos"}
+  faq={faq}
+>
+  <RomanNumerals client:load />
+</ToolLayout>

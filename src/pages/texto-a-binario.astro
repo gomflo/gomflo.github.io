@@ -1,0 +1,22 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import TextBinary from "../components/TextBinary";
+
+const faq = [
+  { q: "¿Cómo se convierte una letra a binario?", a: "Cada letra tiene un número en la tabla de caracteres. La A es 65, que en binario, con ocho bits, es 01000001. Un texto se convierte letra por letra y cada una ocupa un byte, o más si lleva acento o es un emoji." },
+  { q: "¿Por qué la ñ o la á ocupan dos bytes?", a: "Esta herramienta usa UTF-8, la codificación de casi todas las páginas web. Las letras básicas usan un byte, pero la ñ, las vocales con tilde y los emojis necesitan de dos a cuatro. Por ejemplo, ñ es 11000011 10110001." },
+  { q: "¿Qué diferencia hay entre binario, hexadecimal y octal?", a: "Son formas de escribir el mismo número. El binario usa base 2 (0 y 1), el octal base 8 y el hexadecimal base 16 (0–9 y a–f). La letra H es 01001000 en binario, 110 en octal, 48 en hexadecimal y 72 en decimal." },
+];
+---
+
+<ToolLayout
+  slug="texto-a-binario"
+  metaTitle={"Traductor de texto a binario y binario a texto | gomflo.dev"}
+  description={"Convierte texto a código binario y binario a texto, con acentos, ñ y emojis en UTF-8. También a hexadecimal, octal o decimal, con el abecedario en binario."}
+  heading={"Texto a binario"}
+  lead={"Traduce texto a ceros y unos, o descifra un mensaje en binario, hexadecimal, octal o decimal."}
+  sectionLabel={"Traductor de texto a binario"}
+  faq={faq}
+>
+  <TextBinary client:load />
+</ToolLayout>

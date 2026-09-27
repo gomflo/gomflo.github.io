@@ -16,9 +16,15 @@ export type ToolSlug =
   | "generador-hash"
   | "conversor-colores"
   | "conversor-cron"
-  | "user-agent";
+  | "user-agent"
+  | "validar-clabe"
+  | "calculadora-iva"
+  | "dias-habiles"
+  | "numeros-romanos"
+  | "codigo-morse"
+  | "texto-a-binario";
 
-export type CategoryId = "texto" | "codigo" | "generadores";
+export type CategoryId = "texto" | "codigo" | "generadores" | "mexico" | "conversores";
 
 export interface Category {
   id: CategoryId;
@@ -38,6 +44,8 @@ export const categories: Category[] = [
   { id: "texto", title: "Texto", desc: "Cuenta, limpia, ordena y transforma lo que escribes." },
   { id: "codigo", title: "Código y datos", desc: "Formatos que aparecen todos los días en una API." },
   { id: "generadores", title: "Generadores y utilidades", desc: "Contraseñas, identificadores, hashes y colores." },
+  { id: "mexico", title: "Dinero y plazos en México", desc: "CLABE, IVA y días hábiles con las reglas de aquí." },
+  { id: "conversores", title: "Conversores", desc: "Romanos, morse y binario, de ida y de vuelta." },
 ];
 
 export const tools: Tool[] = [
@@ -64,6 +72,16 @@ export const tools: Tool[] = [
   { slug: "conversor-colores", href: "/conversor-colores", title: "Conversor de colores", desc: "HEX, RGB, HSL y OKLCH, con contraste WCAG.", category: "generadores" },
   { slug: "conversor-cron", href: "/conversor-cron", title: "Conversor de Cron", desc: "Arma y explica expresiones cron en español.", category: "generadores" },
   { slug: "user-agent", href: "/user-agent", title: "Mi User Agent", desc: "Consulta qué dice tu navegador de sí mismo.", category: "generadores" },
+
+  // Dinero y plazos en México
+  { slug: "validar-clabe", href: "/validar-clabe", title: "Validar CLABE", desc: "Revisa el dígito de control y de qué banco es una CLABE.", category: "mexico" },
+  { slug: "calculadora-iva", href: "/calculadora-iva", title: "Calculadora de IVA", desc: "Agrega o quita el IVA, con retenciones de ISR e IVA.", category: "mexico" },
+  { slug: "dias-habiles", href: "/dias-habiles", title: "Días hábiles", desc: "Cuenta días hábiles entre fechas, con los feriados de México.", category: "mexico" },
+
+  // Conversores
+  { slug: "numeros-romanos", href: "/numeros-romanos", title: "Números romanos", desc: "Convierte números a romanos y romanos a números.", category: "conversores" },
+  { slug: "codigo-morse", href: "/codigo-morse", title: "Código morse", desc: "Traduce texto a morse y de vuelta, y escúchalo.", category: "conversores" },
+  { slug: "texto-a-binario", href: "/texto-a-binario", title: "Texto a binario", desc: "Texto a binario, hexadecimal, octal o decimal, y al revés.", category: "conversores" },
 ];
 
 export const getTool = (slug: ToolSlug): Tool => {
