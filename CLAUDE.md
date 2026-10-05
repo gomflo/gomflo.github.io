@@ -135,3 +135,12 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/texto-a-binario` | TextBinary | conversores |
 | `/contador-de-palabras` | CharacterCounter (`focus="words"`) | variante de contar-caracteres |
 | `/dias-feriados` | HolidayCalendar (Astro) | variante de dias-habiles |
+| `/partidos-de-hoy` | MatchGuide | fuera del catálogo, identidad propia |
+
+### Guía de partidos (`/partidos-de-hoy/`)
+- Diseño independiente (app deportiva clara/oscura, comparte la preferencia `theme` del sitio): no usa `Layout.astro` ni `global.css`, sino `styles/partidos.css` con clases `mg-*`
+- Escudos (`scripts/escudos.mjs`): clubes con el de 500 px de ESPN (API pública por liga, nombres cruzados con alias), selecciones con bandera SVG de flagcdn.com; si nada coincide queda el de 32 px de la guía (sin agrandarlo) y, si no carga, un monograma. Para un club que no salga, agrega su alias en `CLUB_ALIASES`
+- Sin filtros ni botón de tema arriba: la búsqueda vive en la barra y el tema (Automático/Claro/Oscuro) en el pie; "Automático" sigue a `prefers-color-scheme`
+- `npm run partidos` descarga futbolenvivomexico.com y escribe `src/data/partidos.json` (ignorado en git). Si falla, conserva el archivo anterior; sin archivo la página sale vacía pero el build no se rompe
+- El workflow de despliegue corre cada 3 horas (`schedule`) para refrescar la guía; el estado en vivo, el día "hoy" y la zona horaria se calculan en el navegador
+- Si la fuente cambia su HTML, el parser está en `scripts/partidos.mjs` y la lógica pura en `src/lib/partidos.ts`

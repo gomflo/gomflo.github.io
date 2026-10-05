@@ -1,0 +1,901 @@
+/* Guía de partidos: identidad propia de app deportiva, clara y oscura.
+   Independiente de global.css: solo la usa /partidos-de-hoy/. */
+@import "tailwindcss";
+
+:root.mg-root {
+  --mg-bg: #f2f3f5;
+  --mg-surface: #ffffff;
+  --mg-surface-2: #f4f5f7;
+  --mg-text: #14161a;
+  --mg-muted: #6b7180;
+  --mg-faint: #9aa0ac;
+  --mg-border: #e8eaee;
+  --mg-accent: #00a463;
+  --mg-accent-soft: #e3f6ed;
+  --mg-live: #e5383b;
+  --mg-live-soft: #fdeeee;
+  --mg-star: #f5a524;
+  --mg-backdrop: rgb(10 12 16 / 0.45);
+  --mg-radius: 1rem;
+  --mg-width: 42rem;
+  --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: light;
+  background: var(--mg-bg);
+}
+
+:root.mg-root.dark {
+  --mg-bg: #0b0c0f;
+  --mg-surface: #16181d;
+  --mg-surface-2: #1f2229;
+  --mg-text: #f1f2f4;
+  --mg-muted: #9ba1ad;
+  --mg-faint: #6c727e;
+  --mg-border: #24272e;
+  --mg-accent: #2fd08a;
+  --mg-accent-soft: rgb(47 208 138 / 0.14);
+  --mg-live: #ff5a5f;
+  --mg-live-soft: rgb(255 90 95 / 0.12);
+  --mg-backdrop: rgb(0 0 0 / 0.6);
+
+  color-scheme: dark;
+}
+
+.mg-root body {
+  margin: 0;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: var(--mg-bg);
+  color: var(--mg-text);
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mg-root :focus-visible {
+  outline: 2px solid var(--mg-accent);
+  outline-offset: 2px;
+}
+
+.mg-root svg {
+  flex: none;
+}
+
+.mg-skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 50;
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  background: var(--mg-accent);
+  color: #fff;
+  font-weight: 600;
+}
+.mg-skip:focus-visible {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* ---------- Encabezado fijo: barra, días y filtros ---------- */
+
+.mg-top {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding-top: env(safe-area-inset-top);
+  background: var(--mg-surface);
+  border-bottom: 1px solid var(--mg-border);
+}
+
+.mg-appbar,
+.mg-days {
+  max-width: var(--mg-width);
+  margin-inline: auto;
+}
+
+.mg-appbar {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-height: 56px;
+  padding-inline: 0.35rem;
+}
+
+.mg-title {
+  flex: 1;
+  margin: 0 0 0 0.25rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.mg-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--mg-text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mg-icon-btn:hover {
+  background: var(--mg-surface-2);
+}
+.mg-icon-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mg-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  margin-inline: 0.4rem;
+  padding-left: 0.8rem;
+  border-radius: 0.75rem;
+  background: var(--mg-surface-2);
+  color: var(--mg-faint);
+  animation: mg-fade 0.2s var(--mg-ease);
+}
+.mg-search > svg {
+  width: 18px;
+  height: 18px;
+}
+.mg-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--mg-text);
+  font: inherit;
+  font-size: 1rem;
+}
+.mg-search:focus-within {
+  box-shadow: inset 0 0 0 2px var(--mg-accent);
+}
+.mg-search input:focus-visible {
+  outline: none;
+}
+.mg-search input::placeholder {
+  color: var(--mg-faint);
+}
+.mg-search input::-webkit-search-cancel-button {
+  display: none;
+}
+.mg-cancel {
+  align-self: stretch;
+  padding-inline: 0.8rem;
+  border: 0;
+  background: none;
+  color: var(--mg-accent);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@keyframes mg-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.mg-days {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mg-days::-webkit-scrollbar {
+  display: none;
+}
+
+.mg-days {
+  padding-inline: 0.25rem;
+}
+
+.mg-day {
+  position: relative;
+  flex: 1 0 auto;
+  display: grid;
+  justify-items: center;
+  min-width: 4.2rem;
+  min-height: 48px;
+  padding: 0.35rem 0.5rem 0.55rem;
+  border: 0;
+  background: none;
+  color: var(--mg-muted);
+  font: inherit;
+  cursor: pointer;
+}
+.mg-day::after {
+  content: "";
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--mg-text);
+  transform: scaleX(0);
+  transition: transform 0.25s var(--mg-ease);
+}
+.mg-day[aria-pressed="true"] {
+  color: var(--mg-text);
+}
+.mg-day[aria-pressed="true"]::after {
+  transform: scaleX(1);
+}
+.mg-day-top {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.mg-day-num {
+  font-size: 0.72rem;
+  color: var(--mg-faint);
+}
+
+/* ---------- Lista ---------- */
+
+.mg-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  width: min(100% - 1.25rem, var(--mg-width));
+  margin: 0.75rem auto 0;
+}
+
+.mg-tz-note {
+  margin: 0;
+  color: var(--mg-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.mg-card {
+  overflow: hidden;
+  border-radius: var(--mg-radius);
+  background: var(--mg-surface);
+}
+
+.mg-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem 0.35rem;
+}
+.mg-card-head h2 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--mg-muted);
+  text-transform: uppercase;
+}
+.mg-league-logo {
+  width: 18px;
+  height: 18px;
+}
+.mg-fav-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--mg-star);
+  fill: currentColor;
+}
+
+.mg-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mg-row {
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.7rem 1rem 0.8rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+li + li > .mg-row {
+  box-shadow: inset 0 1px 0 var(--mg-border);
+}
+.mg-row:hover {
+  background: var(--mg-surface-2);
+}
+.mg-row:active {
+  background: var(--mg-border);
+}
+.mg-row:focus-visible {
+  outline-offset: -2px;
+}
+.mg-row[data-status="live"] {
+  background: var(--mg-live-soft);
+}
+.mg-row[data-status="finished"] {
+  color: var(--mg-muted);
+}
+
+.mg-time {
+  display: grid;
+  align-content: start;
+  gap: 0.1rem;
+  padding-top: 0.3rem;
+}
+.mg-clock {
+  font-size: 0.92rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.mg-sub {
+  color: var(--mg-faint);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.mg-soon {
+  color: var(--mg-accent);
+}
+.mg-minute {
+  color: var(--mg-live);
+  font-size: 1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.mg-live-label {
+  color: var(--mg-live);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mg-body {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.mg-row-league {
+  color: var(--mg-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.mg-team {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 28px;
+}
+
+.mg-crest {
+  width: 24px;
+  height: 24px;
+}
+
+/* Contenedor del escudo: el tamaño lo da la clase (mg-crest, mg-crest-lg, mg-league-logo). */
+.mg-logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.mg-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+/* Banderas: círculo recortado con un filo sutil para que el blanco no se pierda. */
+.mg-logo[data-kind="flag"] {
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+.mg-logo[data-kind="flag"] img {
+  object-fit: cover;
+  transform: scale(1.02);
+}
+.mg-logo[data-kind="flag"].mg-crest {
+  width: 22px;
+  height: 22px;
+  margin-inline: 1px;
+}
+/* Escudo de 32 px de la guía: nunca más grande que su tamaño real. */
+.mg-logo[data-kind="small"] img {
+  max-width: 32px;
+  max-height: 32px;
+}
+
+.mg-monogram {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: hsl(var(--hue) 55% 45%);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 800;
+}
+.mg-league-logo.mg-monogram {
+  font-size: 0.45rem;
+}
+
+.mg-team-name {
+  min-width: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mg-fav-mark {
+  width: 13px;
+  height: 13px;
+  color: var(--mg-star);
+  fill: currentColor;
+}
+
+.mg-channels-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  margin-top: 0.1rem;
+  color: var(--mg-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.mg-channels-line > svg {
+  width: 14px;
+  height: 14px;
+  color: var(--mg-faint);
+}
+.mg-channels-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mg-free {
+  flex: none;
+  padding: 0.05rem 0.4rem;
+  border-radius: 0.3rem;
+  background: var(--mg-accent-soft);
+  color: var(--mg-accent);
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Terminados ---------- */
+
+.mg-finished {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+.mg-finished > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 46px;
+  color: var(--mg-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.mg-finished > summary::-webkit-details-marker {
+  display: none;
+}
+.mg-finished > summary::after {
+  content: "";
+  width: 0.42rem;
+  height: 0.42rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s var(--mg-ease);
+}
+.mg-finished[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+/* ---------- Hoja de detalle ---------- */
+
+.mg-sheet {
+  width: 100%;
+  max-width: 30rem;
+  max-height: 88dvh;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 1.4rem 1.4rem 0 0;
+  background: var(--mg-surface);
+  color: var(--mg-text);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.mg-sheet:focus-visible {
+  outline: none;
+}
+.mg-sheet[open] {
+  animation: mg-sheet-up 0.32s var(--mg-ease);
+}
+.mg-sheet::backdrop {
+  background: var(--mg-backdrop);
+  animation: mg-fade 0.25s;
+}
+@keyframes mg-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+@media (min-width: 40rem) {
+  .mg-sheet {
+    margin: auto;
+    border-radius: 1.4rem;
+  }
+  .mg-sheet[open] {
+    animation: mg-sheet-pop 0.25s var(--mg-ease);
+  }
+  .mg-sheet-grip {
+    display: none;
+  }
+}
+@keyframes mg-sheet-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.mg-sheet-inner {
+  display: grid;
+  gap: 1.1rem;
+  padding: 0.5rem 1.1rem calc(1.25rem + env(safe-area-inset-bottom));
+}
+
+.mg-sheet-grip {
+  justify-self: center;
+  width: 2.5rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: var(--mg-border);
+}
+
+.mg-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-right: -0.5rem;
+}
+.mg-sheet-league {
+  margin: 0;
+  color: var(--mg-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mg-versus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 0.5rem;
+}
+.mg-side {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+.mg-side-home {
+  grid-column: 1;
+  grid-row: 1;
+}
+.mg-side-away {
+  grid-column: 3;
+  grid-row: 1;
+}
+.mg-crest-lg {
+  width: 56px;
+  height: 56px;
+}
+.mg-logo[data-kind="flag"].mg-crest-lg {
+  width: 52px;
+  height: 52px;
+  margin: 2px;
+}
+.mg-crest-lg.mg-monogram {
+  font-size: 1.1rem;
+}
+.mg-side-name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.mg-vs-center {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+  padding-top: 0.9rem;
+  min-width: 5.5rem;
+  text-align: center;
+}
+.mg-vs-time {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.mg-minute-lg {
+  font-size: 1.6rem;
+}
+
+.mg-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 36px;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--mg-border);
+  border-radius: 999px;
+  background: none;
+  color: var(--mg-text);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mg-follow svg {
+  width: 14px;
+  height: 14px;
+}
+.mg-follow[aria-pressed="true"] {
+  border-color: transparent;
+  background: rgb(245 165 36 / 0.15);
+  color: var(--mg-star);
+}
+.mg-follow[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+
+.mg-sheet-section h3 {
+  margin: 0 0 0.4rem;
+  color: var(--mg-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mg-channel-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 0.9rem;
+  background: var(--mg-surface-2);
+  overflow: hidden;
+}
+.mg-channel-list li + li {
+  border-top: 1px solid var(--mg-border);
+}
+.mg-channel-list button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 50px;
+  padding: 0.6rem 0.9rem;
+  border: 0;
+  background: none;
+  color: var(--mg-text);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.mg-channel-list button:hover {
+  background: var(--mg-border);
+}
+.mg-channel-list svg {
+  width: 18px;
+  height: 18px;
+  color: var(--mg-faint);
+}
+.mg-channel-name {
+  min-width: 0;
+}
+.mg-channel-more {
+  margin-left: auto;
+  color: var(--mg-faint);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.mg-venue {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: -0.3rem 0 0;
+  color: var(--mg-muted);
+  font-size: 0.85rem;
+}
+.mg-venue svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mg-muted {
+  margin: 0;
+  color: var(--mg-muted);
+}
+
+.mg-sheet-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.mg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 46px;
+  padding-inline: 1rem;
+  border: 0;
+  border-radius: 0.8rem;
+  background: var(--mg-surface-2);
+  color: var(--mg-text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mg-btn:hover {
+  background: var(--mg-border);
+}
+.mg-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Varios ---------- */
+
+.mg-empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 2.5rem 1.25rem;
+  border-radius: var(--mg-radius);
+  background: var(--mg-surface);
+  color: var(--mg-muted);
+  text-align: center;
+}
+.mg-empty p {
+  margin: 0;
+  max-width: 24rem;
+}
+
+.mg-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 60;
+  margin: 0;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.8rem;
+  background: var(--mg-text);
+  color: var(--mg-surface);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.4);
+  transform: translate(-50%, 160%);
+  opacity: 0;
+  transition: transform 0.3s var(--mg-ease), opacity 0.3s;
+  pointer-events: none;
+}
+.mg-toast[data-show] {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.mg-footer {
+  width: min(100% - 2rem, var(--mg-width));
+  margin-inline: auto;
+  padding-block: 1.75rem calc(2rem + env(safe-area-inset-bottom));
+  color: var(--mg-faint);
+  font-size: 0.78rem;
+  text-align: center;
+}
+.mg-footer p {
+  margin: 0.35rem auto;
+  max-width: 32rem;
+}
+.mg-footer a {
+  color: var(--mg-muted);
+}
+.mg-intro {
+  color: var(--mg-muted);
+}
+
+/* Tema: Automático (sigue al sistema), Claro u Oscuro. */
+.mg-theme-picker {
+  display: inline-flex;
+  gap: 2px;
+  margin: 0 0 1rem;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--mg-surface);
+  border: 1px solid var(--mg-border);
+}
+.mg-theme-picker button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 36px;
+  padding-inline: 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--mg-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mg-theme-picker button[aria-pressed="true"] {
+  background: var(--mg-surface-2);
+  color: var(--mg-text);
+}
+.mg-theme-picker svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (min-width: 40rem) {
+  .mg-main {
+    margin-top: 1rem;
+  }
+  .mg-row {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    padding-inline: 1.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-root *,
+  .mg-root *::before,
+  .mg-root *::after,
+  .mg-sheet::backdrop {
+    animation: none !important;
+    transition: none !important;
+  }
+}

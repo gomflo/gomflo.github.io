@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Recompila cada 3 horas para refrescar la guía de /partidos-de-hoy/.
+  schedule:
+    - cron: "15 */3 * * *"
 
 permissions:
   contents: read
@@ -32,6 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Fetch match guide
+        run: npm run partidos
 
       - name: Build
         run: npm run build
