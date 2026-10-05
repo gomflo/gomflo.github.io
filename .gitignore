@@ -23,3 +23,6 @@ Thumbs.db
 
 # Snyk Security Extension - AI Rules (auto-generated)
 .cursor/rules/snyk_rules.mdc
+
+# Guía de partidos: se descarga en cada build (npm run partidos)
+src/data/partidos.json

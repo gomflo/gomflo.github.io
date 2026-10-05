@@ -1,0 +1,147 @@
+---
+// Guía de partidos con identidad propia (app deportiva, claro/oscuro): no usa Layout.astro.
+import { existsSync } from "node:fs";
+import "../styles/partidos.css";
+import MatchGuide from "../components/MatchGuide";
+import type { MatchData } from "../lib/partidos";
+
+// El JSON lo genera `npm run partidos`; si falta, la página sale vacía en vez de romper el build.
+const files = import.meta.glob<MatchData>("../data/partidos.json", { eager: true, import: "default" });
+const data: MatchData = Object.values(files)[0] ?? { generatedAt: new Date().toISOString(), source: "", days: [] };
+
+const title = "Partidos de hoy y en qué canal pasan | gomflo.dev";
+const description =
+  "Partidos de futbol de hoy con horario del centro de México y los canales donde pasan: Liga MX, Selección, Champions y más. Filtra por equipo, liga o canal gratis.";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+const imagePath = "/img/partidos-de-hoy.jpeg";
+const hasImage = existsSync(new URL(`../../public${imagePath}`, import.meta.url));
+
+const firstDay = data.days[0];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: "Partidos de hoy y en qué canal pasan",
+      url: canonicalURL,
+      inLanguage: "es-MX",
+      description,
+      dateModified: data.generatedAt,
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", Astro.site).href },
+        { "@type": "ListItem", position: 2, name: "Partidos de hoy", item: canonicalURL },
+      ],
+    },
+    ...(firstDay?.matches ?? []).slice(0, 30).map((m) => ({
+      "@type": "SportsEvent",
+      name: `${m.home} vs ${m.away}`,
+      startDate: m.start,
+      sport: "Soccer",
+      eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
+      eventStatus: "https://schema.org/EventScheduled",
+      homeTeam: { "@type": "SportsTeam", name: m.home },
+      awayTeam: { "@type": "SportsTeam", name: m.away },
+      superEvent: { "@type": "SportsEvent", name: m.league },
+      ...(m.venue ? { location: { "@type": "Place", name: m.venue } } : {}),
+    })),
+  ],
+};
+
+const updated = new Date(data.generatedAt).toLocaleString("es-MX", {
+  day: "numeric",
+  month: "long",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "America/Mexico_City",
+});
+---
+
+<!doctype html>
+<html lang="es-MX" class="mg-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="gomflo.dev" />
+    {hasImage && <meta property="og:image" content={new URL(imagePath, Astro.site).href} />}
+    <meta name="twitter:card" content={hasImage ? "summary_large_image" : "summary"} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://static.futbolenlatv.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>
+      // Mismo tema que el resto del sitio (localStorage "theme" y clase .dark).
+      (function () {
+        var stored = localStorage.getItem("theme");
+        var dark = stored === "dark" || (!stored && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#16181d" : "#ffffff");
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#guia" class="mg-skip">Ir a la guía de partidos</a>
+
+    <MatchGuide client:load data={data} />
+
+    <footer class="mg-footer">
+      <div class="mg-theme-picker" role="group" aria-label="Tema">
+        <button type="button" data-theme="system" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>
+          Automático
+        </button>
+        <button type="button" data-theme="light" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+          Claro
+        </button>
+        <button type="button" data-theme="dark" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+          Oscuro
+        </button>
+      </div>
+      <p class="mg-intro">Horarios del centro de México y los canales donde pasa cada partido: TV abierta, de paga y streaming.</p>
+      <p>
+        Datos de <a href="https://www.futbolenvivomexico.com/" rel="nofollow noopener" target="_blank">futbolenvivomexico.com</a>,
+        última actualización: {updated}. Los canales pueden cambiar a última hora y el minuto en vivo es aproximado.
+      </p>
+      <p><a href="/">Más herramientas en gomflo.dev</a></p>
+    </footer>
+
+    <script>
+      // Tema: "system" (sin valor guardado) sigue a prefers-color-scheme, igual que el resto del sitio.
+      const media = matchMedia("(prefers-color-scheme: dark)");
+      const buttons = document.querySelectorAll<HTMLButtonElement>(".mg-theme-picker button");
+      const apply = () => {
+        const stored = localStorage.getItem("theme");
+        const dark = stored === "dark" || (!stored && media.matches);
+        document.documentElement.classList.toggle("dark", dark);
+        document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#16181d" : "#ffffff");
+        const current = stored ?? "system";
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.theme === current)));
+      };
+      buttons.forEach((b) =>
+        b.addEventListener("click", () => {
+          if (b.dataset.theme === "system") localStorage.removeItem("theme");
+          else localStorage.setItem("theme", b.dataset.theme!);
+          apply();
+        }),
+      );
+      media.addEventListener("change", apply);
+      apply();
+    </script>
+  </body>
+</html>
