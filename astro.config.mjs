@@ -15,6 +15,8 @@ export default defineConfig({
   redirects: {
     '/ordenar-alfabeticamente': '/ordenar-lista/',
     '/quitar-tildes': '/remover-acentos/',
+    // Atajo corto para compartir la guía de partidos.
+    '/partidos': '/partidos-de-hoy/',
   },
 
   vite: {
