@@ -74,6 +74,17 @@ const isHome = Astro.url.pathname === "/";
         if (meta) meta.setAttribute("content", isDark ? "#0b1130" : "#f5f7fc");
       })();
     </script>
+    <!-- Visitas en un Umami propio, sin cookies. Sin query ni hash: lo que alguien
+         escriba en una herramienta no debe viajar aunque un día acabe en la URL. -->
+    <script
+      is:inline
+      defer
+      src="https://stats.gomflo.dev/script.js"
+      data-website-id="e7a2bcf5-7b1d-4aef-91a7-94458ce8530c"
+      data-domains="gomflo.dev"
+      data-exclude-search="true"
+      data-exclude-hash="true"
+      data-performance="true"></script>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Ir al contenido principal</a>
