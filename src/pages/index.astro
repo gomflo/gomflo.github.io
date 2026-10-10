@@ -71,6 +71,23 @@ const jsonLd = JSON.stringify([
       </section>
     ))}
 
+    <section class="group" aria-labelledby="group-apps">
+      <header class="group-head">
+        <h2 id="group-apps" class="group-title">Apps</h2>
+        <p class="group-desc">Proyectos más grandes, con la misma regla: tus datos se quedan contigo.</p>
+      </header>
+      <ul class="panel panel-wide" role="list">
+        <li>
+          <a href="/susurro/" class="tile azulejo">
+            <span class="tile-text">
+              <span class="tile-title">Susurro</span>
+              <span class="tile-desc">Dictado por voz para Mac. Mantén fn, habla y suelta: el texto aparece pulido en cualquier app, sin salir de tu equipo.</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
     <script type="application/ld+json" set:html={jsonLd} />
   </main>
 </Layout>
@@ -178,6 +195,19 @@ const jsonLd = JSON.stringify([
 
   .panel li {
     display: flex;
+  }
+
+  .panel-wide {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-wide .tile {
+    min-height: 0;
+    padding-inline: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .panel-wide .tile-desc {
+    max-width: 60ch;
   }
 
   .tile {

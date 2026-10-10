@@ -9,7 +9,11 @@ export default defineConfig({
   site: 'https://gomflo.dev',
   // GitHub Pages sirve /ruta/ y redirige /ruta con un 301: los enlaces van con barra.
   trailingSlash: 'always',
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    // /susurro/ se publica desde otro repo (gomflo/susurro); sin esto no aparece en el sitemap.
+    sitemap({ customPages: ['https://gomflo.dev/susurro/'] }),
+  ],
 
   // URLs de la versión anterior que Google aún tiene registradas.
   redirects: {
