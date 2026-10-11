@@ -87,6 +87,7 @@ footer { font-size: 12.5px; line-height: 1.4; text-align: center; max-width: 340
   <p class="hint pill" id="hint" hidden></p>
   <footer class="pill" id="footer"></footer>
 </main>
+<script src="papeles.js"></script>
 <script src="papelito.js"></script>
 <script>
 (function () {
@@ -114,6 +115,14 @@ footer { font-size: 12.5px; line-height: 1.4; text-align: center; max-width: 340
     $('empty-body').textContent = t.emptyBody;
     $('empty').hidden = false;
     return;
+  }
+
+  // Quien organiza pudo elegir otro papel de envoltura: viene en el enlace. Si no, se quedan los lunares del CSS.
+  var tile = data.paper && paperTile(data.paper, Math.min(window.devicePixelRatio || 1, 3));
+  if (tile) {
+    document.body.style.backgroundColor = tile.ground;
+    document.body.style.backgroundImage = 'url(' + tile.url + ')';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', tile.ground);
   }
 
   var slip = $('slip');
