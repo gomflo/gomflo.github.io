@@ -30,7 +30,7 @@ function decodeSlip(link) {
   }
   const fields = text.split('\u001f');
   if (fields.length < 7 || fields[0] !== '1' || !fields[1] || !fields[2]) return null;
-  return { owner: fields[1], receiver: fields[2], exchange: fields[3], amount: fields[4], when: fields[5], place: fields[6] };
+  return { owner: fields[1], receiver: fields[2], exchange: fields[3], amount: fields[4], when: fields[5], place: fields[6], paper: fields[7] || '' };
 }
 
 if (typeof module !== 'undefined') module.exports = { decodeSlip };
