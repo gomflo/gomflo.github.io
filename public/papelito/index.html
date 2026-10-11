@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#2743A6">
+<title>Papelito</title>
+<meta property="og:title" content="Tu papelito del intercambio">
+<meta property="og:description" content="Ábrelo a solas y guarda el secreto.">
+<style>
+@font-face { font-family: "Shantell Sans"; src: url("shantell-sans.woff2") format("woff2"); font-weight: 500 700; font-display: swap; }
+@font-face { font-family: "Hanken Grotesk"; src: url("hanken-grotesk.woff2") format("woff2"); font-weight: 400 700; font-display: swap; }
+:root { --ink: #1B2136; --soft: #5C627A; --line: rgba(27, 33, 54, .14); --panel: 132px; --p: 0; }
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: "Hanken Grotesk", system-ui, sans-serif; color: #FFFEFB; -webkit-font-smoothing: antialiased;
+  /* El papel de lunares: el mismo que usa la app para un intercambio nuevo. */
+  background-color: #2743A6;
+  background-image:
+    radial-gradient(circle at 24px 24px, #F7C948 10px, transparent 10.6px),
+    radial-gradient(circle at 72px 72px, #F7C948 10px, transparent 10.6px),
+    radial-gradient(circle at 72px 24px, #F28CA9 4.8px, transparent 5.4px),
+    radial-gradient(circle at 24px 72px, #F28CA9 4.8px, transparent 5.4px);
+  background-size: 96px 96px;
+}
+main { min-height: 100%; display: flex; flex-direction: column; align-items: center; padding: max(18px, env(safe-area-inset-top)) 24px max(18px, env(safe-area-inset-bottom)); }
+.overline { font-weight: 700; font-size: 11.5px; letter-spacing: .11em; text-transform: uppercase; line-height: 1.3; text-align: center; margin: 0; }
+.stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; perspective: 1100px; }
+/* Lo que va escrito sobre el estampado lleva su propio fondo blanco: directo sobre los lunares no se lee. */
+.pill { background: #FFFEFB; color: var(--ink); border-radius: 10px; padding: 8px 14px; box-shadow: 0 2px 5px rgba(0, 0, 0, .25); }
+.hint { font-weight: 500; font-size: 14px; line-height: 1.3; text-align: center; margin: 0 0 14px; }
+
+/* El papelito: tres tercios. El de en medio está fijo; los otros dos giran sobre su doblez. */
+.slip { position: relative; width: min(340px, 100%); height: calc(var(--panel) * 3); color: var(--ink); cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+  transform: rotate(calc(-2.2deg * (1 - var(--p)))); transform-style: preserve-3d; border: 0; padding: 0; background: none; font: inherit; }
+.slip:focus-visible { outline: 3px solid #FFFEFB; outline-offset: 6px; }
+.panel, .flap { position: absolute; left: 0; width: 100%; height: var(--panel); }
+.panel { top: var(--panel); background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); box-shadow: 0 8px 22px rgba(0, 0, 0, .28); }
+.flap { transform-style: preserve-3d; }
+.flap.top { top: 0; transform-origin: 50% 100%; transform: rotateX(calc(-180deg * (1 - clamp(0, (var(--p) - .5) * 2, 1)))); }
+.flap.bottom { top: calc(var(--panel) * 2); transform-origin: 50% 0; transform: rotateX(calc(180deg * (1 - clamp(0, var(--p) * 2, 1)))); }
+.face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0 18px; text-align: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.face.in { background: #fff; }
+.face.out { background: #F3F1EC; transform: rotateX(180deg); }
+.slip.settle { transition: transform .5s cubic-bezier(.2, .9, .3, 1); }
+.slip.settle .flap { transition: transform .5s cubic-bezier(.2, .9, .3, 1); }
+.hand { font-family: "Shantell Sans", "Comic Sans MS", cursive; margin: 0; overflow-wrap: anywhere; }
+.owner { font-weight: 700; font-size: 30px; line-height: 1.12; }
+.note { font-weight: 500; font-size: 16px; line-height: 1.3; }
+.receiver { font-weight: 700; font-size: 44px; line-height: 1.05; padding: 0 16px; text-align: center; }
+.receiver.long { font-size: 30px; }
+.receiver.longer { font-size: 22px; }
+.soft { color: var(--soft); }
+.center { height: 100%; display: flex; align-items: center; justify-content: center; }
+
+/* Sin papelito: la etiqueta que explica qué es esto. */
+.tag { background: #FFFEFB; color: var(--ink); max-width: 420px; padding: 44px 22px 22px; position: relative; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .3));
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%, 0 20px); }
+.tag::before { content: ""; position: absolute; left: 50%; top: 14px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #2743A6; box-shadow: 0 0 0 4.5px #FFFEFB, 0 0 0 6px var(--line); }
+.tag h1 { font-family: "Shantell Sans", cursive; font-size: 28px; line-height: 1.12; margin: 0 0 10px; }
+.tag p { margin: 0; font-size: 15.5px; line-height: 1.42; color: var(--soft); }
+footer { font-size: 12.5px; line-height: 1.4; text-align: center; max-width: 340px; margin: 0; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .slip.settle, .slip.settle .flap { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="overline pill" id="private" hidden></p>
+  <div class="stage">
+    <button class="slip" id="slip" type="button" hidden>
+      <span class="panel"><span class="center"><span class="hand receiver" id="receiver" aria-hidden="true"></span></span></span>
+      <span class="flap top">
+        <span class="face in"><span class="overline soft" id="exchange"></span><span class="hand note" id="yougot"></span></span>
+        <span class="face out"></span>
+      </span>
+      <span class="flap bottom">
+        <span class="face in" id="details"></span>
+        <span class="face out"><span class="overline soft" id="slipof"></span><span class="hand owner" id="owner"></span></span>
+      </span>
+    </button>
+    <div class="tag" id="empty" hidden><h1 id="empty-title"></h1><p id="empty-body"></p></div>
+  </div>
+  <p class="hint pill" id="hint" hidden></p>
+  <footer class="pill" id="footer"></footer>
+</main>
+<script src="papelito.js"></script>
+<script>
+(function () {
+  var en = !/^es\b/i.test(navigator.language || 'es');
+  var t = en ? {
+    lang: 'en', private: 'Keep the screen to yourself', slipOf: 'Slip for', youGot: function (n) { return n + ', you’re giving a gift to'; },
+    hint: 'Swipe down or tap to unfold it', hintOpen: 'Tap to fold it again', secret: 'Keep it secret',
+    footer: 'This slip lives only inside the link. It was never stored on a server.',
+    emptyTitle: 'There’s no slip here', emptyBody: 'This link is missing its slip, or it got cut off when it was copied. Ask whoever is organizing the exchange to send it again.',
+    result: function (o, r) { return o + ' gives to ' + r; }, unfold: function (o) { return 'Unfold ' + o + '’s slip'; }
+  } : {
+    lang: 'es', private: 'Que nadie más vea la pantalla', slipOf: 'Papelito de', youGot: function (n) { return n + ', te tocó regalarle a'; },
+    hint: 'Desliza hacia abajo o toca para desdoblarlo', hintOpen: 'Toca para volver a doblarlo', secret: 'Guarda el secreto',
+    footer: 'Este papelito vive solo dentro del enlace. Nunca se guardó en un servidor.',
+    emptyTitle: 'Aquí no hay papelito', emptyBody: 'A este enlace le falta su papelito, o se cortó al copiarlo. Pídele a quien organiza el intercambio que te lo mande otra vez.',
+    result: function (o, r) { return o + ' le regala a ' + r; }, unfold: function (o) { return 'Desdoblar el papelito de ' + o; }
+  };
+  document.documentElement.lang = t.lang;
+  var $ = function (id) { return document.getElementById(id); };
+  $('footer').textContent = t.footer;
+
+  var data = decodeSlip(location.href);
+  if (!data) {
+    $('empty-title').textContent = t.emptyTitle;
+    $('empty-body').textContent = t.emptyBody;
+    $('empty').hidden = false;
+    return;
+  }
+
+  var slip = $('slip');
+  $('private').textContent = t.private;
+  $('slipof').textContent = t.slipOf;
+  $('owner').textContent = data.owner;
+  $('exchange').textContent = data.exchange;
+  $('yougot').textContent = t.youGot(data.owner);
+  var receiver = $('receiver');
+  receiver.textContent = data.receiver;
+  if (data.receiver.length > 28) receiver.classList.add('longer'); else if (data.receiver.length > 12) receiver.classList.add('long');
+  var details = [data.amount, data.when, data.place].filter(Boolean);
+  if (details.length === 0) details = [t.secret];
+  details.forEach(function (line, i) {
+    var span = document.createElement('span');
+    span.className = 'hand note' + (data.amount || data.when || data.place ? '' : ' soft');
+    span.textContent = line;
+    $('details').appendChild(span);
+  });
+  slip.setAttribute('aria-label', t.unfold(data.owner));
+  $('hint').textContent = t.hint;
+  ['private', 'slip', 'hint'].forEach(function (id) { $(id).hidden = false; });
+  document.title = t.slipOf + ' ' + data.owner;
+
+  // Desdoblar: --p va de 0 (doblado) a 1 (abierto). Se arrastra hacia abajo o se toca.
+  var p = 0, start = null, moved = false;
+  var travel = 132 * 1.7;
+  function set(value, settle) {
+    p = Math.max(0, Math.min(1, value));
+    slip.classList.toggle('settle', !!settle);
+    slip.style.setProperty('--p', p);
+    var open = p > 0.97;
+    $('hint').textContent = open ? t.hintOpen : t.hint;
+    // Para un lector de pantalla el nombre no existe hasta que el papelito está abierto.
+    if (open) { receiver.removeAttribute('aria-hidden'); slip.setAttribute('aria-label', t.result(data.owner, data.receiver)); }
+    else { receiver.setAttribute('aria-hidden', 'true'); slip.setAttribute('aria-label', t.unfold(data.owner)); }
+  }
+  slip.addEventListener('pointerdown', function (e) { start = { y: e.clientY, p: p }; moved = false; slip.setPointerCapture(e.pointerId); });
+  slip.addEventListener('pointermove', function (e) {
+    if (!start) return;
+    var dy = e.clientY - start.y;
+    if (Math.abs(dy) > 6) moved = true;
+    if (moved) set(start.p + dy / travel, false);
+  });
+  function release() {
+    if (!start) return;
+    var wasDrag = moved;
+    start = null;
+    if (wasDrag) set(p > 0.5 ? 1 : 0, true);
+  }
+  slip.addEventListener('pointerup', release);
+  slip.addEventListener('pointercancel', release);
+  slip.addEventListener('click', function () { if (!moved) set(p > 0.5 ? 0 : 1, true); moved = false; });
+})();
+</script>
+</body>
+</html>
