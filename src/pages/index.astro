@@ -4,6 +4,28 @@ import Rosette from "../components/brand/Rosette.astro";
 import Motif from "../components/brand/Motif.astro";
 import { categories, tools, toolsIn } from "../lib/tools";
 
+// Apps de escritorio: sus landings se publican desde otros repos (ver astro.config.mjs).
+// Sin `href` el azulejo sale como "Próximamente" y no enlaza a nada.
+const apps: { slug: string; title: string; desc: string; href?: string }[] = [
+  {
+    slug: "susurro",
+    title: "Susurro",
+    desc: "Dictado por voz. Mantén fn, habla y suelta: el texto aparece pulido en cualquier app, sin salir de tu equipo.",
+    href: "/susurro/",
+  },
+  {
+    slug: "destello",
+    title: "Destello",
+    desc: "Capturas de pantalla. Captura, anota, copia texto, fija y graba con un atajo; nativa y sin nube.",
+    href: "/destello/",
+  },
+  {
+    slug: "brinco",
+    title: "Brinco",
+    desc: "Cambio de escritorio al instante. Brinca entre Spaces con tus atajos o el trackpad, sin la animación de macOS.",
+  },
+];
+
 const siteURL = new URL("/", Astro.site).href;
 const jsonLd = JSON.stringify([
   {
@@ -49,6 +71,39 @@ const jsonLd = JSON.stringify([
       </div>
     </section>
 
+    <section class="group" aria-labelledby="group-apps">
+      <header class="group-head">
+        <h2 id="group-apps" class="group-title">Apps para Mac</h2>
+        <p class="group-desc">Nativas, ligeras y con la misma regla: tus datos se quedan contigo.</p>
+      </header>
+      <ul class="panel" role="list">
+        {apps.map((app) => {
+          const Tag = app.href ? "a" : "div";
+          return (
+            <li>
+              <Tag href={app.href} class="tile azulejo">
+                <img
+                  src={`/img/apps/${app.slug}.png`}
+                  alt=""
+                  width="72"
+                  height="72"
+                  decoding="async"
+                  class="tile-icon"
+                />
+                <span class="tile-text">
+                  <span class="tile-title">
+                    {app.title}
+                    {!app.href && <span class="tile-tag">Próximamente</span>}
+                  </span>
+                  <span class="tile-desc">{app.desc}</span>
+                </span>
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
     {categories.map((category) => (
       <section class="group" aria-labelledby={`group-${category.id}`}>
         <header class="group-head">
@@ -70,31 +125,6 @@ const jsonLd = JSON.stringify([
         </ul>
       </section>
     ))}
-
-    <section class="group" aria-labelledby="group-apps">
-      <header class="group-head">
-        <h2 id="group-apps" class="group-title">Apps</h2>
-        <p class="group-desc">Proyectos más grandes, con la misma regla: tus datos se quedan contigo.</p>
-      </header>
-      <ul class="panel panel-wide" role="list">
-        <li>
-          <a href="/susurro/" class="tile azulejo">
-            <span class="tile-text">
-              <span class="tile-title">Susurro</span>
-              <span class="tile-desc">Dictado por voz para Mac. Mantén fn, habla y suelta: el texto aparece pulido en cualquier app, sin salir de tu equipo.</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="/destello/" class="tile azulejo">
-            <span class="tile-text">
-              <span class="tile-title">Destello</span>
-              <span class="tile-desc">Capturas de pantalla para Mac. Captura, anota, copia texto, fija y graba con un atajo; nativa y sin nube.</span>
-            </span>
-          </a>
-        </li>
-      </ul>
-    </section>
 
     <script type="application/ld+json" set:html={jsonLd} />
   </main>
@@ -205,19 +235,6 @@ const jsonLd = JSON.stringify([
     display: flex;
   }
 
-  .panel-wide {
-    grid-template-columns: 1fr;
-  }
-
-  .panel-wide .tile {
-    min-height: 0;
-    padding-inline: clamp(2.5rem, 5vw, 4rem);
-  }
-
-  .panel-wide .tile-desc {
-    max-width: 60ch;
-  }
-
   .tile {
     --orn-r: 40px;
     --seed-r: 9px;
@@ -246,6 +263,26 @@ const jsonLd = JSON.stringify([
     transition: color 0.3s var(--ease-out);
   }
 
+  .tile-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .tile-tag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    background: var(--yolk);
+    color: var(--yolk-ink);
+    font-size: 0.75rem;
+    font-weight: 650;
+    font-variation-settings: normal;
+    letter-spacing: 0;
+    line-height: 1.2;
+    vertical-align: middle;
+  }
+
   .tile-text {
     display: grid;
     gap: 0.375rem;
@@ -267,24 +304,24 @@ const jsonLd = JSON.stringify([
     transition: color 0.3s var(--ease-out);
   }
 
-  .tile:hover,
-  .tile:focus-visible {
+  a.tile:hover,
+  a.tile:focus-visible {
     --tile-bg: var(--cobalt);
     --orn: color-mix(in oklab, var(--on-cobalt) 24%, transparent);
     color: var(--on-cobalt);
   }
 
-  .tile:hover :global(.tile-motif),
-  .tile:focus-visible :global(.tile-motif) {
+  a.tile:hover :global(.tile-motif),
+  a.tile:focus-visible :global(.tile-motif) {
     color: var(--on-cobalt);
   }
 
-  .tile:hover .tile-desc,
-  .tile:focus-visible .tile-desc {
+  a.tile:hover .tile-desc,
+  a.tile:focus-visible .tile-desc {
     color: color-mix(in oklab, var(--on-cobalt) 82%, transparent);
   }
 
-  .tile:focus-visible {
+  a.tile:focus-visible {
     outline: 3px solid var(--yolk);
     outline-offset: -7px;
     border-radius: 0;
@@ -294,7 +331,8 @@ const jsonLd = JSON.stringify([
     .tile {
       min-height: 14rem;
     }
-    .tile :global(.tile-motif) {
+    .tile :global(.tile-motif),
+    .tile-icon {
       width: 3.75rem;
       height: 3.75rem;
     }
@@ -315,7 +353,8 @@ const jsonLd = JSON.stringify([
       min-height: 0;
       padding: 1.25rem 1.25rem 1.25rem 1.5rem;
     }
-    .tile :global(.tile-motif) {
+    .tile :global(.tile-motif),
+    .tile-icon {
       flex: none;
       width: 3rem;
       height: 3rem;
