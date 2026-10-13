@@ -11,8 +11,10 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     react(),
-    // /susurro/ y /destello/ se publican desde otros repos; sin esto no aparecen en el sitemap.
-    sitemap({ customPages: ['https://gomflo.dev/susurro/', 'https://gomflo.dev/destello/'] }),
+    // /susurro/, /destello/ y /brinco/ se publican desde otros repos; sin esto no aparecen en el sitemap.
+    sitemap({
+      customPages: ['https://gomflo.dev/susurro/', 'https://gomflo.dev/destello/', 'https://gomflo.dev/brinco/'],
+    }),
   ],
 
   // URLs de la versión anterior que Google aún tiene registradas.
