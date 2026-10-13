@@ -40,10 +40,10 @@ const CaseConverter = () => {
               aria-pressed={mode === m.id}
               onClick={() => setMode(m.id)}
               className={cn(
-                "min-h-[44px] cursor-pointer rounded-full border px-4 text-sm font-semibold transition-[background-color,color,border-color,scale] duration-150 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97]",
+                "min-h-[44px] cursor-pointer rounded-md border px-4 text-sm font-semibold transition-[background-color,color,border-color,scale] duration-150 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97]",
                 mode === m.id
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-input bg-card hover:bg-accent"
+                  : "border-input bg-card hover:border-(--tinta-fija) hover:bg-pieza hover:text-(--tinta-fija)"
               )}
             >
               {m.label}

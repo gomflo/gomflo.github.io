@@ -4,7 +4,7 @@
  *   npm run build && npm run og
  *
  * Lee el HTML de ./dist (título, descripción y el motivo SVG de cada
- * herramienta), arma una tarjeta con la identidad "Azulejo" y la captura con
+ * herramienta), arma una tarjeta con la identidad "Bloques" y la captura con
  * Chrome sin interfaz. Escribe public/img/<slug>.jpeg (el inicio es inicio.jpeg).
  * Vuelve a correrlo al agregar herramientas o al cambiar de año (días feriados).
  *
@@ -23,7 +23,7 @@ const DIST = join(ROOT, "dist");
 const OUT = join(ROOT, "public/img");
 const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 /** Motivos del mosaico del inicio: uno por categoría. */
-const HOME_MOTIFS = ["contar-caracteres", "formatear-json", "generador-contrasenas", "validar-clabe", "numeros-romanos", "codigo-morse"];
+const HOME_MOTIFS = ["contar-caracteres", "formatear-json", "generador-contrasenas", "validar-clabe", "numeros-romanos"];
 
 if (!existsSync(DIST)) throw new Error("No existe ./dist: corre npm run build primero.");
 if (!existsSync(CHROME)) throw new Error(`No encontré Chrome en ${CHROME}. Define CHROME_PATH.`);
@@ -36,82 +36,62 @@ const escape = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/
 const text = (html) => decode(html.replace(/<[^>]+>/g, "")).trim();
 
 const match = (html, re) => html.match(re)?.[1];
-const motifSvg = (html, cls) => html.match(new RegExp(`<svg class="motif ${cls}"[\\s\\S]*?</svg>`))?.[0];
+const motifSvg = (html) => html.match(/cabeza__dibujo[\s\S]*?(<svg class="motif"[\s\S]*?<\/svg>)/)?.[1];
 
 const motifsCss = await readFile(join(ROOT, "src/styles/motifs.css"), "utf8");
+const FONTS = `file://${join(ROOT, "public/fonts")}`;
 
-const page = ({ title, lead, art, url, size }) => `<!doctype html>
+const COLORES = { texto: "#96e6c1", codigo: "#ff8767", generadores: "#b8a6ff", mexico: "#ffcf4a", conversores: "#8ecbff" };
+
+// Tarjeta "Bloques": un bloque del color de la categoría sobre la mesa crema, con el dibujo en su ficha oscura.
+const page = ({ title, lead, art, url, size, color }) => `<!doctype html>
 <html lang="es-MX"><head><meta charset="utf-8">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Martian+Mono:wdth,wght@75..112.5,400..600&display=block" rel="stylesheet">
 <style>
-  :root {
-    --glaze: #f5f7fc; --glaze-raised: #fff; --cobalt: #2340b8; --ink: #111a4a; --ink-muted: #4a5584;
-    --yolk: #f2b01e; --yolk-ink: #2b1f00; --grout: #d3daf0;
-    --ease-out: linear; --ease-in-out: linear; --ease-spring: linear;
-  }
+  @font-face { font-family: "Bricolage Grotesque"; src: url("${FONTS}/bricolage-grotesque-200_800-normal.woff2") format("woff2");
+    font-weight: 200 800; font-stretch: 75% 100%; font-display: block; }
+  @font-face { font-family: "DM Mono"; src: url("${FONTS}/dm-mono-500-normal.woff2") format("woff2"); font-weight: 500; font-display: block; }
+  :root { --tinta: #1c1a2e; --crema: #fbf2e1; --pieza: ${color}; --acento-dibujo: var(--pieza);
+    --ease-out: linear; --ease-in-out: linear; --ease-spring: linear; }
   * { box-sizing: border-box; }
   html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
-  body {
-    display: grid; grid-template-columns: 430px 1fr; align-items: center; gap: 64px;
-    padding: 72px 80px 88px; background: var(--glaze); color: var(--ink);
-    font-family: "Bricolage Grotesque", system-ui, sans-serif;
-  }
-  body::after {
-    content: ""; position: absolute; inset: auto 0 0 0; height: 20px;
-    background: radial-gradient(circle at 10px 0, var(--yolk) 5px, transparent 5.5px) 0 0 / 40px 20px, var(--cobalt);
-  }
-  .tile {
-    --r: 64px; --w: 4px; --orn: color-mix(in oklab, var(--cobalt) 18%, transparent);
-    position: relative; width: 430px; aspect-ratio: 1; display: grid; place-items: center;
-    border: 6px solid var(--cobalt); border-radius: 56px; color: var(--cobalt); overflow: hidden;
-    background:
-      radial-gradient(circle at 0 0, var(--yolk) 14px, transparent 14.5px),
-      radial-gradient(circle at 100% 0, var(--yolk) 14px, transparent 14.5px),
-      radial-gradient(circle at 100% 100%, var(--yolk) 14px, transparent 14.5px),
-      radial-gradient(circle at 0 100%, var(--yolk) 14px, transparent 14.5px),
-      radial-gradient(circle at 0 0, transparent var(--r), var(--orn) calc(var(--r) + .5px) calc(var(--r) + var(--w)), transparent calc(var(--r) + var(--w) + .5px)),
-      radial-gradient(circle at 100% 0, transparent var(--r), var(--orn) calc(var(--r) + .5px) calc(var(--r) + var(--w)), transparent calc(var(--r) + var(--w) + .5px)),
-      radial-gradient(circle at 100% 100%, transparent var(--r), var(--orn) calc(var(--r) + .5px) calc(var(--r) + var(--w)), transparent calc(var(--r) + var(--w) + .5px)),
-      radial-gradient(circle at 0 100%, transparent var(--r), var(--orn) calc(var(--r) + .5px) calc(var(--r) + var(--w)), transparent calc(var(--r) + var(--w) + .5px)),
-      var(--glaze-raised);
-  }
-  .tile > .motif { width: 62%; }
-  .mosaic { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; width: 72%; }
-  .mosaic .motif { width: 100%; }
-  .brand { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 700; color: var(--ink); }
-  .brand svg { width: 48px; height: 48px; }
-  h1 {
-    margin: 28px 0 0; font-size: ${size}px; line-height: 0.95; font-weight: 800;
-    font-variation-settings: "wdth" 78; letter-spacing: -0.035em; text-wrap: balance;
-  }
-  p { margin: 24px 0 0; font-size: 29px; line-height: 1.3; color: var(--ink-muted); text-wrap: pretty;
-    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-  .url { margin-top: 32px; font-family: "Martian Mono", monospace; font-size: 22px; color: var(--cobalt);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body { padding: 28px; background: var(--crema); color: var(--tinta); font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+  .bloque { position: relative; height: 100%; padding: 44px 52px; border-radius: 44px; background: var(--pieza);
+    display: flex; flex-direction: column; }
+  .bloque.oscuro { background: var(--tinta); color: var(--crema); }
+  .brand { display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 800; letter-spacing: -0.015em; }
+  .brand i { display: grid; grid-template-columns: 15px 15px; gap: 4px; padding: 7px; border-radius: 12px; background: var(--tinta); }
+  .brand i b { width: 15px; height: 15px; border-radius: 5px; }
+  .ficha { position: absolute; top: 40px; right: 48px; width: 136px; height: 136px; padding: 20px; border-radius: 32px;
+    background: var(--tinta); color: var(--crema); rotate: 4deg; }
+  .ficha .motif { width: 100%; height: 100%; stroke-width: 4; }
+  .mosaic { position: absolute; top: 44px; right: 52px; display: flex; gap: 10px; }
+  .mosaic span { width: 84px; height: 84px; padding: 16px; border-radius: 22px; color: var(--tinta); --acento-dibujo: #fff; }
+  .mosaic .motif { width: 100%; height: 100%; stroke-width: 4; }
+  h1 { margin: auto 0 0; max-width: 1000px; font-size: ${size}px; line-height: 0.92; font-weight: 800;
+    font-stretch: 90%; letter-spacing: -0.015em; text-wrap: balance; }
+  .oscuro h1 em { font-style: normal; color: #ffcf4a; }
+  p { margin: 22px 0 0; max-width: 900px; font-size: 30px; font-weight: 500; line-height: 1.25; text-wrap: pretty;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .url { margin-top: 26px; align-self: flex-start; padding: 10px 18px; border-radius: 14px; background: var(--tinta); color: var(--crema);
+    font-family: "DM Mono", monospace; font-size: 24px; font-weight: 500; white-space: nowrap; }
+  .oscuro .url { background: var(--crema); color: var(--tinta); }
   ${motifsCss}
   /* Congela cada motivo en su estado "en juego" final. */
   .motif, .motif * { transition-duration: 0s !important; transition-delay: 0s !important;
     animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
 </style></head>
 <body data-play>
-  <div class="tile">${art}</div>
-  <div style="min-width: 0">
-    <div class="brand">
-      <svg viewBox="0 0 36 36"><rect x="1" y="1" width="34" height="34" rx="9" fill="#2340b8"/>
-        <path d="M1 12A11 11 0 0 0 12 1H10A9 9 0 0 1 1 10Z" fill="#f2b01e"/><circle cx="29" cy="29" r="2.5" fill="#f2b01e"/>
-        <ellipse cx="13" cy="18" rx="4.2" ry="5" fill="#fff"/><circle cx="13.6" cy="18.6" r="2.2" fill="#0b1233"/>
-        <ellipse cx="23" cy="18" rx="4.2" ry="5" fill="#fff"/><circle cx="23.6" cy="18.6" r="2.2" fill="#0b1233"/></svg>
-      gomflo.dev
-    </div>
-    <h1>${escape(title)}</h1>
+  <div class="bloque${color ? "" : " oscuro"}">
+    <div class="brand"><i><b style="background:#b8a6ff"></b><b style="background:#96e6c1"></b><b style="background:#ff8767"></b><b style="background:#ffcf4a"></b></i>gomflo</div>
+    ${art}
+    <h1>${title}</h1>
     <p>${escape(lead)}</p>
     <div class="url">${escape(url)}</div>
   </div>
 </body></html>`;
 
 /** Tamaño del título según su largo, para que quepa en tres líneas. */
-const titleSize = (title) => (title.length <= 16 ? 104 : title.length <= 26 ? 88 : 72);
+const titleSize = (title) => (title.length <= 16 ? 128 : title.length <= 26 ? 108 : 88);
 
 const pages = [];
 for (const entry of await readdir(DIST, { withFileTypes: true })) {
@@ -119,26 +99,27 @@ for (const entry of await readdir(DIST, { withFileTypes: true })) {
   const file = join(DIST, entry.name, "index.html");
   if (!existsSync(file)) continue;
   const html = await readFile(file, "utf8");
-  const svg = motifSvg(html, "tool-stage-motif");
+  const svg = motifSvg(html);
   if (!svg) continue; // redirecciones y páginas sin herramienta
   pages.push({
     slug: entry.name,
-    title: text(match(html, /<h1[^>]*>([\s\S]*?)<\/h1>/)),
-    lead: text(match(html, /<p class="tool-lead[^"]*"[^>]*>([\s\S]*?)<\/p>/)),
-    art: svg,
+    title: escape(text(match(html, /<h1[^>]*>([\s\S]*?)<\/h1>/))),
+    lead: text(match(html, /<p class="cabeza__entrada[^"]*"[^>]*>([\s\S]*?)<\/p>/)),
+    art: `<div class="ficha">${svg}</div>`,
+    color: COLORES[match(html, /<main[^>]*data-cat="([^"]+)"/)] ?? COLORES.mexico,
     url: `gomflo.dev/${entry.name}`,
   });
 }
 
 const home = await readFile(join(DIST, "index.html"), "utf8");
 const tiles = Object.fromEntries(
-  [...home.matchAll(/<svg class="motif tile-motif" data-motif="([^"]+)"[\s\S]*?<\/svg>/g)].map((m) => [m[1], m[0]])
+  [...home.matchAll(/<svg class="motif pieza__dibujo" data-motif="([^"]+)"[\s\S]*?<\/svg>/g)].map((m) => [m[1], m[0]])
 );
 pages.push({
   slug: "inicio",
-  title: "Herramientas pequeñas para todos los días",
-  lead: "Texto, código, dinero y conversores. Gratis, en español y sin enviar tus datos.",
-  art: `<div class="mosaic">${HOME_MOTIFS.map((s) => tiles[s]).join("")}</div>`,
+  title: "Herramientas online gratis <em>para el día a día.</em>",
+  lead: "Texto, código, dinero y conversores. En español, sin cuenta y sin instalar nada.",
+  art: `<div class="mosaic">${HOME_MOTIFS.map((s, i) => `<span style="background:${Object.values(COLORES)[i]}">${tiles[s]}</span>`).join("")}</div>`,
   url: "gomflo.dev",
 });
 
@@ -146,7 +127,7 @@ const work = await mkdtemp(join(tmpdir(), "og-"));
 const render = async ({ slug, title, ...rest }) => {
   const htmlPath = join(work, `${slug}.html`);
   const pngPath = join(work, `${slug}.png`);
-  await writeFile(htmlPath, page({ title, ...rest, size: titleSize(title) }));
+  await writeFile(htmlPath, page({ title, ...rest, size: titleSize(title.replace(/<[^>]+>/g, "")) }));
   await run(CHROME, [
     "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
     "--window-size=1200,630", "--virtual-time-budget=6000", `--screenshot=${pngPath}`, `file://${htmlPath}`,
