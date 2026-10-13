@@ -88,7 +88,7 @@ export const ResultRow = ({
   <div
     className={cn(
       "grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 rounded-xl px-3 py-2.5 transition-colors duration-200 sm:grid-cols-[9rem_1fr_auto]",
-      highlight ? "bg-yolk/25" : "odd:bg-muted/60"
+      highlight ? "bg-pieza/35" : "odd:bg-muted/60"
     )}
   >
     <span className="text-muted-foreground col-span-2 text-sm font-semibold sm:col-span-1">
@@ -131,7 +131,7 @@ export const Segmented = <T extends string>({
             onChange={() => onChange(option.value)}
             className="peer sr-only"
           />
-          <span className="text-foreground/70 hover:text-foreground peer-checked:bg-card peer-checked:text-foreground peer-focus-visible:ring-ring/50 flex min-h-9 items-center rounded-full px-4 text-sm font-semibold transition-[background-color,color,box-shadow] duration-200 peer-checked:shadow-sm peer-focus-visible:ring-[3px]">
+          <span className="text-foreground/70 hover:text-foreground peer-checked:bg-card peer-checked:text-foreground peer-focus-visible:ring-ring/50 flex min-h-9 items-center rounded-md px-4 text-sm font-semibold transition-[background-color,color,box-shadow] duration-200 peer-checked:shadow-sm peer-focus-visible:ring-[3px]">
             {option.label}
           </span>
         </label>
@@ -165,7 +165,7 @@ export const Checkbox = ({
       checked={checked}
       disabled={disabled}
       onChange={(e) => onChange(e.target.checked)}
-      className="size-[1.125rem] shrink-0 cursor-pointer accent-(--cobalt) disabled:cursor-not-allowed"
+      className="size-[1.125rem] shrink-0 cursor-pointer accent-(--acento) disabled:cursor-not-allowed"
     />
     <span>
       {label}

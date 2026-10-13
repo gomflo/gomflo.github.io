@@ -1,100 +1,105 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Motif from "../components/brand/Motif.astro";
-import { categories, toolsIn } from "../lib/tools";
+import Piezas from "../components/Piezas.astro";
 ---
 
 <Layout title="Página no encontrada | gomflo.dev" description="Esta página no existe o cambió de dirección. Elige una de las herramientas." noindex>
-  <main id="main-content" class="not-found" tabindex="-1">
-    <header class="nf-head">
-      <p class="nf-code">404</p>
-      <h1 class="nf-title">Esta página no existe</h1>
-      <p class="nf-lead">Puede que haya cambiado de dirección. Estas son todas las herramientas:</p>
-    </header>
+  <main id="main-content" class="perdida contenedor" tabindex="-1">
+    <section class="perdida__arriba" aria-labelledby="perdida-titulo">
+      <div class="pieza perdida__titulo entra" data-cabeza>
+        <p class="etiqueta">error 404</p>
+        <h1 id="perdida-titulo" class="titular">Esta pieza <span>no está en la caja.</span></h1>
+      </div>
+      <div class="perdida__nota entra">
+        <p>La dirección no existe o cambió de lugar. Lo que sí hay está aquí abajo, y ya está funcionando.</p>
+        <a class="perdida__boton" href="/" data-destino="Inicio">Ir al inicio</a>
+      </div>
+    </section>
 
-    {categories.map((category) => (
-      <section class="nf-group" aria-labelledby={`nf-${category.id}`}>
-        <h2 id={`nf-${category.id}`} class="nf-group-title">{category.title}</h2>
-        <ul class="nf-list" role="list">
-          {toolsIn(category.id).map((tool) => (
-            <li>
-              <a href={tool.href} class="nf-item motif-trigger">
-                <span class="nf-icon"><Motif slug={tool.slug} /></span>
-                {tool.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))}
+    <section class="perdida__lista" aria-label="Todas las herramientas">
+      <Piezas level={2} />
+    </section>
   </main>
 </Layout>
 
 <style>
-  .not-found {
-    width: 100%;
-    max-width: calc(var(--tool-width) + 2 * var(--gutter));
-    margin: 0 auto;
-    padding: clamp(2rem, 6vw, 4rem) var(--gutter) 4rem;
-  }
-  .nf-code {
-    margin: 0;
-    color: var(--cobalt);
-    font-family: var(--font-code);
-    font-weight: 600;
-  }
-  .nf-title {
-    margin: 0.25rem 0 0;
-    font-size: clamp(2.25rem, 6vw, 3.5rem);
-    font-weight: 800;
-    font-variation-settings: "wdth" 78;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    color: var(--ink);
-  }
-  .nf-lead {
-    margin: 1rem 0 0;
-    color: var(--ink-muted);
-    font-size: 1.125rem;
-  }
-  .nf-group {
-    margin-top: 2.5rem;
-  }
-  .nf-group-title {
-    margin: 0 0 0.75rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .nf-list {
+  .perdida__arriba {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--hueco);
+    margin-bottom: var(--hueco);
+  }
+
+  .perdida__titulo {
+    --pieza: var(--bloque-oscuro);
+    justify-content: space-between;
+    gap: 2.5rem;
+    min-height: clamp(14rem, 30vw, 20rem);
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    color: var(--crema-fija);
+  }
+  .perdida__titulo .etiqueta {
     margin: 0;
-    padding: 0;
-    list-style: none;
   }
-  .nf-item {
+  .perdida h1 {
+    margin: 0;
+    font-size: var(--t-xl);
+  }
+  .perdida h1 span {
+    color: var(--coral);
+  }
+
+  .perdida__nota {
+    --d: 0.08s;
+    --de: 1.5deg;
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 44px;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--grout);
-    border-radius: 0.875rem;
-    background: var(--glaze-raised);
-    color: var(--ink);
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    background: var(--coral);
+    color: var(--tinta-fija);
+    border-radius: var(--radio-pieza);
+  }
+  .perdida__nota p {
+    margin: 0;
+    font-size: var(--t-m);
     font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .perdida__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    padding: 0 1.4rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
     text-decoration: none;
-    transition: border-color 0.2s var(--ease-out);
+    border-radius: 0.875rem;
+    transition:
+      background-color 0.2s var(--ease-soft),
+      color 0.2s var(--ease-soft),
+      scale 0.2s var(--ease-soft);
   }
-  .nf-item:hover,
-  .nf-item:focus-visible {
-    border-color: var(--cobalt);
+  @media (hover: hover) {
+    .perdida__boton:hover {
+      background: #ffffff;
+      color: var(--tinta-fija);
+    }
   }
-  .nf-icon {
-    width: 1.75rem;
-    flex: none;
-    color: var(--cobalt);
+  .perdida__boton:active {
+    scale: 0.96;
+  }
+  .perdida__boton:focus-visible {
+    outline-color: var(--tinta-fija);
+  }
+
+  @media (max-width: 800px) {
+    .perdida__arriba {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 </style>

@@ -23,7 +23,7 @@ const SETS: { id: CharsetId; label: string }[] = [
 const MIN = 6;
 const MAX = 64;
 
-const STRENGTH_COLORS = ["", "bg-destructive", "bg-yolk", "bg-cobalt", "bg-cobalt"];
+const STRENGTH_COLORS = ["", "bg-destructive", "bg-pieza", "bg-acento", "bg-acento"];
 
 const PasswordGenerator = () => {
   const [length, setLength] = useState(16);
@@ -72,7 +72,7 @@ const PasswordGenerator = () => {
                 <span
                   key={level}
                   className={cn(
-                    "h-1.5 rounded-full transition-colors duration-300",
+                    "h-1.5 rounded-md transition-colors duration-300",
                     level <= strength.level ? STRENGTH_COLORS[strength.level] : "bg-muted"
                   )}
                 />
@@ -104,7 +104,7 @@ const PasswordGenerator = () => {
               value={length}
               onChange={(e) => setLengthClamped(Number(e.target.value))}
               aria-label="Longitud de la contraseña"
-              className="h-11 min-w-0 flex-1 cursor-pointer accent-(--cobalt)"
+              className="h-11 min-w-0 flex-1 cursor-pointer accent-(--acento)"
             />
             <input
               id="password-length"

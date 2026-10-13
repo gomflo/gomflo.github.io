@@ -2,6 +2,7 @@
 import { existsSync } from "node:fs";
 import Layout from "./Layout.astro";
 import Motif from "@/components/brand/Motif.astro";
+import { ThemeAwareToaster } from "@/components/ui/sonner";
 import { getCategory, getTool, toolsIn, variantsOf, type ToolSlug, type VariantSlug } from "@/lib/tools";
 
 export interface Faq {
@@ -10,7 +11,7 @@ export interface Faq {
 }
 
 interface Props {
-  /** Herramienta de la página: define el motivo, la categoría y las relacionadas. */
+  /** Herramienta de la página: define el dibujo, la categoría y las relacionadas. */
   slug: ToolSlug;
   /** Si la página es una variante (página satélite) de la herramienta. */
   variant?: VariantSlug;
@@ -84,241 +85,294 @@ const structuredData = [
 const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 ---
 
-<Layout title={metaTitle} description={description} image={image} imageAlt={heading}>
-  <main id="main-content" class="tool-page" tabindex="-1">
-    <a href="/" class="back-link">
-      <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-        <path d="M10 3L5 8l5 5" />
-      </svg>
-      Todas las herramientas
-    </a>
-
-    <header class="tool-head">
-      <div class="tool-stage azulejo" data-motif-stage>
-        <Motif slug={slug} class="tool-stage-motif" />
+<Layout title={metaTitle} description={description} image={image} imageAlt={heading} section="herramientas">
+  <main id="main-content" class="herramienta contenedor" data-cat={tool.category} tabindex="-1">
+    <!-- La cabeza: la pieza abierta, del color de su categoría. Baja, para que la herramienta quede a la vista. -->
+    <header class="pieza cabeza" data-cabeza>
+      <div class="cabeza__barra">
+        <a href="/#herramientas" class="volver" data-destino="Herramientas">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M10 3L5 8l5 5" />
+          </svg>
+          Todas las herramientas
+        </a>
+        <span class="etiqueta cabeza__cat">{category.title}</span>
       </div>
-      <div class="tool-head-text">
-        <h1 class="tool-title">{heading}</h1>
-        <p class="tool-lead">{lead}</p>
+      <div class="cabeza__in">
+        <div class="cabeza__texto">
+          <h1 class="cabeza__titulo titular">{heading}</h1>
+          <p class="cabeza__entrada">{lead}</p>
+        </div>
+        <div class="cabeza__dibujo" data-motif-stage>
+          <Motif slug={slug} />
+        </div>
       </div>
     </header>
 
-    <section class="tool-body" aria-labelledby={headingId}>
-      <h2 id={headingId} class="sr-only">{sectionLabel}</h2>
-      <slot />
-    </section>
+    <div class="reticula cuerpo">
+      <div class="cuerpo__principal">
+        <section class="tool-body" aria-labelledby={headingId}>
+          <h2 id={headingId} class="sr-only">{sectionLabel}</h2>
+          <slot />
+        </section>
 
-    {faq.length > 0 && (
-      <section class="faq" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" class="section-title">Preguntas frecuentes</h2>
-        <div class="faq-list">
-          {faq.map(({ q, a }) => (
-            <details class="faq-item">
-              <summary>
-                <span>{q}</span>
-                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                  <path d="M3 8h10M8 3v10" />
-                </svg>
-              </summary>
-              <p>{a}</p>
-            </details>
+        {faq.length > 0 && (
+          <section class="faq" aria-labelledby="faq-heading">
+            <h2 id="faq-heading" class="seccion-titulo titular">Preguntas frecuentes</h2>
+            <div class="faq-list">
+              {faq.map(({ q, a }) => (
+                <details class="faq-item">
+                  <summary>
+                    <span>{q}</span>
+                    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                      <path d="M3 8h10M8 3v10" />
+                    </svg>
+                  </summary>
+                  <p>{a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      <nav class="cuerpo__mas" aria-labelledby="more-heading">
+        <h2 id="more-heading" class="seccion-titulo titular">Más de {category.title.charAt(0).toLowerCase() + category.title.slice(1)}</h2>
+        <ul class="mas-lista" role="list">
+          {related.map((t) => (
+            <li>
+              <a href={t.href} class="pieza pieza--chica motif-trigger" data-cat={tool.category}>
+                <Motif slug={t.slug} class="pieza__dibujo" />
+                <span class="pieza__nombre">{t.title}</span>
+              </a>
+            </li>
           ))}
-        </div>
-      </section>
-    )}
-
-    <nav class="more" aria-labelledby="more-heading">
-      <h2 id="more-heading" class="section-title">Más herramientas de {category.title.charAt(0).toLowerCase() + category.title.slice(1)}</h2>
-      <ul class="more-list" role="list">
-        {related.map((t) => (
-          <li>
-            <a href={t.href} class="more-item motif-trigger">
-              <span class="more-icon">
-                <Motif slug={t.slug} />
-              </span>
-              <span class="more-name">{t.title}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+        </ul>
+        <a href="/#herramientas" class="enlace mas-todas" data-destino="Herramientas">Ver todas las herramientas</a>
+      </nav>
+    </div>
 
     <script type="application/ld+json" set:html={jsonLd} />
   </main>
+  <ThemeAwareToaster slot="after" client:idle />
 </Layout>
 
 <style>
-  .tool-page {
-    width: 100%;
-    max-width: calc(var(--tool-width) + 2 * var(--gutter));
-    margin: 0 auto;
-    padding: clamp(1rem, 3vw, 2rem) var(--gutter) 0;
+  .cabeza {
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    padding: clamp(1rem, 0.8rem + 1.2vw, 1.75rem) clamp(1.125rem, 0.8rem + 2vw, 2.5rem) clamp(1.25rem, 1rem + 1.6vw, 2.25rem);
   }
 
-  .back-link {
+  .cabeza__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .volver {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.35rem;
     min-height: 44px;
-    color: var(--ink-muted);
-    font-size: 0.9375rem;
-    font-weight: 500;
+    margin-left: -0.75rem;
+    padding: 0 0.9rem 0 0.6rem;
+    color: inherit;
+    font-size: var(--t-s);
+    font-weight: 700;
     text-decoration: none;
-    transition: color 0.2s var(--ease-out);
+    border-radius: 0.875rem;
+    transition:
+      background-color 0.2s var(--ease-soft),
+      color 0.2s var(--ease-soft);
   }
-  .back-link svg {
+  .volver svg {
     width: 1rem;
     height: 1rem;
     fill: none;
     stroke: currentColor;
-    stroke-width: 2;
+    stroke-width: 2.5;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: transform 0.25s var(--ease-out);
+    transition: translate 0.3s var(--ease-out);
   }
-  .back-link:hover {
-    color: var(--cobalt);
+  @media (hover: hover) {
+    .volver:hover {
+      background: var(--tinta-fija);
+      color: var(--pieza);
+    }
+    .volver:hover svg {
+      translate: -3px 0;
+    }
   }
-  .back-link:hover svg {
-    transform: translateX(-3px);
+  .volver:active {
+    background: var(--tinta-fija);
+    color: var(--pieza);
+  }
+  .volver:focus-visible {
+    outline-color: var(--tinta-fija);
   }
 
-  .tool-head {
+  .cabeza__in {
     display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: clamp(1.25rem, 4vw, 2.25rem);
-    margin: 1.25rem 0 clamp(2rem, 5vw, 3rem);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: clamp(1rem, 3vw, 2.5rem);
   }
 
-  .tool-stage {
-    --orn-r: 22px;
-    --seed-r: 5px;
-    --orn-w: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .cabeza__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+  }
+
+  .cabeza__entrada {
+    margin: 0.75rem 0 0;
+    max-width: 56ch;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* El dibujo va en su propia ficha oscura, como la ventanita de la pieza. */
+  .cabeza__dibujo {
+    --acento-dibujo: var(--pieza);
     flex: none;
-    width: clamp(6rem, 18vw, 8.5rem);
-    aspect-ratio: 1;
-    border-radius: 1.25rem;
-    border: 2px solid var(--cobalt);
-    color: var(--cobalt);
+    width: clamp(4.5rem, 9vw, 7.5rem);
+    padding: clamp(0.6rem, 1.2vw, 1rem);
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    border-radius: calc(var(--radio-pieza) * 0.8);
+    rotate: 4deg;
+    transition: rotate 0.5s var(--ease-spring);
+  }
+  @media (hover: hover) {
+    .cabeza__dibujo:hover {
+      rotate: -3deg;
+    }
   }
 
-  .tool-stage :global(.tool-stage-motif) {
-    width: 64%;
+  .cabeza__dibujo :global(.motif) {
+    display: block;
+    width: 100%;
     height: auto;
     aspect-ratio: 1;
+    stroke-width: 4;
   }
 
-  .tool-title {
-    margin: 0 0 0.5rem;
-    font-size: clamp(2rem, 5.5vw, 3.25rem);
-    font-weight: 800;
-    font-variation-settings: "wdth" 80;
-    letter-spacing: -0.025em;
+  @media (max-width: 560px) {
+    /* En el teléfono manda la herramienta: la cabeza se compacta. */
+    .cabeza__cat {
+      display: none;
+    }
+    .cabeza__in {
+      align-items: start;
+      gap: 0.75rem;
+    }
+    .cabeza__dibujo {
+      width: 3.25rem;
+      padding: 0.45rem;
+      border-radius: 0.75rem;
+    }
+    .cabeza__entrada {
+      margin-top: 0.5rem;
+      font-size: var(--t-body);
+    }
+  }
+
+  /* ---------- Cuerpo: herramienta a la izquierda, relacionadas pegadas a la derecha ---------- */
+
+  .cuerpo {
+    align-items: start;
+    column-gap: var(--hueco);
+    row-gap: clamp(3rem, 7vw, 5rem);
+    padding-top: var(--hueco);
+  }
+
+  .cuerpo__principal {
+    grid-column: 1 / span 9;
+    min-width: 0;
+  }
+
+  .cuerpo__mas {
+    grid-column: 10 / -1;
+    position: sticky;
+    top: 1rem;
+    padding: clamp(0.875rem, 0.7rem + 0.7vw, 1.25rem);
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  /* El panel donde se trabaja: blanco, plano y con el contorno de la tinta. */
+  .tool-body {
+    padding: clamp(1rem, 2.5vw, 2rem);
+    background: var(--panel);
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .seccion-titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
     line-height: 1;
-    color: var(--ink);
   }
 
-  .tool-lead {
-    margin: 0;
-    max-width: 52ch;
-    color: var(--ink-muted);
-    font-size: 1.0625rem;
-    line-height: 1.5;
-    text-wrap: pretty;
+  .faq {
+    margin-top: clamp(3rem, 7vw, 5rem);
   }
 
-  @media (max-width: 520px) {
-    .tool-head {
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-    .tool-stage {
-      width: 5.5rem;
-      border-radius: 1rem;
-    }
-  }
-
-  .faq,
-  .more {
-    margin-top: clamp(4rem, 9vw, 6rem);
-  }
-
-  .faq + .more {
-    margin-top: clamp(3rem, 6vw, 4rem);
-  }
-
-  .section-title {
-    margin: 0 0 1rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    font-variation-settings: "wdth" 85;
-    letter-spacing: -0.01em;
-  }
-
-  .more-list {
+  .mas-lista {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14.5rem, 1fr));
-    gap: 0.5rem;
-    margin: 0;
+    gap: 0.375rem;
+    margin: 0 0 1rem;
     padding: 0;
     list-style: none;
   }
 
-  .more-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 3.5rem;
-    padding: 0.5rem 0.875rem 0.5rem 0.5rem;
-    border-radius: 0.875rem;
-    color: var(--ink);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    text-decoration: none;
-    transition: background-color 0.2s var(--ease-out);
+  .mas-lista :global(.pieza__nombre) {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
   }
 
-  .more-icon {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.625rem;
-    background: var(--glaze-sunk);
-    color: var(--cobalt);
-    transition:
-      background-color 0.2s var(--ease-out),
-      color 0.2s var(--ease-out);
+  .mas-todas {
+    display: inline-block;
+    padding-block: 0.3rem;
+    font-size: var(--t-s);
+    font-weight: 700;
   }
 
-  .more-icon :global(.motif) {
-    width: 1.625rem;
-    height: 1.625rem;
-    stroke-width: 4.5;
+  @media (max-width: 1000px) {
+    .cuerpo__principal,
+    .cuerpo__mas {
+      grid-column: 1 / -1;
+    }
+    .cuerpo__mas {
+      position: static;
+    }
+    .mas-lista {
+      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    }
   }
 
-  .more-item:hover,
-  .more-item:focus-visible {
-    background: var(--glaze-sunk);
-  }
-
-  .more-item:hover .more-icon,
-  .more-item:focus-visible .more-icon {
-    background: var(--cobalt);
-    color: var(--on-cobalt);
-  }
+  /* ---------- Preguntas frecuentes: cada una es un bloque que se abre ---------- */
 
   .faq-list {
-    border-top: 1px solid var(--grout);
+    display: grid;
+    gap: 0.5rem;
   }
 
   .faq-item {
-    border-bottom: 1px solid var(--grout);
+    background: var(--crema-honda);
+    border-radius: 1rem;
+    transition: background-color 0.25s var(--ease-soft);
+  }
+
+  .faq-item[open] {
+    background: var(--pieza);
+    color: var(--tinta-fija);
   }
 
   .faq-item summary {
@@ -326,55 +380,57 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    min-height: 3.5rem;
-    padding: 0.875rem 0.25rem;
-    font-weight: 600;
-    line-height: 1.35;
+    min-height: 3.75rem;
+    padding: 0.875rem 1rem 0.875rem 1.25rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
     cursor: pointer;
     list-style: none;
-    border-radius: 0.5rem;
-    transition: color 0.2s var(--ease-out);
+    border-radius: 1rem;
   }
 
   .faq-item summary::-webkit-details-marker {
     display: none;
   }
 
-  .faq-item summary:hover {
-    color: var(--cobalt);
-  }
-
   .faq-item summary:focus-visible {
-    outline: 2px solid var(--cobalt);
-    outline-offset: 2px;
+    outline-offset: -3px;
+    outline-color: var(--tinta);
   }
 
   .faq-item summary svg {
     flex: none;
-    width: 1.25rem;
-    height: 1.25rem;
-    padding: 0.125rem;
-    border-radius: 999px;
-    background: var(--glaze-sunk);
+    width: 2rem;
+    height: 2rem;
+    padding: 0.4rem;
+    border-radius: 50%;
+    background: var(--tinta);
     fill: none;
-    stroke: var(--cobalt);
-    stroke-width: 2;
+    stroke: var(--crema);
+    stroke-width: 2.5;
     stroke-linecap: round;
-    transition: transform 0.3s var(--ease-spring), background-color 0.2s var(--ease-out);
+    transition:
+      rotate 0.4s var(--ease-spring),
+      scale 0.2s var(--ease-soft);
+  }
+
+  @media (hover: hover) {
+    .faq-item summary:hover svg {
+      scale: 1.12;
+    }
   }
 
   .faq-item[open] summary svg {
-    transform: rotate(45deg);
-    background: var(--yolk);
-    stroke: var(--yolk-ink);
+    rotate: 45deg;
+    background: var(--tinta-fija);
+    stroke: var(--pieza);
   }
 
   .faq-item p {
     margin: 0;
-    padding: 0 2.5rem 1.25rem 0.25rem;
-    max-width: 65ch;
-    color: var(--ink-muted);
-    line-height: 1.6;
-    text-wrap: pretty;
+    padding: 0 3.5rem 1.25rem 1.25rem;
+    max-width: 68ch;
+    line-height: 1.55;
   }
 </style>
