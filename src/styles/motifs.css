@@ -15,11 +15,11 @@
 }
 
 .motif .m-accent {
-  stroke: var(--yolk);
+  stroke: var(--acento-dibujo, var(--acento));
 }
 
 .motif .m-accent-fill {
-  fill: var(--yolk);
+  fill: var(--acento-dibujo, var(--acento));
 }
 
 .motif .m-line,
@@ -283,7 +283,7 @@
 
   /* decodificar-jwt */
   & .m-seg-1 { transform: translate(3px, -14px); }
-  & .m-seg-2 { fill: var(--yolk); }
+  & .m-seg-2 { fill: var(--acento-dibujo, var(--acento)); }
   & .m-seg-3 { transform: translate(-3px, 14px); }
   & .m-sep { opacity: 1; transform: scale(1); transition-delay: 0.15s; }
 
@@ -332,7 +332,7 @@
 
   /* convertir-mayusculas-minusculas */
   & .m-cap { transform: scale(0.6); }
-  & .m-low { transform: scale(1.55); stroke: var(--yolk); }
+  & .m-low { transform: scale(1.55); stroke: var(--acento-dibujo, var(--acento)); }
 
   /* codificar-url */
   & .m-link-l { transform: translate(-5px, 5px); }
@@ -371,15 +371,15 @@
 
   /* calculadora-iva */
   & .m-iva-tag { animation: motif-swing 0.8s var(--ease-out) both; }
-  & .m-iva-pct { transform: scale(1.2); stroke: var(--yolk); }
+  & .m-iva-pct { transform: scale(1.2); stroke: var(--acento-dibujo, var(--acento)); }
 
   /* dias-habiles */
-  & .m-wk-on { fill: var(--yolk); animation: motif-hop 0.35s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+  & .m-wk-on { fill: var(--acento-dibujo, var(--acento)); animation: motif-hop 0.35s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
 
   /* numeros-romanos */
   & .m-ro { animation: motif-hop 0.35s var(--ease-out) both; }
   & .m-ro-2 { animation-delay: 90ms; }
-  & .m-ro-3 { animation-delay: 180ms; stroke: var(--yolk); }
+  & .m-ro-3 { animation-delay: 180ms; stroke: var(--acento-dibujo, var(--acento)); }
 
   /* codigo-morse */
   & .m-mo { animation: motif-blink 0.3s var(--ease-out) both; animation-delay: calc(var(--i) * 120ms); }
@@ -403,8 +403,8 @@
 
 @keyframes motif-blink {
   0% { fill: currentColor; transform: scale(1); }
-  50% { fill: var(--yolk); transform: scale(1.18); }
-  100% { fill: var(--yolk); transform: scale(1); }
+  50% { fill: var(--acento-dibujo, var(--acento)); transform: scale(1.18); }
+  100% { fill: var(--acento-dibujo, var(--acento)); transform: scale(1); }
 }
 
 @keyframes motif-roll {

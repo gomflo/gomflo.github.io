@@ -9,7 +9,7 @@ const SEGMENTS = [
   { key: "banco", label: "Banco", from: 0, to: 3, className: "bg-primary text-primary-foreground" },
   { key: "plaza", label: "Plaza", from: 3, to: 6, className: "bg-muted" },
   { key: "cuenta", label: "Cuenta", from: 6, to: 17, className: "bg-muted/60" },
-  { key: "control", label: "Control", from: 17, to: 18, className: "bg-yolk text-(--yolk-ink)" },
+  { key: "control", label: "Control", from: 17, to: 18, className: "bg-pieza text-(--tinta-fija)" },
 ] as const;
 
 const ClabeValidator = () => {
@@ -91,7 +91,7 @@ const ClabeValidator = () => {
             <div className="flex items-start gap-3">
               <StatusIcon
                 aria-hidden
-                className={cn("mt-0.5 size-6 shrink-0", status.ok ? "text-cobalt" : "text-destructive")}
+                className={cn("mt-0.5 size-6 shrink-0", status.ok ? "text-acento" : "text-destructive")}
               />
               <div className="grid gap-1">
                 <CardTitle className="text-lg font-bold">{status.title}</CardTitle>

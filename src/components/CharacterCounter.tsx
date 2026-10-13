@@ -7,9 +7,9 @@ import { labelClass, textareaClass } from "./tool-kit";
 type Focus = "characters" | "words";
 
 const Stat = ({ label, value, big }: { label: string; value: string; big?: boolean }) => (
-  <div className={cn("grid content-start gap-1 rounded-2xl px-4 py-3", big ? "bg-card border border-border shadow-xs" : "bg-muted/60")}>
-    <dt className="text-muted-foreground text-sm font-semibold">{label}</dt>
-    <dd className={cn("m-0 font-bold tabular-nums", big ? "text-3xl sm:text-4xl" : "text-xl")}>{value}</dd>
+  <div className={cn("grid content-start gap-1 rounded-2xl px-4 py-3", big ? "bg-pieza text-(--tinta-fija)" : "bg-muted/60")}>
+    <dt className={cn("text-sm font-semibold", !big && "text-muted-foreground")}>{label}</dt>
+    <dd className={cn("m-0 tabular-nums", big ? "text-5xl leading-none font-black [font-stretch:72%] sm:text-6xl" : "text-xl font-bold")}>{value}</dd>
   </div>
 );
 
@@ -67,18 +67,18 @@ const CharacterCounter = ({ focus = "characters" }: { focus?: Focus }) => {
         />
       </section>
 
-      <dl data-reveal style={{ animationDelay: "40ms" }} className="m-0 grid gap-3" aria-live="polite">
-        <div className="grid grid-cols-2 gap-3">
+      <div data-reveal style={{ animationDelay: "40ms" }} className="grid gap-3" aria-live="polite">
+        <dl className="m-0 grid grid-cols-2 gap-3">
           {primary.map((stat) => (
             <Stat key={stat.label} {...stat} big />
           ))}
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        </dl>
+        <dl className="m-0 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {secondary.map((stat) => (
             <Stat key={stat.label} {...stat} />
           ))}
-        </div>
-      </dl>
+        </dl>
+      </div>
 
       {focus === "characters" && (
         <section data-reveal style={{ animationDelay: "80ms" }} className="grid gap-3" aria-labelledby="counter-limits">
@@ -100,7 +100,7 @@ const CharacterCounter = ({ focus = "characters" }: { focus?: Focus }) => {
                     </span>
                   </div>
                   <div
-                    className="bg-muted h-1.5 overflow-hidden rounded-full"
+                    className="bg-muted h-1.5 overflow-hidden rounded-md"
                     role="meter"
                     aria-label={`${limite.nombre}: ${n(s.caracteres)} de ${n(limite.max)} caracteres`}
                     aria-valuemin={0}
@@ -108,7 +108,7 @@ const CharacterCounter = ({ focus = "characters" }: { focus?: Focus }) => {
                     aria-valuenow={Math.min(s.caracteres, limite.max)}
                   >
                     <div
-                      className={cn("h-full rounded-full transition-[width] duration-200", excedido ? "bg-destructive" : usado > 0.9 ? "bg-yolk" : "bg-primary")}
+                      className={cn("h-full rounded-md transition-[width] duration-200", excedido ? "bg-destructive" : usado > 0.9 ? "bg-pieza" : "bg-acento")}
                       style={{ width: `${Math.min(usado, 1) * 100}%` }}
                     />
                   </div>

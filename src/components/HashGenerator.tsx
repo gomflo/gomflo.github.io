@@ -169,7 +169,7 @@ const HashGenerator = () => {
           className={inputClass}
         />
         {target && hashes && (
-          <p role="status" className={cn("text-sm font-semibold", match ? "text-cobalt" : "text-destructive")}>
+          <p role="status" className={cn("text-sm font-semibold", match ? "text-acento" : "text-destructive")}>
             {match ? `Coincide con ${match}. El contenido es idéntico.` : "No coincide con ninguno de los hashes calculados."}
           </p>
         )}

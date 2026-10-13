@@ -235,7 +235,7 @@ const Base64FileConverter = () => {
                   tabIndex={0}
                   role="button"
                   onKeyDown={handleLabelKeyDown}
-                  className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full border border-input bg-card px-4 py-2 text-sm font-medium ring-offset-background transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-md border border-input bg-card px-4 py-2 text-sm font-medium ring-offset-background transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="Elegir archivo para convertir a Base64"
                 >
                   Elegir archivo

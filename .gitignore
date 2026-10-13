@@ -26,3 +26,6 @@ Thumbs.db
 
 # Guía de partidos: se descarga en cada build (npm run partidos)
 src/data/partidos.json
+
+# Capturas de QA
+.shots/

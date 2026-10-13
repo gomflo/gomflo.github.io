@@ -5,129 +5,189 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ---------- Fuentes (propias, en public/fonts) ---------- */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/fonts/bricolage-grotesque-200_800-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  src: url("/fonts/dm-mono-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  src: url("/fonts/dm-mono-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 /*
- * Identidad "Azulejo": cobalto sobre esmalte, con acentos yema.
- * Tokens de marca primero; los tokens semánticos (shadcn y legado) los usan.
+ * Identidad "Bloques": el sitio es una caja de piezas. Cada herramienta es un
+ * bloque de color (el color dice la categoría) que ya trabaja en miniatura.
+ * Tokens de marca primero; los semánticos (shadcn) apuntan a ellos. Ver DESIGN.md.
  */
 :root {
-  /* Marca */
-  --glaze: #f5f7fc;
-  --glaze-raised: #ffffff;
-  --glaze-sunk: #e8edf9;
-  --cobalt: #2340b8;
-  --cobalt-strong: #1a3196;
-  --on-cobalt: #ffffff;
-  --ink: #111a4a;
-  --ink-deep: #0b1233;
-  --ink-muted: #4a5584;
-  --grout: #d3daf0;
-  --grout-strong: #b9c3e6;
-  --yolk: #f2b01e;
-  --yolk-ink: #2b1f00;
+  /* Mesa y tinta */
+  --crema: #fbf2e1;
+  --crema-honda: #f2e7d0;
+  --panel: #ffffff;
+  --tinta: #1c1a2e;
+  --tinta-fija: #1c1a2e;
+  --crema-fija: #fbf2e1;
+  --gris: #5d596f;
+  --linea: #e4d8be;
+  --linea-fuerte: #8f8a9c;
+  --bloque-oscuro: #1c1a2e;
+
+  /* Piezas: un color por categoría */
+  --lila: #b8a6ff;
+  --menta: #96e6c1;
+  --coral: #ff8767;
+  --cielo: #8ecbff;
+  --sol: #ffcf4a;
+  /* Color de la pieza en turno; lo fija [data-cat]. */
+  --pieza: var(--sol);
+
+  /* Acento para texto, foco y controles (las piezas son fondos, no texto) */
+  --acento: #4a2fd0;
+  --peligro: #b92a14;
 
   /* Movimiento */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-soft: cubic-bezier(0.215, 0.61, 0.355, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Tipografía */
   --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font-sans);
-  --font-code: "Martian Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-code: "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Layout */
-  --max-width: 70rem;
-  --tool-width: 52rem;
-  --gutter: clamp(1rem, 4vw, 2rem);
+  --t-xl: clamp(2.5rem, 1.6rem + 4vw, 5rem);
+  --t-l: clamp(1.5rem, 1.2rem + 1.4vw, 2.375rem);
+  --t-m: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+  --t-body: 1.0625rem;
+  --t-s: 0.9375rem;
+  --t-xs: 0.8125rem;
+
+  /* Retícula */
+  --max-width: 82rem;
+  --gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+  --hueco: clamp(0.5rem, 0.35rem + 0.6vw, 0.875rem);
   --radius: 0.75rem;
+  --radio-pieza: clamp(1.125rem, 0.9rem + 0.8vw, 1.625rem);
 
-  /* Legado (componentes existentes) */
-  --color-text: var(--ink);
-  --color-text-muted: var(--ink-muted);
-  --color-border: var(--grout);
-  --color-bg: var(--glaze);
-  --home-accent: var(--cobalt);
-  --json-result-accent: var(--cobalt);
-  --diff-accent: var(--cobalt);
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-danger: #dc2626;
-  --diff-bg: var(--glaze-raised);
+  /* Capas */
+  --z-header: 50;
+  --z-curtain: 90;
+
+  /* Herramientas */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: var(--peligro);
+  --json-result-accent: var(--acento);
+  --diff-accent: var(--acento);
+  --diff-bg: var(--panel);
   --diff-add: oklch(0.45 0.15 145);
   --diff-add-bg: oklch(0.92 0.06 145 / 0.45);
   --diff-remove: oklch(0.52 0.2 25);
   --diff-remove-bg: oklch(0.94 0.05 25 / 0.5);
 
   /* Semánticos (shadcn) */
-  --background: var(--glaze);
-  --foreground: var(--ink);
-  --card: var(--glaze-raised);
-  --card-foreground: var(--ink);
-  --popover: var(--glaze-raised);
-  --popover-foreground: var(--ink);
-  --primary: var(--cobalt);
-  --primary-foreground: var(--on-cobalt);
-  --secondary: var(--glaze-sunk);
-  --secondary-foreground: var(--ink);
-  --muted: var(--glaze-sunk);
-  --muted-foreground: var(--ink-muted);
-  --accent: var(--glaze-sunk);
-  --accent-foreground: var(--ink);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: var(--grout);
-  --input: var(--grout-strong);
-  --ring: var(--cobalt);
-  --ring-offset: var(--glaze);
-  --chart-1: var(--cobalt);
-  --chart-2: var(--yolk);
-  --chart-3: #5b74d6;
-  --chart-4: #9fb0ea;
-  --chart-5: #c98a00;
-  --sidebar: var(--glaze-raised);
-  --sidebar-foreground: var(--ink);
-  --sidebar-primary: var(--cobalt);
-  --sidebar-primary-foreground: var(--on-cobalt);
-  --sidebar-accent: var(--glaze-sunk);
-  --sidebar-accent-foreground: var(--ink);
-  --sidebar-border: var(--grout);
-  --sidebar-ring: var(--cobalt);
+  --background: var(--crema);
+  --foreground: var(--tinta);
+  --card: var(--panel);
+  --card-foreground: var(--tinta);
+  --popover: var(--panel);
+  --popover-foreground: var(--tinta);
+  --primary: var(--tinta);
+  --primary-foreground: var(--crema);
+  --secondary: var(--crema-honda);
+  --secondary-foreground: var(--tinta);
+  --muted: var(--crema-honda);
+  --muted-foreground: var(--gris);
+  --accent: var(--crema-honda);
+  --accent-foreground: var(--tinta);
+  --destructive: var(--peligro);
+  --destructive-foreground: #ffffff;
+  --border: var(--linea);
+  --input: var(--linea-fuerte);
+  --ring: var(--acento);
+  --ring-offset: var(--crema);
+  --chart-1: var(--lila);
+  --chart-2: var(--menta);
+  --chart-3: var(--coral);
+  --chart-4: var(--cielo);
+  --chart-5: var(--sol);
+  --sidebar: var(--panel);
+  --sidebar-foreground: var(--tinta);
+  --sidebar-primary: var(--tinta);
+  --sidebar-primary-foreground: var(--crema);
+  --sidebar-accent: var(--crema-honda);
+  --sidebar-accent-foreground: var(--tinta);
+  --sidebar-border: var(--linea);
+  --sidebar-ring: var(--acento);
 }
 
+/* De noche la mesa se apaga y las piezas conservan su color. */
 .dark {
   color-scheme: dark;
-  --glaze: #0b1130;
-  --glaze-raised: #121a42;
-  --glaze-sunk: #1a2354;
-  --cobalt: #8aa4ff;
-  --cobalt-strong: #a9bcff;
-  --on-cobalt: #0b1233;
-  --ink: #e8ecff;
-  --ink-muted: #a7b1da;
-  --grout: #27306a;
-  --grout-strong: #3a4585;
-  --yolk: #ffc53d;
+  --crema: #131120;
+  --crema-honda: #25223b;
+  --panel: #1c1930;
+  --tinta: #f8f0dd;
+  --gris: #aca7c0;
+  --linea: #322f4b;
+  --linea-fuerte: #77728f;
+  --bloque-oscuro: #25223b;
+  --acento: #b8a6ff;
+  --peligro: #ff9a85;
 
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
   --diff-add: oklch(0.72 0.15 145);
   --diff-add-bg: oklch(0.32 0.08 145 / 0.45);
   --diff-remove: oklch(0.72 0.17 25);
   --diff-remove-bg: oklch(0.32 0.09 25 / 0.45);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: #131120;
 }
+
+/* El color dice la categoría: en la lista, en la cabeza de la herramienta y entre páginas. */
+[data-cat="texto"] { --pieza: var(--menta); }
+[data-cat="codigo"] { --pieza: var(--coral); }
+[data-cat="generadores"] { --pieza: var(--lila); }
+[data-cat="mexico"] { --pieza: var(--sol); }
+[data-cat="conversores"] { --pieza: var(--cielo); }
 
 @theme inline {
   --radius-xs: 0.375rem;
   --radius-sm: 0.5rem;
-  --radius-md: 0.625rem;
+  --radius-md: 0.75rem;
   --radius-lg: 0.875rem;
-  --radius-xl: 1.125rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
-  --radius-4xl: 2.5rem;
-  --color-cobalt: var(--cobalt);
-  --color-yolk: var(--yolk);
-  --color-ink: var(--ink);
-  --color-glaze: var(--glaze);
+  --radius-xl: 1rem;
+  --radius-2xl: 1.125rem;
+  --radius-3xl: 1.25rem;
+  --radius-4xl: 1.5rem;
+  --color-pieza: var(--pieza);
+  --color-sol: var(--sol);
+  --color-coral: var(--coral);
+  --color-lila: var(--lila);
+  --color-menta: var(--menta);
+  --color-cielo: var(--cielo);
+  --color-acento: var(--acento);
+  --color-tinta: var(--tinta);
+  --color-crema: var(--crema);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -176,7 +236,8 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
+    text-size-adjust: 100%;
+    background: var(--crema);
   }
 
   body {
@@ -184,18 +245,16 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: var(--glaze);
-    color: var(--ink);
+    background: var(--crema);
+    color: var(--tinta);
     font-family: var(--font-sans);
-    font-optical-sizing: auto;
-    font-size: 1.0625rem;
-    line-height: 1.55;
+    font-size: var(--t-body);
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     touch-action: manipulation;
-    transition:
-      background-color 0.3s var(--ease-out),
-      color 0.3s var(--ease-out);
+    overflow-x: clip;
   }
 
   main {
@@ -203,45 +262,50 @@
     scroll-margin-top: 2rem;
   }
 
-  main h1 {
-    font-family: var(--font-display);
+  main:focus {
+    outline: none;
+  }
+
+  h1,
+  h2,
+  h3 {
     text-wrap: balance;
   }
 
-  ::selection {
-    background: var(--yolk);
-    color: var(--yolk-ink);
+  p {
+    text-wrap: pretty;
   }
 
-  a:focus-visible {
-    outline: 2px solid var(--cobalt);
+  ::selection {
+    background: var(--lila);
+    color: var(--tinta-fija);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--acento);
     outline-offset: 3px;
-    border-radius: 0.375rem;
+    border-radius: var(--radius);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 .font-code {
   font-family: var(--font-code);
-  font-variation-settings: "wdth" 87.5;
   letter-spacing: -0.01em;
 }
 
 .font-display {
   font-family: var(--font-display);
-  font-variation-settings: "wdth" 85;
 }
 
 .sr-only {
@@ -254,6 +318,306 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  left: var(--gutter);
+  top: 0.75rem;
+  z-index: calc(var(--z-curtain) + 1);
+  padding: 0.7em 1.1em;
+  background: var(--tinta-fija);
+  color: var(--crema-fija);
+  font-weight: 700;
+  border-radius: var(--radius);
+  translate: 0 -300%;
+}
+.skip-link:focus-visible {
+  translate: 0 0;
+  outline-color: var(--coral);
+}
+
+/* ---------- Retícula ---------- */
+
+.contenedor {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.reticula {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+/* ---------- Titulares ---------- */
+
+.titular {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 90%;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+}
+
+.etiqueta {
+  font-family: var(--font-code);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: lowercase;
+}
+
+/* ---------- La pieza: bloque de color que se levanta al tocarlo ---------- */
+
+.pieza {
+  --acento-dibujo: #ffffff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(0.875rem, 0.7rem + 0.7vw, 1.25rem);
+  background: var(--pieza);
+  color: var(--tinta-fija);
+  border-radius: var(--radio-pieza);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a.pieza {
+  transition:
+    translate 0.45s var(--ease-spring),
+    rotate 0.45s var(--ease-spring),
+    scale 0.2s var(--ease-soft);
+}
+@media (hover: hover) {
+  a.pieza:hover {
+    translate: 0 -0.3rem;
+    rotate: var(--giro, -1.2deg);
+  }
+  a.pieza:hover .pieza__flecha {
+    translate: 0.15rem -0.15rem;
+    background: var(--tinta-fija);
+    color: var(--pieza);
+  }
+}
+a.pieza:active {
+  scale: 0.97;
+  translate: 0 0;
+  rotate: 0deg;
+}
+a.pieza:focus-visible {
+  outline-color: var(--tinta);
+  outline-offset: 3px;
+  border-radius: var(--radio-pieza);
+}
+/* Las piezas no giran todas igual: alternan, como fichas mal acomodadas. */
+li:nth-child(even) > a.pieza { --giro: 1.2deg; }
+
+.pieza__arriba {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.pieza__dibujo {
+  width: 2.5rem;
+  height: auto;
+  aspect-ratio: 1;
+  flex: none;
+  stroke-width: 4;
+}
+.pieza__flecha {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+  border-radius: 50%;
+  transition:
+    translate 0.3s var(--ease-out),
+    background-color 0.2s var(--ease-soft),
+    color 0.2s var(--ease-soft);
+}
+.pieza__flecha svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pieza__nombre {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  font-size: clamp(1.1875rem, 1.05rem + 0.5vw, 1.4375rem);
+  font-weight: 800;
+  font-stretch: 90%;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+.pieza__desc {
+  margin-top: 0.3rem;
+  font-size: var(--t-s);
+  line-height: 1.3;
+}
+/* La pieza trabajando: una línea de resultado, en vivo. El alto va reservado. */
+.pieza__vivo {
+  display: block;
+  margin-top: 0.75rem;
+  min-height: 2rem;
+  padding: 0.4rem 0.6rem;
+  overflow: hidden;
+  background: var(--tinta-fija);
+  color: var(--crema-fija);
+  border-radius: 0.625rem;
+  font-family: var(--font-code);
+  font-size: var(--t-xs);
+  line-height: 1.2rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pieza__vivo[data-muestra-color]::before {
+  content: "";
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.45rem;
+  vertical-align: -0.08rem;
+  border-radius: 50%;
+  background: var(--muestra, var(--lila));
+  box-shadow: 0 0 0 1.5px var(--crema-fija);
+}
+/* Parpadeo corto cuando la línea cambia. */
+@keyframes vivo {
+  from { color: var(--pieza); }
+}
+.motion .pieza__vivo.cambia {
+  animation: vivo 0.6s var(--ease-soft);
+}
+
+/* Pieza chica: listas de relacionadas */
+.pieza--chica {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.875rem;
+  font-weight: 700;
+  font-stretch: 92%;
+  line-height: 1.1;
+}
+.pieza--chica .pieza__dibujo {
+  width: 1.75rem;
+}
+
+/* ---------- Enlaces ---------- */
+
+/* Navegación: ficha que se llena al apuntarla; la página actual la conserva. */
+.ficha {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 0.875rem;
+  transition:
+    background-color 0.2s var(--ease-soft),
+    color 0.2s var(--ease-soft);
+}
+@media (hover: hover) {
+  .ficha:hover {
+    background: var(--ficha, var(--tinta));
+    color: var(--sobre-ficha, var(--crema));
+  }
+}
+.ficha:active,
+.ficha[aria-current] {
+  background: var(--ficha, var(--tinta));
+  color: var(--sobre-ficha, var(--crema));
+}
+
+/* En texto: subrayado grueso que sube a resaltador. */
+.enlace {
+  color: inherit;
+  text-decoration: none;
+  background: linear-gradient(var(--pieza) 0 0) left bottom / 100% 0.18em no-repeat;
+  transition: background-size 0.3s var(--ease-out), color 0.2s var(--ease-soft);
+}
+@media (hover: hover) {
+  .enlace:hover {
+    background-size: 100% 100%;
+    color: var(--tinta-fija);
+  }
+}
+.enlace:focus-visible {
+  background-size: 100% 100%;
+  color: var(--tinta-fija);
+}
+
+/* ---------- Botón principal: toma el color de la pieza al apuntarlo ---------- */
+
+@media (hover: hover) {
+  .btn-pieza:not(:disabled):hover {
+    background: var(--pieza);
+    color: var(--tinta-fija);
+  }
+}
+.btn-pieza:not(:disabled):active {
+  background: var(--pieza);
+  color: var(--tinta-fija);
+}
+
+/* ---------- Motor: entradas y el color entre páginas ---------- */
+
+/* Oculto hasta entrar, solo con JS y con movimiento permitido. */
+.motion [data-entra] {
+  visibility: hidden;
+}
+
+/*
+ * Bloques de portada: caen en su lugar con CSS, sin esperar al JS y sin
+ * opacidad, para que el texto más grande se pinte en el primer cuadro (LCP).
+ */
+@keyframes cae {
+  from {
+    transform: translateY(1.5rem) scale(0.96) rotate(var(--de, -1.5deg));
+  }
+}
+.motion .entra {
+  animation: cae 0.8s var(--ease-spring) var(--d, 0s) backwards;
+}
+
+/*
+ * Entre páginas el color de la pieza que tocaste llena la pantalla desde ese
+ * punto, y al llegar se encoge hasta volverse la cabeza de la página nueva.
+ * GSAP es dueño del clip-path (src/engine/transition.ts).
+ */
+#curtain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-curtain);
+  display: grid;
+  place-items: end start;
+  padding: var(--gutter);
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+  background: var(--pieza);
+  color: var(--tinta-fija);
+}
+#curtain:not([data-cat]) {
+  background: var(--bloque-oscuro);
+  color: var(--crema-fija);
+}
+.curtain__nombre {
+  max-width: 14ch;
+  font-size: clamp(2.5rem, 1rem + 7vw, 7.5rem);
 }
 
 /* ---------- Transiciones de las herramientas ---------- */
@@ -289,14 +653,15 @@
   }
 }
 
+/* Las secciones de una herramienta caen en su lugar, como una pieza que se acomoda. */
 @keyframes tool-reveal {
   from {
     opacity: 0;
-    transform: translateY(0.5rem);
+    transform: translateY(0.75rem) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
@@ -312,41 +677,5 @@
     .tool-view
   )
   [data-reveal] {
-  animation: tool-reveal 0.35s var(--ease-out) both;
-}
-
-/*
- * Azulejo: superficie con ornamentos de esquina. Cuando varios azulejos se
- * tocan, los cuartos de círculo se unen en rosetones.
- */
-.azulejo {
-  --tile-bg: var(--glaze-raised);
-  --orn: color-mix(in oklab, var(--cobalt) 18%, transparent);
-  --orn-seed: var(--yolk);
-  --orn-r: 30px;
-  --orn-w: 2.5px;
-  --seed-r: 7px;
-  background:
-    radial-gradient(circle at 0 0, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
-    radial-gradient(circle at 100% 0, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
-    radial-gradient(circle at 100% 100%, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
-    radial-gradient(circle at 0 100%, var(--orn-seed) var(--seed-r), transparent calc(var(--seed-r) + 0.5px)),
-    radial-gradient(circle at 0 0, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
-    radial-gradient(circle at 100% 0, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
-    radial-gradient(circle at 100% 100%, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
-    radial-gradient(circle at 0 100%, transparent var(--orn-r), var(--orn) calc(var(--orn-r) + 0.5px) calc(var(--orn-r) + var(--orn-w)), transparent calc(var(--orn-r) + var(--orn-w) + 0.5px)),
-    var(--tile-bg);
-}
-
-/* Registradas para poder animar el esmalte del azulejo. */
-@property --tile-bg {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --orn {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
+  animation: tool-reveal 0.5s var(--ease-out) backwards;
 }
