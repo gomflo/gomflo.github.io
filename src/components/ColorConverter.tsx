@@ -19,8 +19,8 @@ const Verdict = ({ ratio, min, label }: { ratio: number; min: number; label: str
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold",
-        pass ? "bg-cobalt/15 text-foreground" : "bg-destructive/15 text-destructive"
+        "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold",
+        pass ? "bg-acento/15 text-foreground" : "bg-destructive/15 text-destructive"
       )}
     >
       {pass ? "✓" : "✕"} {label}

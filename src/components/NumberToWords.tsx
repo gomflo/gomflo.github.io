@@ -63,7 +63,7 @@ const NumberToWords = () => {
               key={example}
               type="button"
               onClick={() => setInput(example)}
-              className="font-code hover:bg-accent focus-visible:ring-ring/50 min-h-9 cursor-pointer rounded-full border border-input bg-card px-3 text-xs transition-colors outline-none focus-visible:ring-[3px]"
+              className="font-code hover:bg-accent focus-visible:ring-ring/50 min-h-9 cursor-pointer rounded-md border border-input bg-card px-3 text-xs transition-colors outline-none focus-visible:ring-[3px]"
             >
               {example}
             </button>

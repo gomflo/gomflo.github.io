@@ -1,9 +1,6 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
-import { ThemeAwareToaster } from "@/components/ui/sonner";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import LogoMark from "@/components/brand/LogoMark.astro";
-import TileStrip from "@/components/brand/TileStrip.astro";
 
 interface Props {
   title?: string;
@@ -13,6 +10,8 @@ interface Props {
   imageAlt?: string;
   /** Para páginas que no deben aparecer en buscadores (404). */
   noindex?: boolean;
+  /** Marca "Herramientas" en la navegación (páginas de herramienta). */
+  section?: "herramientas";
 }
 
 const {
@@ -21,22 +20,28 @@ const {
   image,
   imageAlt,
   noindex = false,
+  section,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
 const imageURL = image ? new URL(image, Astro.site).href : undefined;
 const isHome = Astro.url.pathname === "/";
+const year = new Date().getFullYear();
 ---
 
 <!doctype html>
-<html lang="es-MX">
+<html lang="es-MX" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f5f7fc" />
+    <meta name="theme-color" content="#fbf2e1" />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalURL} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="32x32" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href="/fonts/bricolage-grotesque-200_800-normal.woff2" as="font" type="font/woff2" crossorigin />
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -57,21 +62,24 @@ const isHome = Astro.url.pathname === "/";
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {imageURL && <meta name="twitter:image" content={imageURL} />}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Martian+Mono:wdth,wght@75..112.5,400..600&display=swap"
-      rel="stylesheet"
-    />
     <title>{title}</title>
+    <slot name="head" />
+    <!-- Antes de pintar: tema, y banderas de JS y movimiento para que nada parpadee.
+         Astro reemplaza los atributos de <html> al navegar, así que se repite tras cada cambio. -->
     <script is:inline>
       (function () {
-        var stored = localStorage.getItem("theme");
-        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        var isDark = stored === "dark" || (!stored && prefersDark);
-        document.documentElement.classList.toggle("dark", isDark);
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute("content", isDark ? "#0b1130" : "#f5f7fc");
+        function aplicar() {
+          var h = document.documentElement;
+          var stored = localStorage.getItem("theme");
+          var isDark = stored === "dark" || (!stored && matchMedia("(prefers-color-scheme: dark)").matches);
+          h.classList.toggle("dark", isDark);
+          h.classList.add("js");
+          h.classList.toggle("motion", !matchMedia("(prefers-reduced-motion: reduce)").matches);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", isDark ? "#131120" : "#fbf2e1");
+        }
+        aplicar();
+        document.addEventListener("astro:after-swap", aplicar);
       })();
     </script>
     <!-- Visitas en un Umami propio, sin cookies. Sin query ni hash: lo que alguien
@@ -85,83 +93,299 @@ const isHome = Astro.url.pathname === "/";
       data-exclude-search="true"
       data-exclude-hash="true"
       data-performance="true"></script>
+    <ClientRouter fallback="swap" />
   </head>
   <body>
     <a href="#main-content" class="skip-link">Ir al contenido principal</a>
-    <header class="site-header">
-      <a href="/" class="brand" aria-label="gomflo, ir al inicio" aria-current={isHome ? "page" : undefined}>
-        <LogoMark />
-        <span class="brand-word">gomflo</span>
-      </a>
-      <ThemeToggle client:load />
+    <div id="curtain" transition:persist="curtain" aria-hidden="true"><span class="curtain__nombre titular" data-curtain-nombre></span></div>
+
+    <header class="cabecera">
+      <div class="contenedor cabecera__in">
+        <a href="/" class="marca" aria-label="gomflo.dev, ir al inicio" aria-current={isHome ? "page" : undefined} data-destino="gomflo.dev">
+          <span class="marca__piezas" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="marca__palabra titular">gomflo</span>
+        </a>
+        <nav class="cabecera__nav" aria-label="Principal">
+          <a class="ficha" href="/#herramientas" aria-current={section === "herramientas" ? "true" : undefined} data-destino="Herramientas">Herramientas</a>
+          <a class="ficha" href="/#apps" data-destino="Apps">Apps</a>
+        </nav>
+        <button type="button" class="tema" data-tema aria-label="Cambiar a modo oscuro">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <mask id="tema-mask">
+              <rect width="24" height="24" fill="#fff"></rect>
+              <circle class="tema__mordida" cx="25" cy="3" r="7" fill="#000"></circle>
+            </mask>
+            <circle class="tema__disco" cx="12" cy="12" r="5" fill="currentColor" mask="url(#tema-mask)"></circle>
+            <g class="tema__rayos" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+                <path d="M12 2.5v2" transform={`rotate(${deg} 12 12)`} />
+              ))}
+            </g>
+          </svg>
+        </button>
+      </div>
     </header>
 
     <slot />
 
-    <footer class="site-footer">
-      <TileStrip />
+    <footer class="remate contenedor">
+      <div class="remate__bloque">
+        <div class="remate__arriba">
+          <p class="remate__regla titular">
+            Sin cuenta, sin instalar nada, y lo que pegas no sale de tu navegador.
+          </p>
+          <nav class="remate__nav" aria-label="Pie de página">
+            <ul role="list">
+              <li><a class="ficha" href="/#herramientas" data-destino="Herramientas">Herramientas</a></li>
+              <li><a class="ficha" href="/#apps" data-destino="Apps">Apps para Mac</a></li>
+              <li><a class="ficha" href="/partidos-de-hoy/" data-astro-reload data-astro-prefetch="false">Partidos de hoy</a></li>
+              <li><a class="ficha" href="https://github.com/gomflo" rel="noopener">GitHub</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="remate__abajo">
+          <p class="remate__nombre titular" aria-hidden="true">gomflo.dev</p>
+          <span class="remate__piezas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <p class="remate__credito">
+          © {year} Víctor Hugo Gómez Flores. Letra: Bricolage Grotesque y DM Mono.
+        </p>
+      </div>
     </footer>
 
-    <ThemeAwareToaster client:idle />
+    <slot name="after" />
     <script>
-      import "../scripts/character";
+      import { start } from "../engine/astro";
+      import { setupMotion } from "../motion/setup";
+      start(setupMotion);
     </script>
   </body>
 </html>
 
 <style>
-  .skip-link {
-    position: absolute;
-    left: -9999px;
-    z-index: 999;
-    padding: 0.75rem 1.25rem;
-    background: var(--cobalt);
-    color: var(--on-cobalt);
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 999px;
-  }
-  .skip-link:focus-visible {
-    left: 1rem;
-    top: 1rem;
-    outline: 3px solid var(--yolk);
-    outline-offset: 2px;
+  .cabecera {
+    position: relative;
+    z-index: var(--z-header);
   }
 
-  .site-header {
+  .cabecera__in {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 1.25rem var(--gutter);
+    gap: clamp(0.25rem, 1vw, 0.75rem);
+    padding-block: clamp(0.75rem, 1.4vw, 1.125rem);
   }
 
-  .brand {
+  .marca {
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
-    color: var(--ink);
+    gap: 0.6rem;
+    min-height: 44px;
+    margin-right: auto;
+    color: var(--tinta);
     text-decoration: none;
-    border-radius: 0.75rem;
   }
 
-  .brand-word {
-    font-size: 1.375rem;
-    font-weight: 750;
-    font-variation-settings: "wdth" 80;
-    letter-spacing: -0.02em;
+  /* La marca: cuatro piezas en una caja de dos por dos. Al apuntarla se reacomodan. */
+  .marca__piezas {
+    display: grid;
+    grid-template-columns: repeat(2, 0.75rem);
+    gap: 0.1875rem;
+  }
+  .marca__piezas i,
+  .remate__piezas i {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 0.25rem;
+    transition: translate 0.45s var(--ease-spring), border-radius 0.45s var(--ease-spring);
+  }
+  .marca__piezas i:nth-child(1) { background: var(--lila); }
+  .marca__piezas i:nth-child(2) { background: var(--menta); }
+  .marca__piezas i:nth-child(3) { background: var(--coral); }
+  .marca__piezas i:nth-child(4) { background: var(--sol); }
+  @media (hover: hover) {
+    .marca:hover .marca__piezas i:nth-child(1) { translate: calc(100% + 0.1875rem) 0; }
+    .marca:hover .marca__piezas i:nth-child(2) { translate: 0 calc(100% + 0.1875rem); }
+    .marca:hover .marca__piezas i:nth-child(4) { translate: calc(-100% - 0.1875rem) 0; }
+    .marca:hover .marca__piezas i:nth-child(3) { translate: 0 calc(-100% - 0.1875rem); }
+  }
+
+  .marca__palabra {
+    font-size: 1.625rem;
     line-height: 1;
   }
 
-  .brand:hover .brand-word {
-    color: var(--cobalt);
+  .cabecera__nav {
+    display: flex;
+    gap: 0.125rem;
+    font-size: var(--t-s);
   }
 
-  .site-footer {
-    margin-top: clamp(4rem, 10vw, 7rem);
+  .tema {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 0.875rem;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease-soft),
+      color 0.2s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .tema:hover {
+      background: var(--sol);
+      color: var(--tinta-fija);
+    }
+  }
+  .tema:active {
+    background: var(--sol);
+    color: var(--tinta-fija);
+  }
+  .tema svg {
+    width: 24px;
+    height: 24px;
+    overflow: visible;
+  }
+  .tema__disco,
+  .tema__mordida,
+  .tema__rayos {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+  }
+  .tema__disco {
+    transition: scale 0.5s var(--ease-spring);
+  }
+  .tema__mordida {
+    transition: translate 0.5s var(--ease-out);
+  }
+  .tema__rayos {
+    transition:
+      rotate 0.5s var(--ease-out),
+      scale 0.5s var(--ease-out),
+      opacity 0.3s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .tema:hover .tema__rayos {
+      rotate: 45deg;
+    }
+  }
+  :global(.dark) .tema__disco {
+    scale: 1.7;
+  }
+  :global(.dark) .tema__mordida {
+    translate: -8px 4px;
+  }
+  :global(.dark) .tema__rayos {
+    rotate: 90deg;
+    scale: 0.4;
+    opacity: 0;
   }
 
+  /* ---------- Remate: el pie es el bloque más grande de la caja ---------- */
+
+  .remate {
+    margin-top: clamp(3.5rem, 8vw, 7rem);
+    padding-bottom: var(--gutter);
+  }
+
+  .remate__bloque {
+    --ficha: var(--crema-fija);
+    --sobre-ficha: var(--tinta-fija);
+    padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+    border-radius: var(--radio-pieza);
+  }
+
+  .remate__bloque :global(:focus-visible) {
+    outline-color: var(--sol);
+  }
+
+  .remate__arriba {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: 2rem clamp(2rem, 8vw, 7rem);
+    align-items: start;
+  }
+
+  .remate__regla {
+    margin: 0;
+    max-width: 22ch;
+    font-size: var(--t-l);
+    line-height: 1.02;
+  }
+
+  .remate__nav ul {
+    display: grid;
+    margin: 0 0 0 -0.9rem;
+    padding: 0;
+    list-style: none;
+    justify-items: start;
+  }
+
+  .remate__abajo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 7vw, 6rem);
+  }
+
+  .remate__nombre {
+    margin: 0;
+    font-size: clamp(3rem, 1rem + 11vw, 11rem);
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    user-select: none;
+  }
+
+  .remate__piezas {
+    display: flex;
+    gap: 0.375rem;
+    padding-bottom: 0.4rem;
+  }
+  .remate__piezas i {
+    width: clamp(1.25rem, 2.4vw, 2.25rem);
+    border-radius: 0.5rem;
+  }
+  .remate__piezas i:nth-child(1) { background: var(--menta); }
+  .remate__piezas i:nth-child(2) { background: var(--coral); }
+  .remate__piezas i:nth-child(3) { background: var(--lila); }
+  .remate__piezas i:nth-child(4) { background: var(--sol); }
+  .remate__piezas i:nth-child(5) { background: var(--cielo); }
+
+  .remate__credito {
+    margin: 1.75rem 0 0;
+    color: #b5b0c8;
+    font-size: var(--t-xs);
+  }
+
+  @media (max-width: 480px) {
+    .cabecera__nav {
+      font-size: var(--t-xs);
+    }
+    .cabecera__nav :global(.ficha) {
+      padding-inline: 0.6rem;
+    }
+    .marca {
+      gap: 0.45rem;
+    }
+    .marca__palabra {
+      font-size: 1.375rem;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .remate__arriba {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .remate__nav ul {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
 </style>

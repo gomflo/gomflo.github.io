@@ -31,7 +31,7 @@ const calendarios = years.map((year) => ({
 ---
 
 <div class="tool-view grid gap-8">
-  <p data-reveal class="next-holiday bg-yolk/25 m-0 rounded-2xl px-5 py-4 text-lg text-pretty" hidden data-next-holiday></p>
+  <p data-reveal class="next-holiday bg-pieza/35 m-0 rounded-2xl px-5 py-4 text-lg text-pretty" hidden data-next-holiday></p>
 
   {calendarios.map(({ year, dias }, i) => (
     <section data-reveal style={`animation-delay:${40 + i * 40}ms`} class="grid gap-3" aria-labelledby={`feriados-${year}`}>
@@ -55,7 +55,7 @@ const calendarios = years.map((year) => ({
               ) : (
                 <span class="tag tag-strong">Descanso obligatorio</span>
               )}
-              {f.puente && <span class="tag tag-yolk">Puente</span>}
+              {f.puente && <span class="tag tag-pieza">Puente</span>}
               {f.finDeSemana && <span class="tag">Cae en fin de semana</span>}
             </span>
           </li>
@@ -80,30 +80,30 @@ const calendarios = years.map((year) => ({
     align-items: center;
     min-height: 1.5rem;
     padding: 0 0.625rem;
-    border-radius: 999px;
+    border-radius: var(--radius);
     background: var(--muted);
-    color: var(--ink-muted);
+    color: var(--gris);
     font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
   }
   .tag-strong {
-    background: color-mix(in oklab, var(--cobalt) 14%, transparent);
-    color: var(--cobalt);
+    background: color-mix(in oklab, var(--acento) 14%, transparent);
+    color: var(--acento);
   }
   :global(.dark) .tag-strong {
     color: var(--foreground);
   }
-  .tag-yolk {
-    background: var(--yolk);
-    color: var(--yolk-ink);
+  .tag-pieza {
+    background: var(--pieza);
+    color: var(--tinta-fija);
   }
   .holiday[data-past] {
-    opacity: 0.55;
+    opacity: 0.7;
   }
   .holiday[data-next] {
-    background: color-mix(in oklab, var(--yolk) 18%, transparent);
-    border-radius: 0.75rem;
+    background: color-mix(in oklab, var(--pieza) 40%, transparent);
+    border-radius: var(--radius);
     padding-inline: 0.75rem;
   }
 </style>
