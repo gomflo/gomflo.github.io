@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Piezas from "../components/Piezas.astro";
 import { tools } from "../lib/tools";
+import { androidApps } from "../data/android-apps";
 
 // Apps de escritorio: sus landings se publican desde otros repos (ver astro.config.mjs).
 // Sin `href` la app sale como "Muy pronto" y no enlaza a nada.
@@ -101,11 +102,11 @@ const jsonLd = JSON.stringify([
       </p>
     </section>
 
-    <!-- Las apps: piezas más grandes, para Mac. -->
+    <!-- Las apps: piezas más grandes, para Mac, y el cajón de las de Android. -->
     <section id="apps" class="apps" aria-labelledby="apps-titulo">
       <header class="apps__cabeza">
-        <h2 id="apps-titulo" class="titular" data-entra>También hago apps para Mac</h2>
-        <p data-entra>Nativas, ligeras y con la misma regla: tus datos se quedan contigo.</p>
+        <h2 id="apps-titulo" class="titular" data-entra>También hago apps</h2>
+        <p data-entra>Para Mac y para Android. Nativas, ligeras y con la misma regla: tus datos se quedan contigo.</p>
       </header>
       <ul class="apps__lista" role="list">
         {apps.map((app) => {
@@ -139,6 +140,24 @@ const jsonLd = JSON.stringify([
           );
         })}
       </ul>
+      <div class="android" data-entra>
+        {/* /android/ no pasa por Layout.astro: recarga completa, sin transición. */}
+        <a href="/android/" class="pieza android__enlace" data-astro-reload data-astro-prefetch="false">
+          <span class="android__texto">
+            <span class="etiqueta">android · {androidApps.length} apps</span>
+            <span class="android__nombre titular">El cajón, para Android</span>
+            <span class="android__desc">La quincena, los sobres, la rifa, el intercambio, las medicinas de tu mamá. Sin anuncios y sin cuenta.</span>
+          </span>
+          <span class="android__iconos" aria-hidden="true">
+            {androidApps.map((a) => (
+              <img src={`/img/android/${a.slug}/icono.png`} alt="" width="56" height="56" loading="lazy" decoding="async" />
+            ))}
+          </span>
+          <span class="pieza__flecha" aria-hidden="true">
+            <svg viewBox="0 0 16 16" focusable="false"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" /></svg>
+          </span>
+        </a>
+      </div>
     </section>
 
     <script type="application/ld+json" set:html={jsonLd} />
@@ -442,7 +461,72 @@ const jsonLd = JSON.stringify([
     line-height: 1.4;
   }
 
+  .android {
+    display: grid;
+    margin-top: var(--hueco);
+  }
+
+  .android__enlace {
+    --pieza: var(--bloque-oscuro);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    padding: clamp(1.125rem, 0.9rem + 1vw, 1.75rem);
+    color: var(--crema-fija);
+  }
+  .android__enlace :global(.pieza__flecha) {
+    align-self: start;
+    background: var(--crema-fija);
+    color: var(--tinta-fija);
+  }
+  @media (hover: hover) {
+    .android__enlace:hover :global(.pieza__flecha) {
+      background: var(--sol);
+      color: var(--tinta-fija);
+    }
+  }
+
+  .android__texto {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .android__nombre {
+    font-size: var(--t-l);
+  }
+
+  .android__desc {
+    max-width: 46ch;
+    font-size: var(--t-s);
+    line-height: 1.4;
+    opacity: 0.85;
+  }
+
+  .android__iconos {
+    display: grid;
+    grid-template-columns: repeat(5, 3.5rem);
+    gap: 0.5rem;
+  }
+  .android__iconos img {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 28%;
+  }
+
   @media (max-width: 900px) {
+    .android__enlace {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .android__iconos {
+      grid-row: 2;
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(5, minmax(0, 3.5rem));
+    }
+    .android__iconos img {
+      width: 100%;
+      height: auto;
+    }
     .apps__lista {
       grid-template-columns: minmax(0, 1fr);
     }
