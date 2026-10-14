@@ -1,0 +1,226 @@
+---
+// "El cajón": landing de las apps para Android de gomflo, con identidad propia.
+// No usa Layout.astro (como /partidos-de-hoy/): CSS propio y el motor de src/engine sin
+// ClientRouter. Concepto y sistema en docs/android.md.
+import "../styles/android.css";
+import Bandeja from "../components/android/Bandeja.astro";
+import Cajon from "../components/android/Cajon.astro";
+import { apps, grupos, sinInternet } from "../components/android/contenido";
+
+const title = "Apps para Android de gomflo: el cajón de la casa";
+const description =
+  "Diez apps para Android hechas en México: la quincena, los sobres, la rifa, el intercambio, las medicinas. Sin anuncios, sin cuenta y sin servidor.";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+const site = Astro.site!;
+const autor = { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" };
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Apps para Android de gomflo",
+  url: canonicalURL,
+  numberOfItems: apps.length,
+  itemListElement: apps.map((a, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "SoftwareApplication",
+      name: a.name,
+      description: a.desc,
+      operatingSystem: "Android",
+      applicationCategory: a.categoria,
+      inLanguage: "es-MX",
+      image: new URL(`/img/android/${a.slug}/icono.png`, site).href,
+      screenshot: a.capturas.map((c) => new URL(`/img/android/${a.slug}/captura-${c.n}.webp`, site).href),
+      url: `${canonicalURL}#${a.slug}`,
+      author: autor,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+      ...(a.play ? { installUrl: a.play } : {}),
+    },
+  })),
+};
+
+const conPrivacidad = apps.filter((a) => a.privacy);
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="theme-color" content="#e8e9eb" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="32x32" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/archivo-100_900-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="gomflo.dev" />
+    <meta property="og:image" content={new URL("/img/android.jpeg", site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Lo que guardabas en el cajón, ahora en tu teléfono: las diez apps para Android de gomflo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Antes de pintar: el tema que ya eligió el visitante en gomflo.dev, y las banderas
+         de JS y movimiento para que nada parpadee. -->
+    <script is:inline>
+      (function () {
+        var h = document.documentElement;
+        var stored = localStorage.getItem("theme");
+        var dark = stored === "dark" || (!stored && matchMedia("(prefers-color-scheme: dark)").matches);
+        h.classList.toggle("dark", dark);
+        h.classList.add("js");
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) h.classList.add("motion");
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", dark ? "#121316" : "#e8e9eb");
+      })();
+    </script>
+  </head>
+  <body class="aw">
+    <a class="saltar" href="#principal">Ir al contenido</a>
+
+    <header class="barra" data-barra>
+      <div class="marco barra__in">
+        <a class="barra__marca" href="https://gomflo.dev/" aria-label="gomflo.dev, ir al inicio">
+          <span class="barra__cuadro" aria-hidden="true"></span><span class="barra__palabra">gomflo</span>
+        </a>
+        <nav class="barra__nav" aria-label="Principal">
+          <a class="dibuja" href="#apps">Las apps</a>
+          <a class="dibuja" href="#promesa">Tus datos</a>
+          <a class="dibuja barra__ext" href="https://gomflo.dev/">gomflo.dev</a>
+        </nav>
+        <button type="button" class="tema" data-tema aria-label="Cambiar a modo oscuro">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect class="tema__cajon" x="3" y="6" width="18" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="2"></rect>
+            <path class="tema__jaladera" d="M9 12.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            <circle class="tema__luz" cx="12" cy="3" r="2" fill="currentColor"></circle>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="principal" tabindex="-1">
+      <section class="portada marco" aria-labelledby="portada-titulo">
+        <div class="portada__texto">
+          <p class="portada__antes">10 apps para Android, hechas en México por gomflo</p>
+          <h1 class="portada__titulo" id="portada-titulo">
+            Lo que guardabas en el cajón, ahora en tu&nbsp;teléfono.
+          </h1>
+          <p class="portada__lead">
+            Los sobres de la quincena, el talonario de la rifa, las medicinas de tu mamá, los tickets de la garantía. Diez
+            apps sin anuncios y sin cuenta. Lo que anotas no sale de tu teléfono.
+          </p>
+          <div class="portada__acciones">
+            <a class="btn" href="#apps" aria-label="Abre el cajón">
+              <span class="btn__rodillo"><span>Abre el cajón</span><span aria-hidden="true">Abre el cajón</span></span>
+              <svg class="btn__flecha" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v11M3 8.5 8 13.5l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </a>
+            <p class="portada__estado estado"><span class="tienda__punto" aria-hidden="true"></span>Todavía no están en Google Play. Salen muy pronto.</p>
+          </div>
+        </div>
+        <div class="portada__cajon">
+          <Bandeja />
+          <p class="portada__pie" aria-hidden="true" data-pie>El cajón se mueve contigo: lo de adentro se recorre.</p>
+        </div>
+      </section>
+
+      <section class="promesa marco" id="promesa" aria-labelledby="promesa-titulo">
+        <h2 class="promesa__titulo" id="promesa-titulo">Lo que anotas se queda en el cajón.</h2>
+        <p class="promesa__lead">
+          Ninguna app tiene servidor, así que no hay a dónde mandar tus gastos, tus medicinas ni la lista de tu rifa. Viven
+          en tu teléfono y en el respaldo que tú decidas.
+        </p>
+        <dl class="promesa__datos">
+          <div><dt>Sin anuncios</dt><dd>Ninguna vende tu atención, ni a la mitad de la lotería.</dd></div>
+          <div><dt>Sin cuenta</dt><dd>Abres la app y ya: no hay correo ni contraseña.</dd></div>
+          <div><dt>Sin servidor</dt><dd>Nada se sincroniza con nadie. Lo tuyo es tuyo.</dd></div>
+          <div>
+            <dt><span class="promesa__cifra">{sinInternet}</span> de {apps.length}</dt>
+            <dd>ni siquiera piden permiso de internet. Las otras tres lo traen con la tienda de Google Play, para la compra de Pro.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <div class="comoda" id="apps">
+        {
+          grupos.map((g) => {
+            const delGrupo = apps.filter((a) => a.group === g.id);
+            return (
+              <section class="grupo marco" aria-labelledby={`grupo-${g.id}`}>
+                <header class="grupo__cabeza">
+                  <h2 class="grupo__titulo" id={`grupo-${g.id}`}>{g.titulo}</h2>
+                  <p class="grupo__lead">{g.lead}</p>
+                  <p class="grupo__cuenta" aria-hidden="true">
+                    {delGrupo.length} {delGrupo.length === 1 ? "cajón" : "cajones"}
+                  </p>
+                </header>
+                {delGrupo.map((app) => (
+                  <Cajon app={app} lado={apps.indexOf(app) % 2 === 0 ? "izq" : "der"} />
+                ))}
+              </section>
+            );
+          })
+        }
+      </div>
+
+      <section class="hechas marco" aria-labelledby="hechas-titulo">
+        <h2 class="hechas__titulo" id="hechas-titulo">Hechas una por&nbsp;una.</h2>
+        <div class="hechas__texto">
+          <p>
+            Cada app es nativa de Android, escrita en Kotlin con Jetpack Compose, y tiene su propio dibujo: el frasco de
+            Canica se inclina con el teléfono, las etiquetas de Tiliches se mecen, la ruleta de Tin Marín gira con el dedo.
+          </p>
+          <p>
+            Son gratis. Las que tienen Pro lo cobran una sola vez; ninguna es suscripción. Las hace Víctor Hugo Gómez Flores,
+            el mismo de las herramientas de <a class="enlace" href="https://gomflo.dev/">gomflo.dev</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="pie">
+      <div class="marco">
+        <div class="pie__frente">
+          <div class="pie__arriba">
+            <p class="pie__grande">Muy pronto en Google&nbsp;Play.</p>
+            <span class="jaladera jaladera--pie" aria-hidden="true"></span>
+          </div>
+          <div class="pie__cols">
+            <nav aria-label="Avisos de privacidad">
+              <h2 class="pie__titulo">Avisos de privacidad</h2>
+              <ul>
+                {conPrivacidad.map((a) => (
+                  <li><a class="utilidad" href={a.privacy}>{a.name}</a></li>
+                ))}
+              </ul>
+            </nav>
+            <nav aria-label="Pie de página">
+              <h2 class="pie__titulo">gomflo</h2>
+              <ul>
+                <li><a class="utilidad" href="https://gomflo.dev/">Herramientas en gomflo.dev</a></li>
+                <li><a class="utilidad" href="https://gomflo.dev/#apps">Apps para Mac</a></li>
+                <li><a class="utilidad" href="#principal">Volver arriba</a></li>
+              </ul>
+            </nav>
+            <p class="pie__letra">
+              © {year} Víctor Hugo Gómez Flores. Hechas en México. Letra: Archivo, de Omnibus-Type.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      import { iniciarCajon } from "../motion/android";
+      iniciarCajon();
+    </script>
+  </body>
+</html>

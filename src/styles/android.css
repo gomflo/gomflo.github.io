@@ -1,0 +1,1384 @@
+/* "El cajón" (/android/). Identidad propia, sin global.css.
+   El sistema está en docs/android.md. Reglas cortas:
+   - Todo es un organizador: marco de mueble (--mueble), divisores (--divisor), huecos (--hueco).
+   - El color lo ponen las apps (--app); el mueble es neutro para que se vean.
+   - Radios concéntricos: radio de afuera = radio de adentro + grosor del marco.
+   - Profundidad con sombra dura (sin desenfoque) y huecos hundidos. Sin degradados. */
+
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-100_900-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* De día: formica gris, mueble negro, organizador de plástico blanco. */
+  --suelo: #e8e9eb;
+  --tinta: #121417;
+  --gris: #565b62;
+  --linea: rgba(18, 20, 23, 0.16);
+  --mueble: #17191c;
+  --mueble-tinta: #d4d8dd;
+  --divisor: #cdd1d6;
+  --hueco: #f7f7f8;
+  --jaladera: #9aa1a9;
+  --sombra: rgba(18, 20, 23, 0.24);
+  --hundido: rgba(18, 20, 23, 0.07);
+
+  --f: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --t-mega: clamp(2.6rem, 0.9rem + 4.9vw, 6.25rem);
+  --t-xl: clamp(2.15rem, 1rem + 4.2vw, 5.25rem);
+  --t-l: clamp(1.45rem, 1.1rem + 1.35vw, 2.35rem);
+  --t-m: clamp(1.12rem, 1.02rem + 0.45vw, 1.4rem);
+  --t-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --t-s: 0.875rem;
+  --t-xs: 0.8125rem;
+
+  --margen: clamp(1rem, 3.2vw, 2.75rem);
+  --gutter: clamp(0.75rem, 1.6vw, 1.5rem);
+  --marco: 12px; /* grosor del mueble */
+  --r-hueco: 12px;
+  --r-divisor: calc(var(--r-hueco) + 10px);
+  --r-mueble: calc(var(--r-divisor) + var(--marco));
+
+  /* Una sola familia de curvas (la del motor): expo para entrar, power3 para responder. */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-soft: cubic-bezier(0.215, 0.61, 0.355, 1);
+  color-scheme: light;
+}
+
+.dark {
+  /* De noche: el mueble se queda, la luz se apaga. Las apps conservan su color. */
+  --suelo: #121316;
+  --tinta: #eef0f2;
+  --gris: #a5abb3;
+  --linea: rgba(238, 240, 242, 0.16);
+  --mueble: #2a2d33;
+  --mueble-tinta: #d4d8dd;
+  --divisor: #0b0c0e;
+  --hueco: #24272c;
+  --jaladera: #6a717b;
+  --sombra: rgba(0, 0, 0, 0.55);
+  --hundido: rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html.motion {
+  scroll-behavior: smooth;
+}
+
+body.aw {
+  margin: 0;
+  background: var(--suelo);
+  color: var(--tinta);
+  font-family: var(--f);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  font-stretch: 100%;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.aw h1,
+.aw h2,
+.aw h3,
+.aw p,
+.aw ul,
+.aw dl,
+.aw dd {
+  margin: 0;
+}
+.aw ul {
+  padding: 0;
+  list-style: none;
+}
+.aw img {
+  display: block;
+  max-width: 100%;
+}
+:where(.aw) a {
+  color: inherit;
+}
+::selection {
+  background: var(--tinta);
+  color: var(--suelo);
+}
+
+:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+main:focus {
+  outline: none;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.saltar {
+  position: fixed;
+  left: var(--margen);
+  top: 0.75rem;
+  z-index: 50;
+  padding: 0.75rem 1rem;
+  background: var(--tinta);
+  color: var(--suelo);
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  translate: 0 -200%;
+}
+.saltar:focus-visible {
+  translate: 0 0;
+}
+
+.marco {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--margen);
+}
+
+/* ---------- Barra ---------- */
+
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--suelo) 92%, transparent);
+  backdrop-filter: saturate(1.2) blur(8px);
+  -webkit-backdrop-filter: saturate(1.2) blur(8px);
+  transition: translate 0.6s var(--e-out);
+}
+html.barra-fuera .barra {
+  translate: 0 -105%;
+}
+.barra__in {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 2rem);
+  min-height: 4.25rem;
+}
+.barra__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 850;
+  font-stretch: 115%;
+  font-size: 1.2rem;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  margin-right: auto;
+  min-height: 44px;
+}
+.barra__cuadro {
+  width: 1.5rem;
+  height: 1.15rem;
+  border-radius: 5px;
+  background: var(--tinta);
+  position: relative;
+}
+.barra__cuadro::after {
+  content: "";
+  position: absolute;
+  transition: translate 0.45s var(--e-out);
+  left: 30%;
+  right: 30%;
+  bottom: 0.3rem;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--suelo);
+}
+.barra__palabra {
+  background: linear-gradient(currentColor 0 0) left bottom / 0% 2px no-repeat;
+  transition: background-size 0.45s var(--e-out);
+}
+/* La marca: el cajoncito se abre (la jaladera baja) y el nombre se subraya. */
+.barra__marca:focus-visible .barra__palabra {
+  background-size: 100% 2px;
+}
+.barra__marca:focus-visible .barra__cuadro::after {
+  translate: 0 3px;
+}
+@media (hover: hover) {
+  .barra__marca:hover .barra__palabra {
+    background-size: 100% 2px;
+  }
+  .barra__marca:hover .barra__cuadro::after {
+    translate: 0 3px;
+  }
+}
+.barra__nav {
+  display: flex;
+  gap: clamp(0.9rem, 2.4vw, 2.25rem);
+  font-size: var(--t-s);
+  font-weight: 600;
+  font-stretch: 92%;
+}
+
+/* Navegación: el subrayado se dibuja, como un cajón que corre en su riel. */
+.dibuja {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  background: linear-gradient(currentColor 0 0) left calc(50% + 0.75em) / 0% 2px no-repeat;
+  transition: background-size 0.45s var(--e-out);
+}
+.dibuja:focus-visible {
+  background-size: 100% 2px;
+}
+@media (hover: hover) {
+  .dibuja:hover {
+    background-size: 100% 2px;
+  }
+}
+
+.tema {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--tinta);
+  background: transparent;
+  color: var(--tinta);
+  cursor: pointer;
+  transition: background-color 0.3s var(--e-soft), color 0.3s var(--e-soft);
+}
+.tema svg {
+  width: 22px;
+  height: 22px;
+}
+.tema__luz {
+  transition: translate 0.45s var(--e-out), opacity 0.3s;
+}
+.dark .tema__luz {
+  opacity: 0.25;
+}
+@media (hover: hover) {
+  .tema:hover {
+    background: var(--tinta);
+    color: var(--suelo);
+  }
+  .tema:hover .tema__luz {
+    translate: 0 2px;
+  }
+}
+.tema:active {
+  scale: 0.96;
+}
+
+/* ---------- Portada ---------- */
+
+.portada {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  align-items: end;
+  padding-top: clamp(1.5rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 7vw, 6rem);
+  min-height: calc(100svh - 4.25rem);
+}
+.portada__texto {
+  grid-column: 1 / span 5;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-bottom: 0.25rem;
+}
+.portada__antes {
+  font-size: var(--t-s);
+  font-weight: 600;
+  font-stretch: 92%;
+  color: var(--gris);
+}
+.portada__titulo {
+  font-size: var(--t-mega);
+  font-weight: 820;
+  font-stretch: 108%;
+  line-height: 0.93;
+  letter-spacing: -0.042em;
+  margin-left: -0.05em;
+  text-wrap: balance;
+  margin-top: 1rem;
+}
+.portada__lead {
+  font-size: var(--t-m);
+  line-height: 1.45;
+  max-width: 34ch;
+  margin-top: auto;
+}
+.portada__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+.portada__estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--t-s);
+  color: var(--gris);
+  max-width: 26ch;
+  line-height: 1.35;
+}
+.portada__cajon {
+  grid-column: 6 / span 7;
+}
+.portada__pie {
+  margin-top: 0.85rem;
+  font-size: var(--t-xs);
+  color: var(--gris);
+  text-align: right;
+}
+@media (prefers-reduced-motion: reduce) {
+  .portada__pie {
+    display: none;
+  }
+}
+
+/* Botón principal: la etiqueta corre como cajón en su riel y el botón se llena. */
+.btn {
+  --relleno: var(--tinta);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 52px;
+  padding: 0 1.4rem 0 1.5rem;
+  border-radius: 14px;
+  background: var(--relleno);
+  color: var(--suelo);
+  font-weight: 750;
+  font-stretch: 105%;
+  text-decoration: none;
+  box-shadow: 0 5px 0 var(--sombra);
+  transition: translate 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
+}
+.btn__rodillo {
+  display: inline-grid;
+  overflow: clip;
+}
+.btn__rodillo > span {
+  grid-area: 1 / 1;
+  transition: translate 0.5s var(--e-out);
+}
+.btn__rodillo > span + span {
+  translate: 0 110%;
+}
+.btn__flecha {
+  width: 1rem;
+  height: 1rem;
+  transition: translate 0.45s var(--e-out);
+}
+.btn:focus-visible .btn__rodillo > span,
+.btn:focus-visible .btn__rodillo > span + span {
+  translate: 0 -110%;
+}
+.btn:focus-visible .btn__rodillo > span + span {
+  translate: 0 0;
+}
+@media (hover: hover) {
+  .btn:hover {
+    translate: 0 -3px;
+    box-shadow: 0 8px 0 var(--sombra);
+  }
+  .btn:hover .btn__rodillo > span {
+    translate: 0 -110%;
+  }
+  .btn:hover .btn__rodillo > span + span {
+    translate: 0 0;
+  }
+  .btn:hover .btn__flecha {
+    translate: 0 4px;
+  }
+}
+.btn:active {
+  translate: 0 3px;
+  box-shadow: 0 2px 0 var(--sombra);
+}
+
+/* ---------- La bandeja (firma) ---------- */
+
+.bandeja {
+  container-type: inline-size;
+  background: var(--mueble);
+  border-radius: var(--r-mueble);
+  padding: var(--marco) var(--marco) 0;
+  box-shadow: 0 10px 0 var(--sombra);
+}
+.bandeja__fondo {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "q q g t t"
+    "c o p p b"
+    "m o f l b";
+  gap: 10px;
+  padding: 10px;
+  aspect-ratio: 5 / 3.15;
+  background: var(--divisor);
+  border-radius: var(--r-divisor);
+}
+.hueco {
+  position: relative;
+  background: var(--hueco);
+  border-radius: var(--r-hueco);
+  box-shadow: inset 0 5px 0 var(--hundido), inset 4px 0 0 var(--hundido);
+  overflow: clip;
+}
+.hueco__liga {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  border-radius: inherit;
+  outline-offset: -4px;
+}
+.hueco__liga:focus-visible {
+  outline: 3px solid var(--tinta);
+}
+.hueco--alto .hueco__liga {
+  place-items: start center;
+  padding-top: 30%;
+}
+.objeto {
+  display: block;
+  width: clamp(48px, 11.5cqi, 96px);
+  margin-top: -0.9rem;
+}
+.objeto__alza {
+  display: block;
+  rotate: var(--giro, 0deg);
+  transition: rotate 0.5s var(--e-out), translate 0.5s var(--e-out);
+}
+.objeto__alza img {
+  width: 100%;
+  height: auto;
+  border-radius: 23%;
+  box-shadow: 0 5px 0 var(--sombra);
+  transition: box-shadow 0.5s var(--e-out);
+}
+.hueco__rotulo {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.55rem;
+  display: grid;
+  justify-items: start;
+  gap: 0.1rem;
+}
+.hueco__que {
+  display: none;
+  font-size: clamp(0.7rem, 1.75cqi, 0.8125rem);
+  font-weight: 500;
+  font-stretch: 92%;
+  line-height: 1.25;
+  color: var(--gris);
+  text-wrap: balance;
+}
+.hueco--alto .hueco__que,
+.hueco[style*="area:q"] .hueco__que,
+.hueco[style*="area:t"] .hueco__que,
+.hueco[style*="area:p"] .hueco__que {
+  display: block;
+}
+.hueco__nombre {
+  font-size: clamp(0.72rem, 1.9cqi, 0.875rem);
+  font-weight: 680;
+  font-stretch: 90%;
+  line-height: 1.2;
+  background: linear-gradient(var(--app) 0 0) left bottom / 0% 3px no-repeat;
+  padding-bottom: 2px;
+  transition: background-size 0.45s var(--e-out);
+}
+/* Apuntar un objeto es sacarlo del cajón: se endereza, se levanta y su sombra crece. */
+.dark .objeto__alza img,
+.dark .cajon__icono {
+  outline: 1.5px solid rgba(255, 255, 255, 0.16);
+  outline-offset: -1.5px;
+}
+.hueco__liga:focus-visible .objeto__alza {
+  rotate: 0deg;
+  translate: 0 -9px;
+}
+.hueco__liga:focus-visible .objeto__alza img {
+  box-shadow: 0 14px 0 var(--sombra);
+}
+.hueco__liga:focus-visible .hueco__nombre {
+  background-size: 100% 3px;
+}
+@media (hover: hover) {
+  .hueco__liga:hover .objeto__alza {
+    rotate: 0deg;
+    translate: 0 -9px;
+  }
+  .hueco__liga:hover .objeto__alza img {
+    box-shadow: 0 14px 0 var(--sombra);
+  }
+  .hueco__liga:hover .hueco__nombre {
+    background-size: 100% 3px;
+  }
+}
+.hueco__liga:active .objeto__alza {
+  rotate: 0deg;
+  translate: 0 -4px;
+}
+
+.bandeja__frente {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 3.75rem;
+  padding: 0 1rem;
+  color: var(--mueble-tinta);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  font-stretch: 92%;
+}
+.bandeja__etiqueta--fin {
+  text-align: right;
+}
+.jaladera {
+  display: block;
+  width: clamp(4.5rem, 16cqi, 8.5rem);
+  height: 11px;
+  border-radius: 99px;
+  background: var(--jaladera);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* Antes de la entrada: el cajón todavía no se abre. Si el script nunca corre, se abre solo. */
+html.motion .bandeja,
+html.motion .portada__pie {
+  opacity: 0;
+  animation: sin-script 0.01s 2.5s forwards;
+}
+html.motion .bandeja.is-lista,
+html.motion .is-lista ~ .portada__pie {
+  animation: none;
+}
+@keyframes sin-script {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Promesa ---------- */
+
+.promesa {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: clamp(1.5rem, 3vw, 2.5rem);
+  padding-block: clamp(4rem, 10vw, 9rem) clamp(3rem, 7vw, 6rem);
+}
+.promesa__titulo {
+  grid-column: 1 / span 9;
+  font-size: var(--t-xl);
+  font-weight: 820;
+  font-stretch: 110%;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-left: -0.04em;
+  text-wrap: balance;
+}
+.promesa__lead {
+  grid-column: 6 / span 6;
+  font-size: var(--t-m);
+  line-height: 1.45;
+}
+.promesa__datos {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gutter);
+  margin-top: clamp(1rem, 3vw, 2.5rem);
+}
+.promesa__datos > div {
+  border-top: 3px solid var(--tinta);
+  padding-top: 1rem;
+}
+.promesa__datos dt {
+  font-size: var(--t-l);
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.promesa__datos dd {
+  margin-top: 0.6rem;
+  color: var(--gris);
+  max-width: 30ch;
+}
+
+/* ---------- La cómoda ---------- */
+
+.grupo {
+  padding-top: clamp(3rem, 8vw, 7rem);
+}
+.grupo__cabeza {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 1rem;
+  align-items: end;
+  margin-bottom: clamp(1.25rem, 3vw, 2.25rem);
+}
+.grupo__titulo {
+  grid-column: 1 / span 8;
+  font-size: var(--t-xl);
+  font-weight: 820;
+  font-stretch: 110%;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-left: -0.04em;
+  text-wrap: balance;
+}
+.grupo__lead {
+  grid-column: 9 / span 4;
+  color: var(--gris);
+  max-width: 36ch;
+}
+.grupo__cuenta {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-size: var(--t-s);
+  font-weight: 600;
+  font-stretch: 92%;
+  color: var(--gris);
+  font-variant-numeric: tabular-nums;
+}
+
+.cajon {
+  background: var(--mueble);
+  border-radius: var(--r-mueble);
+  padding: var(--marco);
+  margin-bottom: clamp(1.25rem, 2.6vw, 2rem);
+  box-shadow: 0 10px 0 var(--sombra);
+  scroll-margin-top: 5rem;
+}
+.cajon__frente {
+  position: relative;
+  z-index: 1;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.9rem, 2.5vw, 2rem);
+  padding: clamp(1rem, 2.4vw, 1.9rem) clamp(1rem, 2.6vw, 2.25rem);
+  background: var(--app);
+  color: var(--app-tinta);
+  border-radius: var(--r-divisor);
+}
+.cajon__icono {
+  width: clamp(3.25rem, 7cqi, 6rem);
+  height: auto;
+  border-radius: 23%;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.28), 0 0 0 2px color-mix(in srgb, var(--app-tinta) 22%, transparent);
+}
+.cajon__nombre {
+  font-size: clamp(2.5rem, 9.6cqi, 8.75rem);
+  font-weight: 900;
+  font-stretch: 125%;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  margin-left: -0.05em;
+  padding-bottom: 0.17em; /* lugar para la p, la g y la j */
+  white-space: nowrap;
+}
+.cajon__tagline {
+  margin-top: 0.15rem;
+  text-wrap: balance;
+  font-size: var(--t-m);
+  font-weight: 560;
+  line-height: 1.25;
+}
+.jaladera--frente {
+  width: clamp(3rem, 9cqi, 8rem);
+  background: color-mix(in srgb, var(--app-tinta) 55%, var(--app));
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.cajon__dentro {
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--divisor);
+  border-radius: var(--r-divisor);
+}
+.cajon__contenido {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 2rem;
+  align-items: start;
+  padding: clamp(1.25rem, 3.4vw, 3.25rem);
+  background: var(--hueco);
+  border-radius: var(--r-hueco);
+  box-shadow: inset 0 6px 0 var(--hundido);
+}
+.desliza {
+  display: none;
+}
+.telefonos {
+  grid-column: 1 / span 7;
+  display: flex;
+  gap: 4%;
+  align-items: flex-start;
+  padding-bottom: 2.5rem;
+}
+.cajon--der .telefonos {
+  grid-column: 6 / span 7;
+  grid-row: 1;
+}
+.cajon--der .cajon__texto {
+  grid-column: 1 / span 5;
+  grid-row: 1;
+}
+.telefono {
+  flex: 1 1 0;
+  max-width: 15rem;
+  padding: 6px;
+  background: #0b0b0c;
+  border-radius: 28px;
+  box-shadow: 0 8px 0 var(--sombra);
+  rotate: -2deg;
+}
+.telefono:nth-child(2) {
+  rotate: 1.5deg;
+  translate: 0 2.25rem;
+}
+.telefono:nth-child(3) {
+  rotate: -0.75deg;
+  translate: 0 0.75rem;
+}
+.telefono img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 540 / 1212;
+  object-fit: cover;
+  border-radius: 22px;
+  background: var(--divisor);
+}
+.telefonos:focus-visible {
+  outline-offset: 8px;
+}
+
+.cajon__texto {
+  grid-column: 8 / span 5;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+.cajon__objeto {
+  font-size: var(--t-s);
+  font-weight: 600;
+  font-stretch: 92%;
+  color: var(--gris);
+}
+.cajon__frase {
+  font-size: var(--t-l);
+  font-weight: 760;
+  font-stretch: 104%;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.cajon__detalle {
+  max-width: 44ch;
+}
+.cajon__puntos {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--linea);
+}
+.cajon__puntos li {
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  font-weight: 620;
+}
+.cajon__puntos li::before {
+  content: "";
+  flex: none;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 3px;
+  background: var(--app);
+  box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.18);
+  translate: 0 0.05em;
+}
+.dark .cajon__puntos li::before {
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
+}
+.cajon__aviso {
+  font-size: var(--t-s);
+  font-weight: 650;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  border: 2px solid var(--tinta);
+  align-self: flex-start;
+}
+.cajon__datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.cajon__datos li {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1.3;
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  background: var(--suelo);
+  box-shadow: inset 0 3px 0 var(--hundido);
+}
+.cajon__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.4rem;
+}
+
+/* La tienda: hoy es una etiqueta de "muy pronto"; con URL en `play`, un botón que se llena. */
+.tienda {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0 1.1rem;
+  border-radius: 12px;
+  font-size: var(--t-s);
+  font-weight: 700;
+  font-stretch: 100%;
+  text-decoration: none;
+}
+/* "Muy pronto": una etiqueta de estado, no un botón. */
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: var(--t-s);
+  font-weight: 700;
+  line-height: 1.3;
+}
+a.tienda {
+  background: var(--tinta);
+  color: var(--suelo);
+  transition: color 0.3s var(--e-soft);
+}
+.tienda__relleno {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--app);
+  translate: 0 102%;
+  transition: translate 0.5s var(--e-out);
+}
+a.tienda:focus-visible {
+  color: var(--app-tinta);
+}
+a.tienda:focus-visible .tienda__relleno {
+  translate: 0 0;
+}
+@media (hover: hover) {
+  a.tienda:hover {
+    color: var(--app-tinta);
+  }
+  a.tienda:hover .tienda__relleno {
+    translate: 0 0;
+  }
+}
+.tienda__punto {
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--app, var(--tinta));
+  box-shadow: 0 0 0 2px var(--hueco), 0 0 0 3.5px var(--tinta);
+}
+.portada__estado .tienda__punto {
+  box-shadow: 0 0 0 2px var(--suelo), 0 0 0 3.5px var(--tinta);
+}
+
+/* Enlaces de utilidad (privacidad, pie): solo el subrayado cambia. */
+.utilidad,
+.enlace {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  transition: text-decoration-color 0.25s, text-decoration-thickness 0.25s;
+}
+.enlace {
+  padding-block: 0.65em;
+  margin-block: -0.65em;
+}
+.utilidad {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--t-s);
+  font-weight: 600;
+}
+.utilidad:focus-visible,
+.enlace:focus-visible {
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 3px;
+}
+@media (hover: hover) {
+  .utilidad:hover,
+  .enlace:hover {
+    text-decoration-color: var(--app, currentColor);
+    text-decoration-thickness: 3px;
+  }
+}
+.pie .utilidad:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Abanico: las capturas encimadas, como se quedan en el fondo después de jalar el cajón. */
+.cajon--abanico .telefonos {
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+.cajon--abanico .telefono {
+  max-width: 14.5rem;
+  margin-left: -9%;
+  rotate: -7deg;
+  translate: 0 1.75rem;
+}
+.cajon--abanico .telefono:first-child {
+  margin-left: 0;
+}
+.cajon--abanico .telefono:nth-child(2) {
+  position: relative;
+  z-index: 1;
+  rotate: 0deg;
+  translate: 0 0;
+  scale: 1.06;
+}
+.cajon--abanico .telefono:nth-child(3) {
+  rotate: 7deg;
+  translate: 0 1.75rem;
+}
+
+/* A lo ancho: la frase arriba a dos columnas y las capturas tendidas a todo lo largo. */
+.cajon.cajon--ancho .cajon__texto {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 1.1rem;
+  align-content: start;
+}
+.cajon--ancho .cajon__texto > * {
+  grid-column: 8 / -1;
+}
+.cajon--ancho .cajon__objeto {
+  grid-column: 1 / 7;
+  grid-row: 1;
+}
+.cajon--ancho .cajon__frase {
+  grid-column: 1 / 7;
+  grid-row: 2 / span 4;
+  align-self: start;
+  font-size: clamp(1.75rem, 1.1rem + 2.3vw, 3.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.cajon--ancho .cajon__detalle {
+  grid-row: 1 / span 2;
+}
+.cajon--ancho .cajon__puntos {
+  grid-row: 3;
+}
+.cajon--ancho .cajon__datos {
+  grid-row: 4;
+}
+.cajon--ancho .cajon__acciones {
+  grid-row: 5;
+}
+.cajon.cajon--ancho .telefonos {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-content: center;
+  gap: 5%;
+  padding: 1.5rem 0 3.5rem;
+}
+.cajon--ancho .telefono {
+  max-width: 17rem;
+  rotate: -3deg;
+}
+.cajon--ancho .telefono:nth-child(2) {
+  rotate: 2deg;
+  translate: 0 3rem;
+}
+.cajon--ancho .telefono:nth-child(3) {
+  rotate: -1deg;
+  translate: 0 1rem;
+}
+
+/* ---------- Hechas ---------- */
+
+.hechas {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 1.5rem;
+  padding-block: clamp(5rem, 11vw, 10rem);
+}
+.hechas__titulo {
+  grid-column: 1 / span 5;
+  font-size: var(--t-xl);
+  font-weight: 820;
+  font-stretch: 110%;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-left: -0.04em;
+}
+.hechas__texto {
+  grid-column: 7 / span 6;
+  display: grid;
+  gap: 1.1rem;
+  font-size: var(--t-m);
+  line-height: 1.45;
+  padding-top: 0.4rem;
+}
+
+/* ---------- Pie: el cajón cerrado ---------- */
+
+.pie__frente {
+  background: var(--mueble);
+  color: var(--mueble-tinta);
+  border-radius: var(--r-mueble) var(--r-mueble) 0 0;
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1.25rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3.25rem);
+  justify-items: start;
+}
+.pie__grande {
+  font-size: var(--t-mega);
+  font-weight: 900;
+  font-stretch: 122%;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  margin-left: -0.05em;
+  color: #f2f3f5;
+  text-wrap: balance;
+}
+.pie__arriba {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--gutter);
+}
+.jaladera--pie {
+  width: clamp(5rem, 12vw, 10rem);
+}
+.pie__cols {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+  border-top: 2px solid rgba(255, 255, 255, 0.14);
+  padding-top: 1.5rem;
+}
+.pie__cols nav:first-child {
+  grid-column: 1 / span 5;
+}
+.pie__cols nav:first-child ul {
+  columns: 2;
+  column-gap: var(--gutter);
+}
+.pie__cols nav:nth-child(2) {
+  grid-column: 6 / span 3;
+}
+.pie__titulo {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  font-stretch: 92%;
+  color: #9ea5ae;
+  margin-bottom: 0.25rem;
+}
+.pie__letra {
+  grid-column: 9 / span 4;
+  justify-self: end;
+  text-align: right;
+  font-size: var(--t-xs);
+  color: #aeb4bc;
+  line-height: 1.5;
+  align-self: end;
+}
+.pie .utilidad:focus-visible {
+  outline-color: #f2f3f5;
+}
+
+/* ---------- Teléfono (390 px y cercanos) ---------- */
+
+@media (max-width: 900px) {
+  .portada {
+    min-height: 0;
+    row-gap: 2.25rem;
+  }
+  .portada__texto,
+  .portada__cajon {
+    grid-column: 1 / -1;
+  }
+  .portada__lead {
+    margin-top: 0;
+  }
+  .promesa__datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2rem;
+  }
+  .promesa__titulo,
+  .promesa__lead,
+  .grupo__titulo,
+  .grupo__lead,
+  .hechas__titulo,
+  .hechas__texto {
+    grid-column: 1 / -1;
+  }
+  .cajon__contenido {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .telefonos,
+  .cajon--der .telefonos,
+  .cajon__texto,
+  .cajon--der .cajon__texto {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .pie__cols nav:first-child,
+  .pie__cols nav:nth-child(2),
+  .pie__letra {
+    grid-column: 1 / -1;
+  }
+  .cajon.cajon--ancho .cajon__texto {
+    display: flex;
+    grid-row: auto;
+  }
+  .cajon.cajon--ancho .telefonos {
+    grid-row: auto;
+    justify-content: flex-start;
+  }
+  .cajon--ancho .cajon__frase {
+    font-size: var(--t-l);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --marco: 8px;
+    --r-hueco: 10px;
+  }
+  .barra__ext {
+    display: none;
+  }
+  .portada {
+    padding-top: 1rem;
+  }
+  .portada__titulo {
+    font-size: clamp(2.45rem, 11.4vw, 3.4rem);
+    font-stretch: 100%;
+    letter-spacing: -0.04em;
+  }
+  .bandeja__fondo {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(5, 5.9rem);
+    grid-template-areas:
+      "q q g"
+      "t t c"
+      "o p p"
+      "o b m"
+      "f b l";
+    aspect-ratio: auto;
+    gap: 8px;
+    padding: 8px;
+  }
+  .objeto {
+    width: clamp(44px, 15cqi, 64px);
+    margin-top: -1rem;
+  }
+  .hueco__nombre {
+    left: 0.55rem;
+    bottom: 0.4rem;
+    font-size: 0.75rem;
+  }
+  .portada__pie {
+    text-align: left;
+  }
+  .promesa__datos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cajon__frente {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 1rem 1rem 1.6rem;
+  }
+  .cajon__nombre {
+    font-size: clamp(1.9rem, 10.8cqi, 3.4rem);
+  }
+  .cajon__tagline {
+    font-size: 1rem;
+  }
+  .jaladera--frente {
+    position: absolute;
+    left: 50%;
+    bottom: 0.6rem;
+    translate: -50% 0;
+    height: 8px;
+  }
+  .cajon__dentro {
+    padding: 8px;
+  }
+  .cajon__contenido {
+    padding: 1.25rem 0 1.5rem;
+    row-gap: 1.5rem;
+  }
+  .cajon__texto {
+    padding-inline: 1.15rem;
+  }
+  .telefonos {
+    order: 1;
+  }
+  .cajon__texto {
+    order: 3;
+  }
+  .desliza {
+    display: block;
+    order: 2;
+    padding-inline: 1.15rem;
+    margin-top: -1.75rem;
+    font-size: var(--t-xs);
+    font-weight: 600;
+    color: var(--gris);
+  }
+  .hueco__que {
+    display: none !important;
+  }
+  .pie__letra {
+    justify-self: start;
+    text-align: left;
+  }
+  .pie__arriba {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.75rem;
+  }
+  .jaladera--pie {
+    justify-self: center;
+  }
+  /* Las capturas se pasan con el dedo, una por una. */
+  .telefonos {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 0.9rem;
+    padding: 0.5rem 1.15rem 2.75rem;
+    scroll-padding-inline: 1.15rem;
+    scrollbar-width: none;
+  }
+  .telefonos::-webkit-scrollbar {
+    display: none;
+  }
+  .telefono,
+  .cajon--abanico .telefono,
+  .cajon--ancho .telefono {
+    flex: 0 0 56%;
+    max-width: none;
+    margin-left: 0;
+    scale: none;
+    scroll-snap-align: start;
+  }
+  .cajon--abanico .telefonos {
+    justify-content: flex-start;
+  }
+  .cajon--abanico .telefono:nth-child(n) {
+    margin-left: 0;
+    scale: none;
+    rotate: 1.5deg;
+    translate: 0 0;
+  }
+  .cajon--abanico .telefono:nth-child(odd) {
+    rotate: -2deg;
+    translate: 0 0.75rem;
+  }
+  .cajon.cajon--ancho .telefonos {
+    padding: 0.5rem 1.15rem 2.75rem;
+  }
+  .pie__cols nav:first-child ul {
+    columns: 2;
+  }
+}
+
+/* Movimiento reducido: todo visible, sin trayectos; los estados se siguen viendo. */
+@media (prefers-reduced-motion: reduce) {
+  html.motion {
+    scroll-behavior: auto;
+  }
+  .barra,
+  .dibuja,
+  .btn,
+  .btn__rodillo > span,
+  .btn__flecha,
+  .objeto__alza,
+  .objeto__alza img,
+  .hueco__nombre,
+  .tienda__relleno,
+  .tema__luz {
+    transition: none !important;
+  }
+  .btn__rodillo > span + span {
+    visibility: hidden;
+  }
+  .btn:hover .btn__rodillo > span,
+  .btn:focus-visible .btn__rodillo > span {
+    translate: none;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .btn:hover,
+  .hueco__liga:hover .objeto__alza,
+  .hueco__liga:focus-visible .objeto__alza {
+    translate: none;
+  }
+}

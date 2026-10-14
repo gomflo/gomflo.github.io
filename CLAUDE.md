@@ -60,7 +60,7 @@ public/                  # Static assets (favicon, fonts/ propias en woff2, robo
 - `trailingSlash: 'always'`: GitHub Pages redirige `/ruta` a `/ruta/` con 301, así que todos los enlaces internos llevan barra final
 - Páginas satélite (`variants` en `tools.ts`): reutilizan una herramienta para otra búsqueda (`/contador-de-palabras/`, `/dias-feriados/`). Usan `ToolLayout` con `variant`, no cuentan para el panel del inicio y se enlazan desde la herramienta madre
 - El inicio (`index.astro`) arma la portada (título y mesa de pruebas), la caja de piezas con buscador a partir de `src/lib/tools.ts` y las apps; publica WebSite + ItemList
-- Enlaces a páginas que no pasan por `Layout.astro` (`/susurro/`, `/destello/`, `/partidos-de-hoy/`) llevan `data-astro-reload`
+- Enlaces a páginas que no pasan por `Layout.astro` (`/susurro/`, `/destello/`, `/partidos-de-hoy/`, `/android/`) llevan `data-astro-reload`
 - Pages use semantic HTML (`<main>`, `<section>`, `<header>`, `<nav>`)
 
 ### Agregar una herramienta
@@ -145,6 +145,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/contador-de-palabras` | CharacterCounter (`focus="words"`) | variante de contar-caracteres |
 | `/dias-feriados` | HolidayCalendar (Astro) | variante de dias-habiles |
 | `/partidos-de-hoy` | MatchGuide | fuera del catálogo, identidad propia |
+| `/android` | El cajón (Astro) | fuera del catálogo, identidad propia |
+
+### Apps para Android (`/android/`)
+- "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
+- Catálogo en `src/data/android-apps.ts`; el copy de la página en `src/components/android/contenido.ts`; estilos en `styles/android.css`; movimiento en `motion/android.ts` (usa `src/engine` sin ClientRouter)
+- Imágenes en `public/img/android/<slug>/` (`icono.png` cuadrado sin máscara, `captura-1..3.webp` de 540 px). Imagen para compartir: `public/img/android.jpeg` (captura del primer pliegue a 1200×630)
+- Ninguna está en Google Play: al publicar una, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace
+- El inicio la enlaza con el bloque oscuro de `#apps`
 
 ### Guía de partidos (`/partidos-de-hoy/`)
 - Diseño independiente (app deportiva clara/oscura, comparte la preferencia `theme` del sitio): no usa `Layout.astro` ni `global.css`, sino `styles/partidos.css` con clases `mg-*`
