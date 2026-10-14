@@ -1,0 +1,87 @@
+---
+// Un cajón de la cómoda: el frente del color de la app, con su nombre como etiqueta,
+// y adentro lo que trae (capturas reales, qué hace, qué no hace, la tienda).
+import type { App } from "./contenido";
+import { tintaSobre } from "./contenido";
+
+interface Props {
+  app: App;
+  /** Alterna de qué lado quedan las capturas. */
+  lado: "izq" | "der";
+}
+const { app, lado } = Astro.props;
+const tinta = tintaSobre(app.color);
+const red =
+  app.red === "sin-permiso"
+    ? "No pide permiso de internet"
+    : "Sin llamadas de red propias";
+---
+
+<article class={`cajon cajon--${lado} cajon--${app.forma}`} id={app.slug} aria-labelledby={`${app.slug}-nombre`} style={`--app:${app.color};--app-tinta:${tinta}`} data-cajon>
+  <header class="cajon__frente">
+    <img class="cajon__icono" src={`/img/android/${app.slug}/icono.png`} alt="" width="256" height="256" loading="lazy" decoding="async" />
+    <div class="cajon__rotulo">
+      <h3 class="cajon__nombre" id={`${app.slug}-nombre`}>{app.name}</h3>
+      <p class="cajon__tagline">{app.tagline}</p>
+    </div>
+    <span class="jaladera jaladera--frente" aria-hidden="true"></span>
+  </header>
+
+  <div class="cajon__dentro" data-dentro>
+    <div class="cajon__contenido" data-contenido>
+      <p class="desliza" aria-hidden="true">Desliza: {app.capturas.length} pantallas</p>
+      <ul class="telefonos" aria-label={`Capturas de ${app.name}`} data-telefonos tabindex="0">
+        {
+          app.capturas.map((c, i) => (
+            <li class="telefono" style={`--i:${i}`}>
+              <img
+                src={`/img/android/${app.slug}/captura-${c.n}.webp`}
+                alt={c.alt}
+                width="540"
+                height="1212"
+                loading="lazy"
+                decoding="async"
+              />
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="cajon__texto">
+        <p class="cajon__objeto">Antes: {app.objeto.charAt(0).toLowerCase() + app.objeto.slice(1)}</p>
+        <p class="cajon__frase">{app.frase}</p>
+        <p class="cajon__detalle">{app.detalle}</p>
+        <ul class="cajon__puntos">
+          {app.points.map((p) => <li>{p}</li>)}
+        </ul>
+        {app.aviso && <p class="cajon__aviso">{app.aviso}</p>}
+        <ul class="cajon__datos" aria-label="Lo que hay que saber">
+          <li>{red}</li>
+          {!app.pro && <li>Gratis, sin compras dentro</li>}
+        </ul>
+        <div class="cajon__acciones">
+          {
+            app.play ? (
+              <a class="tienda" href={app.play} rel="noopener">
+                <span class="tienda__relleno" aria-hidden="true" />
+                <span class="tienda__texto">Bájala en Google Play</span>
+              </a>
+            ) : (
+              <p class="estado">
+                <span class="tienda__punto" aria-hidden="true" />
+                Muy pronto en Google Play
+              </p>
+            )
+          }
+          {
+            app.privacy && (
+              <a class="utilidad" href={app.privacy}>
+                Aviso de privacidad<span class="sr"> de {app.name}</span>
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

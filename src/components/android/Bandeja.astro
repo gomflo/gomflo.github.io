@@ -1,0 +1,35 @@
+---
+// La firma: el cajón abierto, visto desde arriba. Cada compartimento guarda una app como
+// objeto suelto (girado, con holgura) y lleva a su cajón más abajo. La física vive en
+// src/motion/android.ts: un solo valor (la inclinación) mueve todo lo que hay adentro.
+import { apps, area, bandeja } from "./contenido";
+
+const orden = bandeja.map((s) => apps.find((a) => a.slug === s)!);
+---
+
+<div class="bandeja" data-bandeja>
+  <ul class="bandeja__fondo" aria-label="Las diez apps">
+    {
+      orden.map((app) => (
+        <li class={`hueco${["o", "b"].includes(area[app.slug]) ? " hueco--alto" : ""}`} style={`grid-area:${area[app.slug]}`}>
+          <a class="hueco__liga" href={`#${app.slug}`} style={`--app:${app.color}`}>
+            <span class="objeto" data-objeto data-masa={app.masa}>
+              <span class="objeto__alza" style={`--giro:${app.giro}deg`}>
+                <img src={`/img/android/${app.slug}/icono.png`} alt="" width="256" height="256" decoding="async" fetchpriority="high" />
+              </span>
+            </span>
+            <span class="hueco__rotulo">
+              <span class="hueco__nombre">{app.name}</span><span class="sr">, </span>
+              <span class="hueco__que">{app.tagline}</span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="bandeja__frente" aria-hidden="true">
+    <span class="bandeja__etiqueta">El cajón de gomflo</span>
+    <span class="jaladera"></span>
+    <span class="bandeja__etiqueta bandeja__etiqueta--fin">Android</span>
+  </div>
+</div>
