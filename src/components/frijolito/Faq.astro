@@ -1,0 +1,28 @@
+---
+// Preguntas frecuentes, abiertas una por una. El JSON-LD (FAQPage) lo arma cada página con las mismas.
+export interface Faq {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  faq: Faq[];
+  titulo?: string;
+}
+
+const { faq, titulo = "Preguntas frecuentes" } = Astro.props;
+---
+
+<section class="fj-seccion fj-marco" aria-labelledby="faq-titulo">
+  <h2 id="faq-titulo" class="fj-seccion__titulo">{titulo}</h2>
+  <div class="fj-faq">
+    {
+      faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>

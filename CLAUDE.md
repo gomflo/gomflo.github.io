@@ -60,7 +60,7 @@ public/                  # Static assets (favicon, fonts/ propias en woff2, robo
 - `trailingSlash: 'always'`: GitHub Pages redirige `/ruta` a `/ruta/` con 301, así que todos los enlaces internos llevan barra final
 - Páginas satélite (`variants` en `tools.ts`): reutilizan una herramienta para otra búsqueda (`/contador-de-palabras/`, `/dias-feriados/`). Usan `ToolLayout` con `variant`, no cuentan para el panel del inicio y se enlazan desde la herramienta madre
 - El inicio (`index.astro`) arma la portada (título y mesa de pruebas), la caja de piezas con buscador a partir de `src/lib/tools.ts` y las apps; publica WebSite + ItemList
-- Enlaces a páginas que no pasan por `Layout.astro` (`/susurro/`, `/destello/`, `/partidos-de-hoy/`, `/android/`, `/tinmarin/`) llevan `data-astro-reload`
+- Enlaces a páginas que no pasan por `Layout.astro` (`/susurro/`, `/destello/`, `/partidos-de-hoy/`, `/android/`, `/tinmarin/`, `/frijolito/`) llevan `data-astro-reload`
 - Pages use semantic HTML (`<main>`, `<section>`, `<header>`, `<nav>`)
 
 ### Agregar una herramienta
@@ -146,13 +146,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/dias-feriados` | HolidayCalendar (Astro) | variante de dias-habiles |
 | `/partidos-de-hoy` | MatchGuide | fuera del catálogo, identidad propia |
 | `/tinmarin` | TinMarin | fuera del catálogo, identidad de la app |
+| `/frijolito` | Cantador | fuera del catálogo, identidad de la app |
 | `/android` | El cajón (Astro) | fuera del catálogo, identidad propia |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
 - Catálogo en `src/data/android-apps.ts`; el copy de la página en `src/components/android/contenido.ts`; estilos en `styles/android.css`; movimiento en `motion/android.ts` (usa `src/engine` sin ClientRouter)
 - Imágenes en `public/img/android/<slug>/` (`icono.png` cuadrado sin máscara, `captura-1..3.webp` de 540 px). Imagen para compartir: `public/img/android.jpeg` (captura del primer pliegue a 1200×630)
-- Solo Tin Marín está en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
+- Tin Marín y Frijolito están en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
 - El inicio la enlaza con el bloque oscuro de `#apps`
 
 ### Tin Marín en la web (`/tinmarin/`)
@@ -164,6 +165,15 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - Plantilla compartida `layouts/TinMarinLayout.astro` (cabeza con SEO e imagen, barra, pie). Guías por uso en `src/pages/tinmarin/<slug>.astro` con `layouts/TinMarinGuia.astro`: la ruleta adentro (`<TinMarin completa={false} />`, sin sorteos ni comprobador, que viven en `/tinmarin/`), guía, app, FAQ y enlaces. El catálogo de guías está en `src/data/tinmarin-guias.ts`; solo describe lo que la herramienta hace
 - Imágenes para compartir: `npm run og:tinmarin` (`scripts/og-tinmarin.mjs`, no necesita build) escribe `public/img/tinmarin.jpeg` y `public/img/tinmarin/<slug>.jpeg`. Córrelo al agregar una guía
 - Enlaces a Google Play con `playLink(url, campaign)` de `src/lib/play.ts` (agrega `&referrer=` con utm_source=gomflo.dev, utm_medium=web y utm_campaign de la página). En JSON-LD `installUrl` va sin referrer
+
+### Frijolito en la web (`/frijolito/`)
+- El cantador de lotería de la app para Android (`~/code/frijolito`) en el navegador, con su identidad (la mesa toma la tinta de la carta, papel crema, Fraunces e Instrument Sans; sistema en `~/code/frijolito/DESIGN.md`): no usa `Layout.astro` ni `global.css`, sino `styles/frijolito.css` con clases `fj-*`. En la web la mesa va 15 % más honda que en la app (`--fondo`) por contraste
+- La baraja está portada de la app: `src/lib/frijolito/baraja.ts` (SplitMix64 con BigInt, Fisher-Yates, tablas distintas como `Boards.batch`). La baraja entera se decide al barajar; nada depende del ritmo ni de los toques. Con la misma semilla sale el mismo orden que en el teléfono (cotejado contra el Kotlin)
+- Cartas: `src/data/frijolito-cartas.ts` (número, nombre, verso, tinta y texto alternativo; generado desde `cards.xml` y `CardTones.kt` de la app). Ilustraciones de la baraja de feria en `public/frijolito/cartas/NN-slug.webp` (300 px, rejillas y tablas) y `grande/` (480 px, la carta en turno). Fuentes en `public/fonts/fraunces-*.woff2` e `instrument-sans-400_700-normal.woff2` (recortadas de las de la app)
+- Interfaz en `src/components/frijolito/`: `Cantador.tsx` (estado en `localStorage` "frijolito", voz con `speechSynthesis` en es-MX/es-US/es, canta solo, cantadas), `Tablas.tsx` (de 1 a 12 tablas y las 54 cartas para recortar, con `window.print()` y `@media print`, una tabla por hoja carta), `Cara.astro`/`Cara.tsx` (la carta), `App.astro` (bloque de la app con capturas en `public/img/frijolito/`), `Faq.astro` y `Paginas.astro`
+- Plantilla `layouts/FrijolitoLayout.astro` (cabeza con SEO e imagen, barra, pie) y `layouts/FrijolitoGuia.astro` para las guías por uso (el cantador adentro). Catálogo de páginas en `src/data/frijolito-paginas.ts`
+- Imágenes para compartir: `npm run og:frijolito` (`scripts/og-frijolito.mjs`, no necesita build) escribe `public/img/frijolito.jpeg` y `public/img/frijolito/<slug>.jpeg`. Las cartas 2, 8, 14, 25, 26, 38 y 42 no van en imágenes para compartir ni en la portada
+- Nada de "bingo", "casino", "apuestas", "premios", "sorteo" ni "boletos"; no se nombran otras apps de lotería ni fabricantes. El arte es "baraja ilustrada propia" (no "hecha a mano") y las voces de Ramón y Jess son sintéticas. El aviso de privacidad de la app sigue en `public/frijolito/privacidad/`
 
 ### Guía de partidos (`/partidos-de-hoy/`)
 - Diseño independiente (app deportiva clara/oscura, comparte la preferencia `theme` del sitio): no usa `Layout.astro` ni `global.css`, sino `styles/partidos.css` con clases `mg-*`

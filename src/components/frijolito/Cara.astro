@@ -1,0 +1,29 @@
+---
+// Una carta de la baraja de feria, como la dibuja la app: papel, ilustración, el número en la esquina y,
+// en rejillas y tablas, la placa con el nombre al pie. Su gemela en React está en Cara.tsx.
+import { imagen, textoAlt, type Carta } from "../../data/frijolito-cartas";
+
+interface Props {
+  carta: Carta;
+  placa?: boolean;
+  /** Las de arriba de la página no esperan al scroll. */
+  lazy?: boolean;
+}
+
+const { carta, placa = true, lazy = true } = Astro.props;
+---
+
+<div class="fj-cara">
+  <div class="fj-cara__dibujo">
+    <img
+      src={imagen(carta)}
+      alt={textoAlt(carta)}
+      width="300"
+      height="450"
+      loading={lazy ? "lazy" : "eager"}
+      decoding="async"
+    />
+    <span class="fj-cara__numero" aria-hidden="true">{carta.n}</span>
+  </div>
+  {placa && <span class="fj-cara__placa" aria-hidden="true">{carta.nombre}</span>}
+</div>
