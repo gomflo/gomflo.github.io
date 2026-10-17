@@ -1,31 +1,46 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Piezas from "../components/Piezas.astro";
-import { tools } from "../lib/tools";
+import { categories, tools } from "../lib/tools";
 import { androidApps } from "../data/android-apps";
 
 // Apps de escritorio: sus landings se publican desde otros repos (ver astro.config.mjs).
-// Sin `href` la app sale como "Muy pronto" y no enlaza a nada.
-const apps: { slug: string; title: string; desc: string; href?: string }[] = [
+const apps = [
   {
     slug: "susurro",
     title: "Susurro",
-    desc: "Dictado por voz. Mantén fn, habla y suelta: el texto aparece pulido en cualquier app, sin salir de tu equipo.",
+    tipo: "Dictado por voz",
+    desc: "Mantén fn, habla y suelta: el texto aparece pulido en cualquier app, sin salir de tu equipo.",
     href: "/susurro/",
   },
   {
     slug: "destello",
     title: "Destello",
-    desc: "Capturas de pantalla. Captura, anota, copia texto, fija y graba con un atajo; nativa y sin nube.",
+    tipo: "Capturas de pantalla",
+    desc: "Captura, anota, copia texto, fija y graba con un atajo; nativa y sin nube.",
     href: "/destello/",
   },
   {
     slug: "brinco",
     title: "Brinco",
-    desc: "Cambio de escritorio al instante. Brinca entre Spaces con tus atajos o el trackpad, sin la animación de macOS.",
+    tipo: "Cambio de escritorio",
+    desc: "Brinca entre Spaces con tus atajos o el trackpad, sin la animación de macOS.",
     href: "/brinco/",
   },
 ];
+
+// Las capturas del cajón: tres apps de Android, cada una con su primera pantalla.
+const capturas = ["quincena", "canica", "pastillero"].map((slug) => androidApps.find((a) => a.slug === slug)!);
+
+// Seis piezas responden en la mitad de salida; las demás, en la lista.
+const enLaMesa = [
+  ["convertir-mayusculas-minusculas", "Mayúsculas"],
+  ["remover-acentos", "Sin acentos"],
+  ["codigo-morse", "Morse"],
+  ["base64-texto", "Base64"],
+  ["texto-a-binario", "Binario"],
+  ["calculadora-iva", "Con IVA"],
+].map(([slug, nombre]) => ({ ...tools.find((t) => t.slug === slug)!, nombre }));
 
 const siteURL = new URL("/", Astro.site).href;
 const jsonLd = JSON.stringify([
@@ -56,107 +71,147 @@ const jsonLd = JSON.stringify([
   imageAlt="gomflo.dev: herramientas online gratis en español"
   description="Herramientas online gratis en español: validar CLABE, calculadora de IVA, días hábiles, números a letras, romanos, código morse, JSON, contraseñas y más."
 >
-  <main id="main-content" class="inicio contenedor" tabindex="-1">
-    <!-- Portada: el título y la mesa de pruebas. Lo que se escribe en la mesa pasa por todas las piezas. -->
-    <section class="portada" aria-labelledby="portada-titulo">
-      <div class="pieza portada__titulo entra" data-cabeza>
-        <p class="etiqueta">{tools.length} piezas · gratis · en español</p>
-        <h1 id="portada-titulo" class="titular">Herramientas online gratis <span>para el día a día.</span></h1>
-      </div>
-      <div class="mesa entra">
-        <label for="muestra" class="etiqueta">la mesa de pruebas</label>
-        <textarea id="muestra" data-muestra rows="2" maxlength="160" spellcheck="false" autocomplete="off">¡Hola, México!</textarea>
-        <p class="mesa__nota">
-          Escribe lo que quieras aquí arriba. Las {tools.length} piezas de abajo ya lo están trabajando.
+  <main id="main-content" class="inicio" tabindex="-1">
+    <!-- Portada: una sola columna sobre la línea de la cuarta columna. Abajo asoma la mesa. -->
+    <section class="portada contenedor reticula" aria-labelledby="portada-titulo">
+      <div class="portada__columna">
+        <h1 id="portada-titulo" class="entra">Herramientas gratis <br />en español.</h1>
+        <p class="portada__frase entra">
+          {tools.length} piezas para el día a día: CLABE, IVA, JSON, contraseñas, morse y más. Sin cuenta, sin instalar,
+          y lo que escribes no sale de tu navegador.
         </p>
-      </div>
-      <ul class="reglas" role="list">
-        <li class="entra">Sin cuenta</li>
-        <li class="entra">Sin instalar</li>
-        <li class="entra">Nada sale de tu navegador</li>
-      </ul>
-    </section>
-
-    <!-- La caja de piezas, con su buscador. -->
-    <section id="herramientas" class="caja" aria-labelledby="caja-titulo">
-      <div class="buscador" data-buscador-barra>
-        <h2 id="caja-titulo" class="titular">Todas las piezas</h2>
-        <div class="buscador__campo">
-          <label for="buscador" class="sr-only">Buscar herramienta</label>
-          <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="8.5" cy="8.5" r="5.5" /><path d="M13 13l4.5 4.5" /></svg>
-          <input
-            id="buscador"
-            type="search"
-            data-buscador
-            placeholder="CLABE, JSON, IVA…"
-            autocomplete="off"
-            spellcheck="false"
-            enterkeyhint="go"
-          />
-          <span class="buscador__cuenta etiqueta" data-cuenta aria-live="polite">{tools.length} piezas</span>
+        <div class="portada__acciones entra">
+          <a class="boton" href="#herramientas">Ver las {tools.length} piezas</a>
+          <a class="portada__otro" href="#apps">Apps para Mac y Android <span aria-hidden="true">→</span></a>
         </div>
       </div>
-      <Piezas level={3} />
-      <p class="caja__vacio titular" data-sin-resultados hidden>
-        Esa pieza no está en la caja. Prueba con otra palabra o borra la búsqueda.
-      </p>
     </section>
 
-    <!-- Las apps: piezas más grandes, para Mac, y el cajón de las de Android. -->
-    <section id="apps" class="apps" aria-labelledby="apps-titulo">
-      <header class="apps__cabeza">
-        <h2 id="apps-titulo" class="titular" data-entra>También hago apps</h2>
-        <p data-entra>Para Mac y para Android. Nativas, ligeras y con la misma regla: tus datos se quedan contigo.</p>
-      </header>
-      <ul class="apps__lista" role="list">
-        {apps.map((app) => {
-          const Tag = app.href ? "a" : "div";
-          return (
-            <li data-entra>
-              {/* Se publican desde otros repos: recarga completa, sin transición. */}
-              <Tag href={app.href} class="pieza app" data-astro-reload={app.href ? true : undefined} data-astro-prefetch={app.href ? "false" : undefined}>
-                <span class="pieza__arriba">
-                  <img
-                    src={`/img/apps/${app.slug}.png`}
-                    alt=""
-                    width="72"
-                    height="72"
-                    loading="lazy"
-                    decoding="async"
-                    class="app__icono"
-                  />
-                  {app.href ? (
-                    <span class="pieza__flecha" aria-hidden="true">
-                      <svg viewBox="0 0 16 16" focusable="false"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" /></svg>
-                    </span>
-                  ) : (
-                    <span class="app__pronto etiqueta">muy pronto</span>
-                  )}
-                </span>
-                <span class="app__nombre titular">{app.title}</span>
-                <span class="app__desc">{app.desc}</span>
-              </Tag>
-            </li>
-          );
-        })}
-      </ul>
-      <div class="android" data-entra>
-        {/* /android/ no pasa por Layout.astro: recarga completa, sin transición. */}
-        <a href="/android/" class="pieza android__enlace" data-astro-reload data-astro-prefetch="false">
-          <span class="android__texto">
-            <span class="etiqueta">android · {androidApps.length} apps</span>
-            <span class="android__nombre titular">El cajón, para Android</span>
-            <span class="android__desc">La quincena, los sobres, la rifa, el intercambio, las medicinas de tu mamá. Sin anuncios y sin cuenta.</span>
-          </span>
-          <span class="android__iconos" aria-hidden="true">
-            {androidApps.map((a) => (
-              <img src={`/img/android/${a.slug}/icono.png`} alt="" width="56" height="56" loading="lazy" decoding="async" />
+    <!-- La mesa de pruebas: a la izquierda lo que escribes, a la derecha lo que la caja hace con ello. -->
+    <section class="mesa" aria-labelledby="mesa-titulo">
+      <div class="mesa__entrada">
+        <label for="muestra" class="mesa__rotulo">Escribe o pega aquí</label>
+        <textarea id="muestra" data-muestra rows="3" maxlength="160" spellcheck="false" autocomplete="off">¡Hola, México!</textarea>
+        <code class="mesa__cuenta" data-vivo="contar-caracteres" aria-hidden="true" />
+      </div>
+
+      <h2 id="mesa-titulo" class="mesa__titulo">
+        <span>Tú escribes,</span>
+        <span>la caja responde.</span>
+      </h2>
+
+      <div class="mesa__salida">
+        <div class="caja-ui" data-ui>
+          <p class="caja-ui__cabeza"><span>Con tu texto</span><span>{enLaMesa.length} de {tools.length}</span></p>
+          <ul role="list">
+            {enLaMesa.map((tool) => (
+              <li>
+                <a href={tool.href} data-cat={tool.category}>
+                  <span class="caja-ui__punto" aria-hidden="true" />
+                  <span class="caja-ui__nombre" data-nombre>{tool.nombre}</span>
+                  <code data-vivo={tool.slug} />
+                </a>
+              </li>
             ))}
-          </span>
-          <span class="pieza__flecha" aria-hidden="true">
-            <svg viewBox="0 0 16 16" focusable="false"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" /></svg>
-          </span>
-        </a>
+          </ul>
+          <a class="caja-ui__pie" href="#herramientas">Las otras {tools.length - enLaMesa.length} <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- La caja de piezas: el riel con el buscador a la izquierda, la lista a la derecha. -->
+    <section id="herramientas" class="caja contenedor reticula" aria-labelledby="caja-titulo">
+      <div class="riel">
+        <div class="riel__in" data-buscador-barra>
+          <h2 id="caja-titulo" class="riel__titulo">Las {tools.length} piezas</h2>
+          <p class="riel__texto">
+            En {categories.length} cajones. Cada una ya trabaja con lo que escribiste arriba.
+          </p>
+          <div class="buscador">
+            <label for="buscador" class="sr-only">Buscar herramienta</label>
+            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="8.5" cy="8.5" r="5.5" /><path d="M13 13l4.5 4.5" /></svg>
+            <input
+              id="buscador"
+              type="search"
+              data-buscador
+              placeholder="CLABE, JSON, IVA…"
+              autocomplete="off"
+              spellcheck="false"
+              enterkeyhint="go"
+            />
+            <span class="buscador__cuenta" data-cuenta aria-live="polite">{tools.length} piezas</span>
+          </div>
+        </div>
+      </div>
+      <div class="caja__lista">
+        <Piezas level={3} />
+        <p class="caja__vacio" data-sin-resultados hidden>
+          Esa pieza no está en la caja. Prueba con otra palabra.
+        </p>
+      </div>
+    </section>
+
+    <!-- Las apps: un libro mayor y, a un lado, la imagen de la que apuntas (o se van turnando).
+         Se publican desde otros repos: recarga completa, sin transición. -->
+    <section id="apps" class="apps contenedor reticula" aria-labelledby="apps-titulo" data-obras>
+      <div class="riel">
+        <h2 id="apps-titulo" class="riel__titulo" data-entra>También hago apps</h2>
+        <p class="riel__texto" data-entra>Para Mac y para Android. Nativas, ligeras, y tus datos se quedan contigo.</p>
+      </div>
+
+      <ul class="libro" role="list">
+        {apps.map((app, i) => (
+          <li data-entra>
+            <a href={app.href} class="libro__fila" data-obra={i} data-astro-reload data-astro-prefetch="false">
+              <img src={`/img/apps/${app.slug}.png`} alt="" width="256" height="256" loading="lazy" decoding="async" class="libro__icono" />
+              <span class="libro__nombre">{app.title}</span>
+              <span class="libro__tipo">{app.tipo}</span>
+              <span class="libro__donde">Mac</span>
+            </a>
+          </li>
+        ))}
+        <li data-entra>
+          {/* /android/ no pasa por Layout.astro: recarga completa, sin transición. */}
+          <a href="/android/" class="libro__fila" data-obra={apps.length} data-astro-reload data-astro-prefetch="false">
+            <span class="libro__icono libro__icono--cajon" aria-hidden="true">
+              {androidApps.slice(0, 4).map((app) => (
+                <img src={`/img/android/${app.slug}/icono.png`} alt="" width="256" height="256" loading="lazy" decoding="async" />
+              ))}
+            </span>
+            <span class="libro__nombre">El cajón</span>
+            <span class="libro__tipo">{androidApps.length} apps para el día a día</span>
+            <span class="libro__donde">Android</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- La vista: una toma por app; se cruzan despacio (src/motion/obras.ts). -->
+      <div class="vista" data-entra>
+        <div class="vista__marco">
+          {apps.map((app, i) => (
+            <figure class="vista__toma" data-toma={i} data-activa={i === 0 ? "" : undefined}>
+              <img src={`/img/apps/${app.slug}.png`} alt={`Ícono de ${app.title}`} width="256" height="256" loading="lazy" decoding="async" class="vista__icono" />
+            </figure>
+          ))}
+          <figure class="vista__toma vista__toma--cajon" data-toma={apps.length}>
+            {capturas.map((app) => (
+              <img
+                src={`/img/android/${app.slug}/captura-1.webp`}
+                alt={`Pantalla de ${app.name}: ${app.tagline.toLowerCase()}`}
+                width="540"
+                height="1212"
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
+          </figure>
+        </div>
+        <div class="vista__textos">
+          {apps.map((app, i) => (
+            <p data-toma={i} data-activa={i === 0 ? "" : undefined}>{app.desc}</p>
+          ))}
+          <p data-toma={apps.length}>La quincena, los sobres, la rifa, el intercambio, las medicinas de tu mamá. Sin anuncios y sin cuenta.</p>
+        </div>
       </div>
     </section>
 
@@ -165,373 +220,592 @@ const jsonLd = JSON.stringify([
 </Layout>
 
 <style>
-  /* ---------- Portada ---------- */
+  /* ---------- Portada: una columna sobre la cuarta línea; lo demás, aire ---------- */
 
   .portada {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    grid-template-rows: 1fr auto;
-    gap: var(--hueco);
+    min-height: clamp(26rem, calc(100svh - 4.75rem - 7.5rem), 46rem);
   }
 
-  .portada__titulo {
-    --pieza: var(--bloque-oscuro);
-    grid-row: 1 / -1;
-    justify-content: space-between;
-    gap: 2.5rem;
-    min-height: clamp(15rem, 30vw, 22rem);
-    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
-    color: var(--crema-fija);
-  }
-
-  .portada__titulo .etiqueta {
-    margin: 0;
+  .portada__columna {
+    grid-column: 4 / -1;
+    align-self: center;
+    max-width: 46rem;
+    padding-block: clamp(2.5rem, 8vh, 5rem);
   }
 
   .portada h1 {
     margin: 0;
-    font-size: clamp(2.5rem, 1.2rem + 5.2vw, 5.75rem);
-    line-height: 0.9;
+    font-size: var(--t-display);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
   }
-  .portada h1 span {
+
+  .portada__frase {
+    --d: 0.06s;
+    max-width: 36rem;
+    margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0;
+    font-size: var(--t-destacado);
+    line-height: 1.45;
+  }
+
+  .portada__acciones {
+    --d: 0.12s;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.75rem;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .portada .entra {
+    --de: 0deg;
+  }
+
+  .boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.25rem;
+    padding: 0 1.375rem;
+    background: var(--tinta);
+    color: var(--crema);
+    font-size: var(--t-texto);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radio-sobrio);
+    transition:
+      opacity 0.2s var(--ease-soft),
+      scale 0.2s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .boton:hover {
+      opacity: 0.86;
+    }
+  }
+  .boton:active {
+    scale: 0.97;
+  }
+
+  .portada__otro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    color: var(--tinta);
+    font-size: var(--t-texto);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .portada__otro span {
+    transition: translate 0.3s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .portada__otro:hover span {
+      translate: 0.25rem 0;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .portada__columna {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 760px) {
+    .portada {
+      min-height: 0;
+    }
+    .portada__columna {
+      padding-block: 3.5rem 4.5rem;
+    }
+  }
+
+  /* ---------- La mesa: mitad de entrada y mitad de salida, sin hueco entre ellas ---------- */
+
+  .mesa {
+    --margen: max(var(--gutter), calc((100vw - var(--max-width)) / 2 + var(--gutter)));
+    --adentro: clamp(1.5rem, 4vw, 4rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 1fr auto;
+    min-height: clamp(28rem, 68svh, 40rem);
+  }
+
+  .mesa__entrada {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.75rem, 4vw, 3.5rem) var(--adentro) 0 var(--margen);
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+  }
+
+  .mesa__rotulo {
+    color: #c9c4da;
+    font-size: var(--t-chico);
+    transition: color 0.2s var(--ease-soft);
+  }
+  .mesa__entrada:focus-within .mesa__rotulo {
     color: var(--sol);
   }
 
-  /* La mesa de pruebas: el único bloque blanco de la portada, con contorno. */
-  .mesa {
-    --d: 0.07s;
-    --de: 1.5deg;
-    display: flex;
-    flex-direction: column;
-    padding: clamp(1rem, 0.8rem + 1vw, 1.5rem);
-    background: var(--panel);
-    border: 2px solid var(--tinta);
-    border-radius: var(--radio-pieza);
-  }
-
   .mesa textarea {
-    flex: 1;
     width: 100%;
-    min-height: 4.5rem;
-    margin: 0.35rem 0 0;
+    max-width: 34ch;
+    margin: 0.5rem 0 0;
     padding: 0;
     border: 0;
     background: transparent;
-    color: var(--tinta);
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
-    font-weight: 800;
-    font-stretch: 90%;
-    letter-spacing: -0.015em;
-    line-height: 1.02;
+    color: var(--crema-fija);
+    font-family: var(--font-sans);
+    font-size: var(--t-destacado);
+    font-weight: 500;
+    line-height: 1.4;
     resize: none;
-    caret-color: var(--coral);
+    caret-color: var(--sol);
   }
   .mesa textarea:focus-visible {
     outline: none;
   }
-  .mesa:focus-within {
-    outline: 3px solid var(--acento);
-    outline-offset: 3px;
+
+  .mesa__cuenta {
+    margin-top: 0.75rem;
+    color: #c9c4da;
+    font-family: var(--font-code);
+    font-size: var(--t-chico);
   }
 
-  .mesa__nota {
-    margin: 0.75rem 0 0;
-    color: var(--gris);
-    font-size: var(--t-s);
-    line-height: 1.35;
+  .mesa__salida {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    padding: clamp(1.75rem, 4vw, 3.5rem) var(--margen) 0 var(--adentro);
+    background: var(--panel);
   }
 
-  .reglas {
+  /* El titular cruza el borde: una mitad en cada campo, sobre la misma línea. */
+  .mesa__titulo {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    z-index: 1;
     display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr);
-    gap: var(--hueco);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 0;
-    padding: 0;
+    padding-bottom: 2rem;
+    font-size: var(--t-titulo);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .mesa__titulo span:first-child {
+    padding-left: var(--margen);
+    color: var(--crema-fija);
+  }
+  .mesa__titulo span:last-child {
+    padding-left: var(--adentro);
+    color: var(--tinta);
+  }
+
+  /* El fragmento de la caja, a tamaño de interfaz: aquí sí van sus líneas finas. */
+  .caja-ui {
+    max-width: 32rem;
+    background: var(--crema);
+    border: 1px solid var(--linea); /* taste-skill-ignore: dentro del fragmento data-ui */
+    border-radius: var(--radio-sobrio);
+    font-size: var(--t-chico);
+  }
+  .caja-ui__cabeza {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    color: var(--gris);
+    border-bottom: 1px solid var(--linea); /* taste-skill-ignore: dentro del fragmento data-ui */
+  }
+  .caja-ui ul {
+    margin: 0;
+    padding: 0.25rem;
     list-style: none;
   }
-  .reglas li {
+  .caja-ui li a {
+    display: grid;
+    grid-template-columns: 0.5rem minmax(0, 6.5rem) minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0 0.75rem;
+    color: var(--tinta);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: background-color 0.15s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .caja-ui li a:hover {
+      background: var(--crema-honda);
+    }
+  }
+  .caja-ui li a:active {
+    background: var(--crema-honda);
+  }
+  .caja-ui__punto {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--pieza);
+  }
+  .caja-ui__nombre {
+    font-weight: 600;
+  }
+  .caja-ui code {
+    overflow: hidden;
+    font-family: var(--font-code);
+    font-size: var(--t-chico);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  @keyframes vivo {
+    from {
+      opacity: 0.2;
+    }
+  }
+  :global(.motion) .caja-ui code:global(.cambia) {
+    animation: vivo 0.5s var(--ease-soft);
+  }
+  .caja-ui__pie {
     display: flex;
     align-items: center;
-    min-height: 3.25rem;
-    padding: 0.5rem 1rem;
-    color: var(--tinta-fija);
-    font-size: var(--t-s);
-    font-weight: 700;
-    line-height: 1.1;
-    border-radius: 1rem;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    color: var(--gris);
+    text-decoration: none;
+    border-top: 1px solid var(--linea); /* taste-skill-ignore: dentro del fragmento data-ui */
   }
-  .reglas li:nth-child(1) { --d: 0.14s; background: var(--lila); }
-  .reglas li:nth-child(2) { --d: 0.19s; --de: 1.5deg; background: var(--menta); }
-  .reglas li:nth-child(3) { --d: 0.24s; background: var(--cielo); }
-
-  @media (max-width: 900px) {
-    .portada {
-      grid-template-columns: minmax(0, 1fr);
+  @media (hover: hover) {
+    .caja-ui__pie:hover {
+      color: var(--tinta);
     }
-    .portada__titulo {
-      grid-row: auto;
+  }
+
+  /* En el teléfono los campos se apilan y el titular se parte en el borde: una mitad abajo del campo oscuro, otra arriba del claro. */
+  @media (max-width: 760px) {
+    .mesa {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto auto;
       min-height: 0;
     }
+    .mesa__entrada {
+      grid-row: 1;
+      padding: 2rem var(--gutter) 0;
+    }
     .mesa textarea {
-      min-height: 3.5rem;
+      font-size: 1.125rem;
     }
-  }
-  @media (max-width: 460px) {
-    .reglas {
-      grid-template-columns: 1fr 1fr;
+    /* En el teléfono la cuenta ya sale en la lista; aquí se pegaría al titular. */
+    .mesa__cuenta {
+      display: none;
     }
-    .reglas li:nth-child(3) {
-      grid-column: 1 / -1;
+    .mesa__titulo {
+      grid-column: 1;
+      grid-row: 2;
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0;
+    }
+    .mesa__titulo span:first-child,
+    .mesa__titulo span:last-child {
+      padding-inline: var(--gutter);
+    }
+    .mesa__titulo span:first-child {
+      padding-block: 2.5rem 1.5rem;
+      background: var(--bloque-oscuro);
+    }
+    .mesa__titulo span:last-child {
+      padding-top: 1.5rem;
+      background: var(--panel);
+    }
+    .mesa__salida {
+      grid-column: 1;
+      grid-row: 3;
+      padding: 1.5rem var(--gutter) 2.5rem;
     }
   }
 
-  /* ---------- La caja: buscador + piezas ---------- */
+  /* ---------- La caja: riel con buscador y la lista de dos extremos ---------- */
 
-  .caja {
-    padding-top: clamp(2.5rem, 6vw, 4.5rem);
-    scroll-margin-top: 0;
+  .caja,
+  .apps {
+    row-gap: 2rem;
+    padding-top: clamp(5rem, 11vw, 10rem);
+  }
+
+  .riel {
+    grid-column: 1 / 4;
+  }
+  .riel__in {
+    position: sticky;
+    top: 1.5rem;
+  }
+  .riel__titulo {
+    margin: 0;
+    font-size: var(--t-destacado);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .riel__texto {
+    margin: 0.625rem 0 0;
+    font-size: var(--t-texto);
+    line-height: 1.5;
+  }
+
+  .caja__lista {
+    grid-column: 4 / -1;
+    display: grid;
+    gap: 1.5rem;
   }
 
   .buscador {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem 2rem;
-    margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
-  }
-
-  .buscador h2 {
-    margin: 0;
-    font-size: var(--t-l);
-  }
-
-  .buscador__campo {
     position: relative;
     display: flex;
     align-items: center;
-    flex: 1;
-    max-width: 30rem;
-    min-width: min(100%, 16rem);
+    margin-top: 1.5rem;
   }
-
-  .buscador__campo svg {
+  .buscador svg {
     position: absolute;
-    left: 0.9rem;
-    width: 1.25rem;
-    height: 1.25rem;
+    left: 0.875rem;
+    width: 1.125rem;
+    height: 1.125rem;
     fill: none;
-    stroke: var(--tinta);
-    stroke-width: 2.2;
+    stroke: var(--gris);
+    stroke-width: 2;
     stroke-linecap: round;
     pointer-events: none;
   }
-
   .buscador input {
     width: 100%;
-    min-height: 3.25rem;
-    padding: 0.35rem 6.5rem 0.35rem 2.75rem;
-    border: 2px solid var(--tinta);
-    border-radius: 1rem;
+    min-height: 3rem;
+    padding: 0.35rem 5.5rem 0.35rem 2.6rem;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: var(--radio-sobrio);
     background: var(--panel);
     color: var(--tinta);
     font: inherit;
-    font-weight: 600;
+    font-size: var(--t-texto);
   }
-
   .buscador input::placeholder {
     color: var(--gris);
-    font-weight: 400;
   }
-
   .buscador input:focus-visible {
-    outline: 3px solid var(--acento);
+    outline: 2px solid var(--acento);
     outline-offset: 2px;
-    border-radius: 1rem;
+    border-radius: var(--radio-sobrio);
   }
-
   .buscador__cuenta {
     position: absolute;
-    right: 0.9rem;
+    right: 0.875rem;
     color: var(--gris);
+    font-size: var(--t-chico);
     font-variant-numeric: tabular-nums;
     pointer-events: none;
   }
 
   .caja__vacio {
-    margin: 2rem 0 0;
-    max-width: 22ch;
-    font-size: var(--t-l);
-    line-height: 1.05;
+    margin: 0;
+    padding-inline: 0.75rem;
+    font-size: var(--t-destacado);
+    line-height: 1.35;
   }
 
-  /* ---------- Apps ---------- */
+  /* ---------- Apps: libro mayor y su vista ---------- */
 
   .apps {
-    padding-top: clamp(3.5rem, 8vw, 7rem);
+    align-items: start;
   }
 
-  .apps__cabeza {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem 3rem;
-    margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
-  }
-
-  .apps__cabeza h2 {
-    margin: 0;
-    font-size: var(--t-xl);
-    max-width: 14ch;
-  }
-
-  .apps__cabeza p {
-    margin: 0;
-    max-width: 30ch;
-    color: var(--gris);
-    font-size: var(--t-m);
-    line-height: 1.3;
-  }
-
-  .apps__lista {
+  .libro {
+    grid-column: 4 / 9;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--hueco);
-    margin: 0;
+    margin: -0.5rem 0 0;
     padding: 0;
     list-style: none;
   }
-
-  .apps__lista li {
+  .libro__fila {
     display: grid;
-  }
-
-  .app {
-    --pieza: var(--panel);
-    min-height: 17rem;
-    padding: clamp(1.125rem, 0.9rem + 1vw, 1.75rem);
-    color: var(--tinta);
-    border: 2px solid var(--tinta);
-  }
-  .app :global(.pieza__flecha) {
-    background: var(--tinta);
-    color: var(--panel);
-  }
-  @media (hover: hover) {
-    a.app:hover {
-      --pieza: var(--sol);
-      color: var(--tinta-fija);
-      border-color: var(--tinta-fija);
-    }
-    .apps__lista li:nth-child(2) a.app:hover {
-      --pieza: var(--coral);
-    }
-  }
-  a.app {
-    transition:
-      translate 0.45s var(--ease-spring),
-      rotate 0.45s var(--ease-spring),
-      scale 0.2s var(--ease-soft),
-      background-color 0.25s var(--ease-soft),
-      color 0.25s var(--ease-soft);
-  }
-
-  .app__icono {
-    width: 4.5rem;
-    height: 4.5rem;
-  }
-
-  .app__pronto {
-    padding: 0.3rem 0.65rem;
-    background: var(--crema-honda);
-    border-radius: 0.625rem;
-  }
-
-  .app__nombre {
-    margin-top: auto;
-    padding-top: 2rem;
-    font-size: var(--t-l);
-  }
-
-  .app__desc {
-    margin-top: 0.5rem;
-    font-size: var(--t-s);
-    line-height: 1.4;
-  }
-
-  .android {
-    display: grid;
-    margin-top: var(--hueco);
-  }
-
-  .android__enlace {
-    --pieza: var(--bloque-oscuro);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: 2.25rem minmax(0, 6.5rem) minmax(0, 1fr) auto;
     align-items: center;
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    padding: clamp(1.125rem, 0.9rem + 1vw, 1.75rem);
-    color: var(--crema-fija);
+    gap: 1rem;
+    min-height: 3.75rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--tinta);
+    text-decoration: none;
+    border-radius: var(--radio-sobrio);
+    transition:
+      background-color 0.18s var(--ease-soft),
+      opacity 0.18s var(--ease-soft),
+      scale 0.18s var(--ease-soft);
   }
-  .android__enlace :global(.pieza__flecha) {
-    align-self: start;
-    background: var(--crema-fija);
-    color: var(--tinta-fija);
-  }
+  /* Al apuntar una fila, las otras bajan de tono. */
   @media (hover: hover) {
-    .android__enlace:hover :global(.pieza__flecha) {
-      background: var(--sol);
-      color: var(--tinta-fija);
+    .libro:hover .libro__fila:not(:hover) {
+      opacity: 0.5;
+    }
+  }
+  .libro__fila[data-activa],
+  .libro__fila:focus-visible {
+    background: var(--crema-honda);
+  }
+  .libro__fila:active {
+    scale: 0.99;
+  }
+  .libro__icono {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+  }
+  .libro__icono--cajon {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px;
+  }
+  .libro__icono--cajon img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+  }
+  .libro__nombre {
+    font-size: var(--t-texto);
+    font-weight: 600;
+  }
+  .libro__tipo {
+    color: var(--gris);
+    font-size: var(--t-texto);
+  }
+  .libro__donde {
+    color: var(--gris);
+    font-size: var(--t-chico);
+  }
+
+  .vista {
+    grid-column: 9 / -1;
+  }
+  .vista__marco {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--crema-honda);
+    border-radius: var(--radio-sobrio);
+  }
+  /* Las tomas se cruzan despacio, como luz que cambia en un cuarto. */
+  .vista__toma {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 1.6s var(--ease-in-out);
+  }
+  .vista__toma[data-activa] {
+    opacity: 1;
+  }
+  .vista__icono {
+    width: 46%;
+    height: auto;
+    transition: scale 7s var(--ease-soft);
+  }
+  .vista__toma[data-activa] .vista__icono {
+    scale: 1.06;
+  }
+  .vista__toma--cajon {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 5%;
+    padding: 12% 7% 0;
+  }
+  .vista__toma--cajon img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.625rem;
+    transition: translate 7s var(--ease-soft);
+  }
+  .vista__toma--cajon img:nth-child(2) {
+    margin-top: 18%;
+  }
+  .vista__toma--cajon[data-activa] img {
+    translate: 0 -6%;
+  }
+
+  .vista__textos {
+    display: grid;
+    margin-top: 1rem;
+  }
+  .vista__textos p {
+    grid-area: 1 / 1;
+    margin: 0;
+    font-size: var(--t-texto);
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-soft);
+  }
+  .vista__textos p[data-activa] {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vista__toma,
+    .vista__textos p,
+    .vista__icono,
+    .vista__toma--cajon img {
+      transition: none;
+    }
+    .vista__toma[data-activa] .vista__icono,
+    .vista__toma--cajon[data-activa] img {
+      scale: none;
+      translate: none;
     }
   }
 
-  .android__texto {
-    display: grid;
-    gap: 0.5rem;
-  }
-
-  .android__nombre {
-    font-size: var(--t-l);
-  }
-
-  .android__desc {
-    max-width: 46ch;
-    font-size: var(--t-s);
-    line-height: 1.4;
-    opacity: 0.85;
-  }
-
-  .android__iconos {
-    display: grid;
-    grid-template-columns: repeat(5, 3.5rem);
-    gap: 0.5rem;
-  }
-  .android__iconos img {
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 28%;
-  }
-
-  @media (max-width: 900px) {
-    .android__enlace {
-      grid-template-columns: minmax(0, 1fr) auto;
-    }
-    .android__iconos {
-      grid-row: 2;
+  @media (max-width: 1000px) {
+    .riel,
+    .caja__lista,
+    .libro {
       grid-column: 1 / -1;
-      grid-template-columns: repeat(5, minmax(0, 3.5rem));
     }
-    .android__iconos img {
-      width: 100%;
-      height: auto;
+    .riel__in {
+      position: static;
+      max-width: 34rem;
     }
-    .apps__lista {
+    /* La vista va después del libro: el texto que cierra la sección es su descripción. */
+    .vista {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+      gap: 1.5rem;
+      align-items: end;
+    }
+    .vista__marco {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .vista {
       grid-template-columns: minmax(0, 1fr);
+      gap: 0;
     }
-    .app {
-      min-height: 0;
+    .libro__fila {
+      grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+      row-gap: 0;
+    }
+    .libro__icono {
+      grid-row: 1 / 3;
+    }
+    .libro__tipo {
+      grid-column: 2;
+      grid-row: 2;
+      font-size: var(--t-chico);
+    }
+    .libro__donde {
+      grid-column: 3;
+      grid-row: 1;
     }
   }
 </style>

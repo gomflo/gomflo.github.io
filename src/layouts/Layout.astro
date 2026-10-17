@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
+import { tools } from "../lib/tools";
 
 interface Props {
   title?: string;
@@ -128,28 +129,37 @@ const year = new Date().getFullYear();
 
     <slot />
 
-    <footer class="remate contenedor">
-      <div class="remate__bloque">
-        <div class="remate__arriba">
-          <p class="remate__regla titular">
-            Sin cuenta, sin instalar nada, y lo que pegas no sale de tu navegador.
-          </p>
-          <nav class="remate__nav" aria-label="Pie de página">
-            <ul role="list">
-              <li><a class="ficha" href="/#herramientas" data-destino="Herramientas">Herramientas</a></li>
-              <li><a class="ficha" href="/#apps" data-destino="Apps">Apps para Mac</a></li>
-              <li><a class="ficha" href="/partidos-de-hoy/" data-astro-reload data-astro-prefetch="false">Partidos de hoy</a></li>
-              <li><a class="ficha" href="https://github.com/gomflo" rel="noopener">GitHub</a></li>
-            </ul>
-          </nav>
+    <!-- El pie: las dos últimas filas de la caja, en mosaicos llenos. -->
+    <footer class="remate">
+      <div class="remate__tablero">
+        <div class="loseta loseta--regla">
+          <p class="remate__regla">Sin cuenta, sin instalar nada, y lo que pegas no sale de tu navegador.</p>
+          <p class="remate__credito">© {year} Víctor Hugo Gómez Flores. Letra: Bricolage Grotesque y DM Mono.{/* taste-skill-ignore: nombra la letra, no la usa */}</p>
         </div>
-        <div class="remate__abajo">
-          <p class="remate__nombre titular" aria-hidden="true">gomflo.dev</p>
-          <span class="remate__piezas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <nav class="loseta loseta--nav" aria-label="Pie de página">
+          <ul role="list">
+            <li><a href="/#herramientas" data-destino="Herramientas">Herramientas</a></li>
+            <li><a href="/#apps" data-destino="Apps">Apps para Mac</a></li>
+            <li><a href="/android/" data-astro-reload data-astro-prefetch="false">Apps para Android</a></li>
+            <li><a href="/partidos-de-hoy/" data-astro-reload data-astro-prefetch="false">Partidos de hoy</a></li>
+            <li><a href="#main-content">Volver arriba</a></li>
+          </ul>
+        </nav>
+        <div class="loseta loseta--lugar">
+          <p>Hecho en México.</p>
+          <p class="remate__suave">CLABE, IVA y feriados con las reglas de aquí.</p>
         </div>
-        <p class="remate__credito">
-          © {year} Víctor Hugo Gómez Flores. Letra: Bricolage Grotesque y DM Mono.
-        </p>
+        <a class="loseta loseta--codigo" href="https://github.com/gomflo" rel="noopener">
+          <span class="remate__suave">El código, abierto</span>
+          <span class="remate__direccion">github.com/gomflo</span>
+        </a>
+        <a class="loseta loseta--marca" href="/" aria-label="gomflo.dev, ir al inicio" data-destino="gomflo.dev">
+          <span class="remate__marca titular" aria-hidden="true">gomflo</span>
+        </a>
+        <a class="loseta loseta--accion" href="/#herramientas" data-destino="Herramientas">
+          <span class="remate__invita">Ver las {tools.length} piezas</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M12 36L36 12M16 12h20v20" /></svg>
+        </a>
       </div>
     </footer>
 
@@ -191,8 +201,7 @@ const year = new Date().getFullYear();
     grid-template-columns: repeat(2, 0.75rem);
     gap: 0.1875rem;
   }
-  .marca__piezas i,
-  .remate__piezas i {
+  .marca__piezas i {
     display: block;
     aspect-ratio: 1;
     border-radius: 0.25rem;
@@ -285,84 +294,149 @@ const year = new Date().getFullYear();
     opacity: 0;
   }
 
-  /* ---------- Remate: el pie es el bloque más grande de la caja ---------- */
+  /* ---------- Remate: un tablero de mosaicos llenos, separados por 8 px ---------- */
 
   .remate {
-    margin-top: clamp(3.5rem, 8vw, 7rem);
-    padding-bottom: var(--gutter);
+    margin-top: clamp(5rem, 11vw, 10rem);
+    padding: 0.625rem;
   }
 
-  .remate__bloque {
-    --ficha: var(--crema-fija);
-    --sobre-ficha: var(--tinta-fija);
-    padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
-    background: var(--bloque-oscuro);
-    color: var(--crema-fija);
-    border-radius: var(--radio-pieza);
-  }
-
-  .remate__bloque :global(:focus-visible) {
-    outline-color: var(--sol);
-  }
-
-  .remate__arriba {
+  .remate__tablero {
     display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
-    gap: 2rem clamp(2rem, 8vw, 7rem);
-    align-items: start;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: minmax(clamp(10rem, 15vw, 13.75rem), auto);
+    gap: 0.5rem;
   }
+
+  .loseta {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: clamp(1.125rem, 0.8rem + 1vw, 1.5rem);
+    background: var(--crema-honda);
+    color: var(--tinta);
+    text-decoration: none;
+    border-radius: var(--radio-sobrio);
+  }
+  .loseta p {
+    margin: 0;
+  }
+
+  .loseta--regla { grid-column: 1 / 5; }
+  .loseta--nav { grid-column: 5 / 8; justify-content: flex-start; }
+  .loseta--lugar { grid-column: 8 / 10; justify-content: flex-start; gap: 0.5rem; }
+  .loseta--codigo { grid-column: 10 / 13; }
+  .loseta--marca { grid-column: 1 / 9; }
+  .loseta--accion { grid-column: 9 / 13; }
 
   .remate__regla {
-    margin: 0;
-    max-width: 22ch;
-    font-size: var(--t-l);
-    line-height: 1.02;
+    max-width: 24ch;
+    font-size: var(--t-destacado);
+    font-weight: 600;
+    line-height: 1.3;
   }
 
-  .remate__nav ul {
+  .remate__credito,
+  .remate__suave {
+    color: var(--gris);
+    font-size: var(--t-chico);
+    line-height: 1.45;
+  }
+
+  .loseta--nav ul {
     display: grid;
-    margin: 0 0 0 -0.9rem;
+    gap: 0.125rem;
+    margin: -0.5rem 0 0;
     padding: 0;
     list-style: none;
-    justify-items: start;
+  }
+  .loseta--nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    color: inherit;
+    font-size: var(--t-texto);
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+  }
+  @media (hover: hover) {
+    .loseta--nav a:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+    }
   }
 
-  .remate__abajo {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: clamp(2.5rem, 7vw, 6rem);
+  .loseta--lugar p:first-child {
+    font-size: var(--t-texto);
+    font-weight: 600;
   }
 
-  .remate__nombre {
-    margin: 0;
-    font-size: clamp(3rem, 1rem + 11vw, 11rem);
-    line-height: 0.8;
-    letter-spacing: -0.02em;
-    user-select: none;
+  .remate__direccion {
+    font-size: var(--t-destacado);
+    font-weight: 600;
+    overflow-wrap: anywhere;
   }
 
-  .remate__piezas {
-    display: flex;
-    gap: 0.375rem;
-    padding-bottom: 0.4rem;
+  /* Los dos mosaicos de abajo: la marca en tinta y la invitación en color sol. */
+  .loseta--marca,
+  .loseta--accion {
+    min-height: clamp(10rem, 22vw, 20rem);
+    transition:
+      background-color 0.2s var(--ease-soft),
+      scale 0.2s var(--ease-soft);
   }
-  .remate__piezas i {
-    width: clamp(1.25rem, 2.4vw, 2.25rem);
-    border-radius: 0.5rem;
+  .loseta--marca {
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--tinta);
+    color: var(--crema);
   }
-  .remate__piezas i:nth-child(1) { background: var(--menta); }
-  .remate__piezas i:nth-child(2) { background: var(--coral); }
-  .remate__piezas i:nth-child(3) { background: var(--lila); }
-  .remate__piezas i:nth-child(4) { background: var(--sol); }
-  .remate__piezas i:nth-child(5) { background: var(--cielo); }
+  .remate__marca {
+    font-size: clamp(3.5rem, 9.5vw, 9rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    transition: translate 0.5s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .loseta--marca:hover .remate__marca {
+      translate: 0 -0.08em;
+    }
+  }
 
-  .remate__credito {
-    margin: 1.75rem 0 0;
-    color: #b5b0c8;
-    font-size: var(--t-xs);
+  .loseta--accion {
+    background: var(--sol);
+    color: var(--tinta-fija);
+  }
+  .remate__invita {
+    font-size: var(--t-destacado);
+    font-weight: 600;
+  }
+  .loseta--accion svg {
+    align-self: flex-end;
+    width: clamp(2.5rem, 4vw, 3.5rem);
+    height: auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: translate 0.35s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .loseta--accion:hover svg {
+      translate: 0.25rem -0.25rem;
+    }
+    .loseta--codigo:hover {
+      background: var(--linea);
+    }
+  }
+  .loseta--marca:active,
+  .loseta--accion:active,
+  .loseta--codigo:active {
+    scale: 0.985;
   }
 
   @media (max-width: 480px) {
@@ -380,12 +454,24 @@ const year = new Date().getFullYear();
     }
   }
 
+  /* En el teléfono: dos columnas; primero la marca y la invitación, a todo lo ancho. */
   @media (max-width: 800px) {
-    .remate__arriba {
-      grid-template-columns: minmax(0, 1fr);
+    .remate__tablero {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+      gap: 0.375rem;
     }
-    .remate__nav ul {
-      grid-template-columns: 1fr 1fr;
+    .loseta {
+      padding: 1.25rem;
+    }
+    .loseta--marca { grid-column: 1 / -1; grid-row: 1; min-height: 10rem; }
+    .loseta--accion { grid-column: 1 / -1; grid-row: 2; min-height: 8rem; }
+    .loseta--nav { grid-column: 1; grid-row: 3; }
+    .loseta--codigo { grid-column: 2; grid-row: 3; }
+    .loseta--lugar { grid-column: 1; grid-row: 4; }
+    .loseta--regla { grid-column: 2; grid-row: 4; }
+    .remate__marca {
+      font-size: 22vw;
     }
   }
 </style>

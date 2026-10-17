@@ -37,8 +37,9 @@ Movimiento:  Piezas que caen en su lugar con rebote, se levantan y giran un poco
              apuntarlas. Entre páginas, el color de la pieza que tocaste llena la
              pantalla desde ese punto y se encoge hasta ser la cabeza de la página nueva.
 Emoción:     Curiosidad de caja de juguetes; se antoja tocar.
-Captura:     El bloque oscuro del título junto a la mesa blanca, y debajo las filas de
-             piezas de colores con su línea de resultado.
+Captura:     El titular en una columna sobre la mesa crema; abajo, la mesa de pruebas
+             partida en dos: tu texto en el campo oscuro y la caja respondiendo en el
+             claro; luego la lista de las 24 con su punto de color y su línea en vivo.
 ```
 
 Reglas que salen del concepto:
@@ -82,9 +83,16 @@ Sobre una pieza de color el texto siempre es `--tinta-fija` (no cambia de noche)
 ### Retícula y forma
 
 - `.contenedor` (máx. 82rem) y `.reticula` de 12 columnas.
-- La caja de piezas es una sola retícula de 4 columnas (3, 2 y 1 al estrecharse). Las secciones
-  y listas son `display: contents`, así la cabeza de cada categoría es un bloque más: ocupa dos
-  celdas con 6 piezas y una con 3, para que cada categoría cierre sus filas.
+- Inicio (rediseño sobrio de octubre de 2026, con el skill `design-taste-frontend`, dirección
+  "The product performs"): el color baja la voz. Fondo crema, titular en peso medio sobre la cuarta
+  columna; la mesa de pruebas es mitad de entrada (campo oscuro) y mitad de salida (un fragmento de
+  la caja a tamaño de interfaz, `data-ui`), con el titular partido en el borde. La lista es de dos
+  extremos: punto de color de la categoría, nombre y descripción a la izquierda, línea en vivo a la
+  derecha; el buscador vive en el riel izquierdo, fijo en escritorio. Las apps son un libro mayor
+  con una vista que cruza despacio sus imágenes (`src/motion/obras.ts`). El pie es un tablero de
+  mosaicos llenos (marca en tinta, invitación en sol). Cinco tamaños: `--t-display`, `--t-titulo`,
+  `--t-destacado`, `--t-texto`, `--t-chico`; un solo radio, `--radio-sobrio`. En el inicio no hay
+  etiquetas en DM Mono: la monoespaciada queda solo para las líneas en vivo, que son `<code>`.
 - Radios: `--radio-pieza` para bloques, `--radius` (0.75rem) para controles.
 
 ### Movimiento

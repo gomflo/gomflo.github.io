@@ -31,11 +31,11 @@ npm run preview   # Preview production build locally
 src/
 ├── components/          # React components (tool implementations)
 │   ├── brand/Motif.astro # Dibujo SVG por herramienta
-│   ├── Piezas.astro     # La caja de piezas: todas las herramientas como bloques de color (inicio y 404)
+│   ├── Piezas.astro     # La caja de piezas: lista de todas las herramientas con su punto de color y línea en vivo (inicio y 404)
 │   ├── tool-kit.tsx     # Piezas compartidas: CopyButton, ResultRow, Segmented, Checkbox, InlineError, clases de campos
 │   └── ui/              # shadcn/ui primitives (button, card, select, tabs, textarea, sonner)
 ├── engine/              # Motor de movimiento: ciclo de página (boot/leave/cleanup/enter, onPage), entradas `data-entra`, color entre páginas, adaptador de Astro
-├── motion/              # Movimiento del sitio: piezas.ts (resultado en vivo de cada pieza), buscador.ts, tema.ts, setup.ts
+├── motion/              # Movimiento del sitio: piezas.ts (resultado en vivo de cada pieza), buscador.ts, obras.ts (vista de las apps del inicio), tema.ts, setup.ts
 ├── lib/
 │   ├── tools.ts         # Catálogo único de herramientas y categorías (fuente de verdad)
 │   ├── utils.ts         # cn()
