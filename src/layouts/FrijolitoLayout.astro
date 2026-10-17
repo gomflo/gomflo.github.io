@@ -19,25 +19,33 @@ interface Props {
   campaign: string;
   /** A dónde salta el enlace «Ir al contenido». */
   salto?: { href: string; texto: string };
+  /** Idioma de la página. La portada en inglés (/frijolito/en/) pone "en": barra y pie en inglés. */
+  lang?: "es" | "en";
+  /** Versiones de la misma página en otro idioma (hreflang), incluida esta. */
+  alternos?: { hreflang: string; href: string }[];
 }
 
-const { title, description, image, imageAlt, jsonLd, campaign, salto = { href: "#contenido", texto: "Ir al contenido" } } = Astro.props;
+const { title, description, image, imageAlt, jsonLd, campaign, lang = "es", alternos = [] } = Astro.props;
+const en = lang === "en";
+const salto = Astro.props.salto ?? (en ? { href: "#contenido", texto: "Skip to content" } : { href: "#contenido", texto: "Ir al contenido" });
 const site = Astro.site!;
 const canonicalURL = new URL(Astro.url.pathname, site).href;
 const imageURL = existsSync(new URL(`../../public${image}`, import.meta.url)) ? new URL(image, site).href : undefined;
 const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, campaign);
 const actual = Astro.url.pathname;
 const year = new Date().getFullYear();
-const barra = [
-  { href: "/frijolito/", texto: "Cantador" },
-  { href: "/frijolito/cartas-de-la-loteria/", texto: "Cartas" },
-  { href: "/frijolito/tablas-de-loteria-para-imprimir/", texto: "Tablas" },
-  { href: "/frijolito/como-jugar-loteria/", texto: "Cómo jugar" },
-];
+const barra: { href: string; texto: string; lang?: string; hreflang?: string }[] = en
+  ? [{ href: "/frijolito/", texto: "Español", lang: "es", hreflang: "es-MX" }]
+  : [
+      { href: "/frijolito/", texto: "Cantador" },
+      { href: "/frijolito/cartas-de-la-loteria/", texto: "Cartas" },
+      { href: "/frijolito/tablas-de-loteria-para-imprimir/", texto: "Tablas" },
+      { href: "/frijolito/como-jugar-loteria/", texto: "Cómo jugar" },
+    ];
 ---
 
 <!doctype html>
-<html lang="es-MX">
+<html lang={en ? "en-US" : "es-MX"}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -45,6 +53,7 @@ const barra = [
     <meta name="description" content={description} />
     <meta name="theme-color" content="#192664" />
     <link rel="canonical" href={canonicalURL} />
+    {alternos.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     <link rel="icon" type="image/png" href="/img/android/frijolito/icono.png" />
     <link rel="apple-touch-icon" href="/img/android/frijolito/icono.png" />
     <link rel="preload" href="/fonts/fraunces-400_600-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -53,7 +62,8 @@ const barra = [
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:locale" content="es_MX" />
+    <meta property="og:locale" content={en ? "en_US" : "es_MX"} />
+    {alternos.length > 0 && <meta property="og:locale:alternate" content={en ? "es_MX" : "en_US"} />}
     <meta property="og:site_name" content="gomflo.dev" />
     {
       imageURL && (
@@ -77,25 +87,25 @@ const barra = [
     <a href={salto.href} class="fj-salto">{salto.texto}</a>
 
     <header class="fj-barra fj-marco">
-      <a class="fj-marca" href="/frijolito/" aria-label="Frijolito, cantador de lotería: inicio">
+      <a class="fj-marca" href={en ? "/frijolito/en/" : "/frijolito/"} aria-label={en ? "Frijolito, Mexican lotería caller: home" : "Frijolito, cantador de lotería: inicio"}>
         <img src="/img/android/frijolito/icono.png" alt="" width="36" height="36" />
         Frijolito
       </a>
-      <nav aria-label="Principal">
+      <nav aria-label={en ? "Main" : "Principal"}>
         <ul class="fj-barra__ligas">
           {
             barra.map((l) => (
               <li>
-                <a href={l.href} aria-current={actual === l.href ? "page" : undefined}>
+                <a href={l.href} aria-current={actual === l.href ? "page" : undefined} lang={l.lang} hreflang={l.hreflang}>
                   {l.texto}
                 </a>
               </li>
             ))
           }
         </ul>
-        <a class="fj-play" href={play} rel="noopener" aria-label="Bájala en Google Play">
+        <a class="fj-play" href={play} rel="noopener" aria-label={en ? "Get it on Google Play" : "Bájala en Google Play"}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
-          <span><span class="fj-play__largo">Bájala en </span>Google Play</span>
+          <span><span class="fj-play__largo">{en ? "Get it on " : "Bájala en "}</span>Google Play</span>
         </a>
       </nav>
     </header>
@@ -105,19 +115,43 @@ const barra = [
     </main>
 
     <footer class="fj-pie fj-marco">
-      <div class="fj-pie__fila">
-        <nav aria-label="Frijolito en la web">
-          <ul>
-            {paginas.filter((p) => ruta(p) !== actual).map((p) => <li><a href={ruta(p)}>{p.nombre}</a></li>)}
-          </ul>
-        </nav>
-        <ul>
-          <li><a href="/frijolito/privacidad/">Aviso de privacidad</a></li>
-          <li><a href="/android/">Más apps para Android</a></li>
-          <li><a href="/">Herramientas en gomflo.dev</a></li>
-        </ul>
-      </div>
-      <p style="margin-top:1rem">© {year} gomflo. Hecho en México. Las ilustraciones de la baraja son propias de Frijolito.</p>
+      {
+        en ? (
+          <>
+            <div class="fj-pie__fila">
+              <nav aria-label="Frijolito in Spanish">
+                <ul>
+                  <li><a href="/frijolito/" lang="es" hreflang="es-MX">Frijolito en español</a></li>
+                  <li><a href="/frijolito/cartas-de-la-loteria/" lang="es" hreflang="es-MX">Las 54 cartas y sus versos</a></li>
+                  <li><a href="/frijolito/tablas-de-loteria-para-imprimir/" lang="es" hreflang="es-MX">Tablas para imprimir</a></li>
+                </ul>
+              </nav>
+              <ul>
+                <li><a href="/frijolito/privacidad/">Privacy policy (in Spanish)</a></li>
+                <li><a href="/android/">More Android apps (in Spanish)</a></li>
+              </ul>
+            </div>
+            <p style="margin-top:1rem">© {year} gomflo. Made in Mexico. The deck illustrations are Frijolito's own.</p>
+          </>
+        ) : (
+          <>
+            <div class="fj-pie__fila">
+              <nav aria-label="Frijolito en la web">
+                <ul>
+                  {paginas.filter((p) => ruta(p) !== actual).map((p) => <li><a href={ruta(p)}>{p.nombre}</a></li>)}
+                  <li><a href="/frijolito/en/" lang="en" hreflang="en-US">English</a></li>
+                </ul>
+              </nav>
+              <ul>
+                <li><a href="/frijolito/privacidad/">Aviso de privacidad</a></li>
+                <li><a href="/android/">Más apps para Android</a></li>
+                <li><a href="/">Herramientas en gomflo.dev</a></li>
+              </ul>
+            </div>
+            <p style="margin-top:1rem">© {year} gomflo. Hecho en México. Las ilustraciones de la baraja son propias de Frijolito.</p>
+          </>
+        )
+      }
     </footer>
   </body>
 </html>

@@ -8,6 +8,11 @@ interface Props {
   puntos?: string[];
   /** utm_campaign del enlace a Google Play. */
   campaign: string;
+  /** Textos fijos del bloque en otro idioma (la portada en inglés). */
+  rotulo?: string;
+  boton?: string;
+  letra?: string;
+  capturas?: { src: string; alt: string }[];
 }
 
 const {
@@ -21,31 +26,31 @@ const {
     "Funciona sin internet, sin anuncios y sin cuenta",
   ],
   campaign,
+  rotulo = "Lotería Mexicana: Frijolito, para Android",
+  boton = "Bájala gratis en Google Play",
+  letra = "Gratis y completa con la baraja de feria. Las voces de Ramón y Jess (sintéticas) y las otras tres barajas vienen con Pro, un pago único y opcional.",
+  capturas = [
+    { src: "mesa", alt: "Frijolito en el teléfono canta la carta 1, El Gallo, con su verso, sobre la mesa azul" },
+    { src: "tabla", alt: "Una tabla de lotería en Frijolito marcada con frijolitos, con el aviso de ¡Lotería!" },
+    { src: "barajas", alt: "Los ajustes de Frijolito con las cuatro barajas: de feria, grabado, neón y papel picado" },
+  ],
 } = Astro.props;
 const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, campaign);
-const capturas = [
-  { src: "mesa", alt: "Frijolito en el teléfono canta la carta 1, El Gallo, con su verso, sobre la mesa azul" },
-  { src: "tabla", alt: "Una tabla de lotería en Frijolito marcada con frijolitos, con el aviso de ¡Lotería!" },
-  { src: "barajas", alt: "Los ajustes de Frijolito con las cuatro barajas: de feria, grabado, neón y papel picado" },
-];
 ---
 
 <div class="fj-marco">
   <section class="fj-app" aria-labelledby="app-titulo">
     <div>
-      <p class="fj-rotulo" style="color:#5b5048">Lotería Mexicana: Frijolito, para Android</p>
+      <p class="fj-rotulo" style="color:#5b5048">{rotulo}</p>
       <h2 id="app-titulo" style="margin-top:0.5rem">{titulo}</h2>
       <ul>
         {puntos.map((p) => <li>{p}</li>)}
       </ul>
-      <a class="fj-boton" href={play} rel="noopener">Bájala gratis en Google Play</a>
-      <p class="fj-app__letra">
-        Gratis y completa con la baraja de feria. Las voces de Ramón y Jess (sintéticas) y las otras tres barajas vienen con Pro, un pago único y
-        opcional.
-      </p>
+      <a class="fj-boton" href={play} rel="noopener">{boton}</a>
+      <p class="fj-app__letra">{letra}</p>
     </div>
     <div class="fj-app__capturas">
-      {capturas.map((c) => <img src={`/img/frijolito/captura-${c.src}.webp`} alt={c.alt} width="540" height="1212" loading="lazy" decoding="async" />)}
+      {capturas.map((c) => <img src={`/img/frijolito/${c.src.includes("/") ? c.src : `captura-${c.src}`}.webp`} alt={c.alt} width="540" height="1212" loading="lazy" decoding="async" />)}
     </div>
   </section>
 </div>
