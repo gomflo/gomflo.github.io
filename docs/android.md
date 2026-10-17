@@ -19,8 +19,8 @@ Ruta: `/android/`. Hecha con el proceso del skill `/awwwards`
 - **Audiencia:** gente en México con un pendiente cotidiano: la quincena, la rifa, el
   intercambio, las medicinas de la mamá. No buscan "apps", buscan resolver eso.
 - **Trabajo de la página:** que en 3 segundos se entienda qué son, que cada app se reconozca
-  por lo que reemplaza, y que la promesa de privacidad se crea. Ninguna está en Google Play:
-  el botón de tienda es "Muy pronto" y solo se vuelve enlace si `play` tiene URL.
+  por lo que reemplaza, y que la promesa de privacidad se crea. Solo Tin Marín está en Google
+  Play: el botón de tienda es "Muy pronto" y solo se vuelve enlace si `play` tiene URL.
 - **Restricciones:** Astro 5, estático, `trailingSlash: 'always'`, claro y oscuro,
   `prefers-reduced-motion`, sin tocar `Layout.astro`, `global.css`, `index.astro` ni el motor.
 - **Supuestos:** no se publica ningún precio (ninguno está fijo). El copy sale de `PRODUCT.md`
@@ -207,8 +207,10 @@ confirmar una vez). Lo que más la subiría:
 
 ### Pendientes y supuestos
 
-- Ninguna app tiene `play`: todas dicen "Muy pronto en Google Play". Con URL, `Cajon.astro`
-  pinta un enlace "Bájala en Google Play" que se llena del color de la app.
+- Solo Tin Marín tiene `play` (publicada en octubre de 2026); las demás dicen "Muy pronto en
+  Google Play". Con URL, `Cajon.astro` pinta un enlace "Bájala en Google Play" que se llena del
+  color de la app, y la portada y el pie nombran las publicadas.
+- Con `web` (hoy solo Tin Marín, `/tinmarin/`) el cajón suma el enlace "Úsala en la web".
 - Papelito y Boletito no tienen aviso de privacidad publicado; no se enlaza nada para ellas.
 - No hay 404 propio: es una sola página dentro de gomflo.dev, que ya tiene el suyo.
 - Las capturas de Tin Marín se corrigieron durante el trabajo; ya se usan las tres.
