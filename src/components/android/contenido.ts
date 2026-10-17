@@ -187,9 +187,9 @@ export const extras: Record<string, Extra> = {
     detalle:
       "Baraja las 54 cartas, las canta en voz alta con su verso y lleva la cuenta de las que salieron, para revisar la tabla de quien grita ¡Lotería! La baraja ilustrada es propia, y hay tablas en el teléfono o para imprimir.",
     capturas: [
-      { n: 1, alt: "Frijolito canta la carta 47, La Corona: el sombrero de los reyes" },
-      { n: 2, alt: "La baraja de Frijolito lista para cantar la primera carta" },
-      { n: 3, alt: "Una tabla de lotería en el teléfono, marcada con frijolitos" },
+      { n: 1, alt: "Frijolito canta la carta 1, El Gallo, con su verso" },
+      { n: 2, alt: "Frijolito canta solo La Luna, una carta cada 4 segundos" },
+      { n: 3, alt: "Una tabla de lotería en el teléfono, marcada con frijolitos y el aviso ¡Lotería!" },
     ],
     red: "sin-llamadas",
     pro: true,
