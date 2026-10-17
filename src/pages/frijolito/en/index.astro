@@ -1,0 +1,216 @@
+---
+// La portada de Frijolito en inglés (en-US): para quien busca una app de lotería en inglés (familias
+// mexicoamericanas, docentes de español). Habla de la app para Android, no trae el cantador web, que está en
+// español. Las cartas y los versos se dejan en español, que es como se cantan. Su gemela es /frijolito/.
+import FrijolitoLayout from "../../../layouts/FrijolitoLayout.astro";
+import App from "../../../components/frijolito/App.astro";
+import Cara from "../../../components/frijolito/Cara.astro";
+import Faq from "../../../components/frijolito/Faq.astro";
+import { androidApps } from "../../../data/android-apps";
+import { cartas } from "../../../data/frijolito-cartas";
+import { playLink } from "../../../lib/play";
+
+const app = androidApps.find((a) => a.slug === "frijolito")!;
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const campaign = "frijolito-en";
+const play = playLink(app.play!, campaign);
+const alternos = [
+  { hreflang: "es-MX", href: new URL("/frijolito/", site).href },
+  { hreflang: "en-US", href: canonicalURL },
+  { hreflang: "x-default", href: new URL("/frijolito/", site).href },
+];
+
+const title = "Mexican Lotería Caller App: Frijolito | gomflo.dev";
+const description =
+  "Frijolito calls all 54 Mexican lotería cards out loud in Spanish, with their verses, and makes printable boards as a PDF. Offline, no ads, no account.";
+
+// Tres cartas de muestra, con texto alternativo en inglés. El nombre y el verso se quedan en español.
+const muestra = [
+  { n: 1, alt: "Lotería card 1, El Gallo: a rooster crowing with its beak to the sky and one foot raised, on a sky-blue background." },
+  { n: 23, alt: "Lotería card 23, La Luna: a full moon with a sleeping face, wrapped in a long cloud." },
+  { n: 27, alt: "Lotería card 27, El Corazón: a red sacred heart with a crown of flames and a garland of roses." },
+].map((m) => ({ ...m, carta: cartas.find((c) => c.n === m.n)! }));
+
+const faq = [
+  {
+    q: "Is the app in English?",
+    a: "The menus, buttons and settings are in English. The cards and their verses are always called in Spanish, because that is how lotería is played: El Gallo is El Gallo at every table. That makes it easy for anyone to run the game, even if they are still learning Spanish.",
+  },
+  {
+    q: "Does it need an internet connection?",
+    a: "No. Frijolito calls the cards, keeps the game and makes the boards without internet. There is no sign-up and nothing to log in to: your game and your boards stay on your phone.",
+  },
+  {
+    q: "Does it work with the cardboard boards I already have?",
+    a: "Yes. It uses the 54 traditional cards with their traditional numbers, from El Gallo (1) to La Rana (54). The illustrations are Frijolito's own, but each name and number matches the ones on any lotería board.",
+  },
+  {
+    q: "Can I print lotería boards?",
+    a: "Yes. The app makes a letter-size PDF with one 4 × 4 board per page, all different from each other, ready to print or send to the group chat. The free version makes PDFs of up to 4 boards; with Pro, up to 40 boards without the app mark.",
+  },
+  {
+    q: "How do I know the deck is really shuffled?",
+    a: "The whole deck is shuffled at once, before the first card is called. From then on the order is set: calling fast or slow, pausing or tapping does not change which card comes next. If you call one too many, you can put the last card back in the deck.",
+  },
+  {
+    q: "What does Pro add?",
+    a: "Pro is an optional one-time purchase, with no subscription. It adds two caller voices, Ramón and Jess (synthetic), that sound the same on any phone; three more illustrated decks (Linocut, Neon and Papel picado); and PDFs of up to 40 boards. Everything else, including the Fairground deck and your phone's Spanish voice, is free, with no ads.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MobileApplication",
+      name: "Mexican Lotería: Frijolito",
+      alternateName: "Lotería Mexicana: Frijolito",
+      url: canonicalURL,
+      description,
+      operatingSystem: "Android",
+      applicationCategory: "GameApplication",
+      installUrl: app.play,
+      image: new URL("/img/android/frijolito/icono.png", site).href,
+      inLanguage: ["en-US", "es-MX"],
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "gomflo.dev", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Frijolito", item: new URL("/frijolito/", site).href },
+        { "@type": "ListItem", position: 3, name: "English", item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      inLanguage: "en-US",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<FrijolitoLayout
+  title={title}
+  description={description}
+  image="/img/frijolito/en.jpeg"
+  imageAlt="Mexican lotería caller: Frijolito, for Android"
+  jsonLd={jsonLd}
+  campaign={campaign}
+  lang="en"
+  alternos={alternos}
+>
+  <div class="fj-portada fj-marco">
+    <h1>The Mexican lotería caller, in your pocket.</h1>
+    <p>
+      Frijolito is an Android app that shuffles the 54 lotería cards, calls each one out loud in Spanish with its traditional verse and keeps track of
+      the ones already called. The menus are in English. No internet, no account and no ads.
+    </p>
+    <p class="fj-ir">
+      <a class="fj-boton" href={play} rel="noopener">Get it free on Google Play</a>
+    </p>
+  </div>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="cartas-titulo">
+    <h2 id="cartas-titulo" class="fj-seccion__titulo">The cards are called in Spanish, the way they always are.</h2>
+    <p class="fj-seccion__lead">
+      Each card comes up big, with its number and name, and the phone says it out loud with its verse. The table takes on the color of the card that
+      was just called.
+    </p>
+    <ul class="fj-rejilla">
+      {
+        muestra.map((m) => (
+          <li class="fj-ficha">
+            <Cara carta={m.carta} alt={m.alt} />
+            <div>
+              <h3 lang="es">
+                <span lang="en">Card {m.carta.n}</span>
+                {m.carta.nombre}
+              </h3>
+              <p lang="es">{m.carta.verso}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="como-titulo">
+    <h2 id="como-titulo" class="fj-seccion__titulo">How a game goes</h2>
+    <ol class="fj-pasos">
+      <li class="fj-tarjeta fj-paso">
+        <h3>Hand out the boards</h3>
+        <p>Your cardboard boards work: they have the same 54 cards and numbers. If you don't have any, print a PDF of boards that are all different.</p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>Call the first card</h3>
+        <p>The deck is already shuffled. Plug the phone into a speaker if the whole room needs to hear it.</p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>At your pace, or on its own</h3>
+        <p>Call card by card, or let it call by itself with a pause of 2 to 8 seconds between cards. Tap again to stop.</p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>Check whoever shouted ¡Lotería!</h3>
+        <p>Every called card stays on the list, in order. Compare the board card by card. Called one too many? Put the last one back.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="quien-titulo">
+    <h2 id="quien-titulo" class="fj-seccion__titulo">For the family table and the classroom</h2>
+    <ul class="fj-pasos fj-pasos--lista">
+      <li class="fj-tarjeta fj-paso">
+        <h3>Families</h3>
+        <p>
+          For the posada, the holiday party or Sunday at grandma's, when nobody has the deck at hand. Whoever calls doesn't need to read the cards in
+          Spanish: the phone does.
+        </p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>Spanish teachers</h3>
+        <p>
+          A game the whole class can play: every card is a word with its article, said out loud by a Spanish voice, and every verse is a short line to
+          read and talk about. Print a board for each student.
+        </p>
+      </li>
+    </ul>
+  </section>
+
+  <App
+    campaign={campaign}
+    titulo="Everything Frijolito does on your phone."
+    rotulo="Mexican Lotería: Frijolito, for Android"
+    puntos={[
+      "Calls the 54 cards in Spanish with their verses, card by card or on its own",
+      "4 × 4 boards on the phone, all different, marked with beans, that tell you when you have a line, corners, the center or a full board",
+      "Printable boards: a letter-size PDF, one board per page, ready to print or share",
+      "Riddle mode: the verse first, with the card face down",
+      "The game saves itself: close the app and it picks up on the same card",
+      "Works without internet, with no ads and no account",
+    ]}
+    boton="Get it free on Google Play"
+    letra="Free and complete with the Fairground deck. The voices of Ramón and Jess (synthetic) and three more decks come with Pro, an optional one-time purchase."
+    capturas={[
+      { src: "en/captura-mesa", alt: "Frijolito on the phone calling card 1, El Gallo, with its Spanish verse, and the Next card button" },
+      { src: "en/captura-tabla", alt: "A lotería board in Frijolito marked with beans, with the ¡Lotería! notice and the line, corners, center and full board options" },
+      { src: "en/captura-imprimir", alt: "The Print boards sheet in Frijolito, to make a letter-size PDF of boards" },
+    ]}
+  />
+
+  <Faq faq={faq} titulo="Questions" />
+
+  <section class="fj-seccion fj-marco" aria-labelledby="web-titulo">
+    <h2 id="web-titulo" class="fj-seccion__titulo">No phone at hand?</h2>
+    <p class="fj-seccion__lead">
+      Frijolito also calls the cards in the browser, and prints boards from there. Those pages are in Spanish:
+      <a class="fj-enlace" href="/frijolito/" lang="es" hreflang="es-MX">el cantador</a>,
+      <a class="fj-enlace" href="/frijolito/cartas-de-la-loteria/" lang="es" hreflang="es-MX">las 54 cartas y sus versos</a> and
+      <a class="fj-enlace" href="/frijolito/tablas-de-loteria-para-imprimir/" lang="es" hreflang="es-MX">tablas para imprimir</a>.
+    </p>
+  </section>
+</FrijolitoLayout>

@@ -84,6 +84,8 @@ const pages = paginas.map((p) =>
     ? { file: `frijolito/${p.slug}.jpeg`, antetitulo: "Lotería mexicana", titulo: p.titulo, url: `gomflo.dev/frijolito/${p.slug}`, cartas: p.cartas }
     : { file: "frijolito.jpeg", antetitulo: "Con voz y verso", titulo: p.titulo, url: "gomflo.dev/frijolito", cartas: p.cartas },
 );
+// La portada en inglés (src/pages/frijolito/en/) no está en el catálogo: sus enlaces y tarjetas son en español.
+pages.push({ file: "frijolito/en.jpeg", antetitulo: "Called in Spanish", titulo: "Mexican lotería caller", url: "gomflo.dev/frijolito/en", cartas: [1, 23, 27] });
 
 await mkdir(join(OUT, "frijolito"), { recursive: true });
 const work = await mkdtemp(join(tmpdir(), "og-frijolito-"));
