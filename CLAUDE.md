@@ -160,7 +160,10 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - El sorteo está portado tal cual de la app: `src/lib/tinmarin/sorteo.ts` (FairDraw: SplitMix64 con BigInt, huella SHA-256), `lista.ts` (ListParser) y `rueda.ts` (WheelLayout, SpinPlan). Un código del teléfono se comprueba en la web y al revés: no cambies nada ahí sin volver a cotejarlo contra el Kotlin de la app (mismo ganador, punto de parada, código y huella)
 - Interfaz en `src/components/tinmarin/`: `Rueda.tsx` (canvas, gesto y giro, sin re-render durante el giro), `cara.ts` (la cara de la rueda en un canvas aparte), `Resultado.tsx` (el ganador), `tarjeta.ts` (imagen para compartir), `TinMarin.tsx` (estado en `localStorage` "tinmarin", editor, sorteos y comprobador)
 - Lo que se queda en la app (video, varias ruletas, temas, Pro) es la razón para bajarla: la página la enlaza a Google Play. El aviso de privacidad de la app sigue en `public/tinmarin/privacidad/`
-- Sonidos de la app en `public/tinmarin/sonidos/`; DM Sans en `public/fonts/dm-sans-100_1000-normal.woff2`. Imagen para compartir: `public/img/tinmarin.jpeg` (captura del primer pliegue a 1200×630)
+- Sonidos de la app en `public/tinmarin/sonidos/`; DM Sans en `public/fonts/dm-sans-100_1000-normal.woff2`
+- Plantilla compartida `layouts/TinMarinLayout.astro` (cabeza con SEO e imagen, barra, pie). Guías por uso en `src/pages/tinmarin/<slug>.astro` con `layouts/TinMarinGuia.astro`: la ruleta adentro (`<TinMarin completa={false} />`, sin sorteos ni comprobador, que viven en `/tinmarin/`), guía, app, FAQ y enlaces. El catálogo de guías está en `src/data/tinmarin-guias.ts`; solo describe lo que la herramienta hace
+- Imágenes para compartir: `npm run og:tinmarin` (`scripts/og-tinmarin.mjs`, no necesita build) escribe `public/img/tinmarin.jpeg` y `public/img/tinmarin/<slug>.jpeg`. Córrelo al agregar una guía
+- Enlaces a Google Play con `playLink(url, campaign)` de `src/lib/play.ts` (agrega `&referrer=` con utm_source=gomflo.dev, utm_medium=web y utm_campaign de la página). En JSON-LD `installUrl` va sin referrer
 
 ### Guía de partidos (`/partidos-de-hoy/`)
 - Diseño independiente (app deportiva clara/oscura, comparte la preferencia `theme` del sitio): no usa `Layout.astro` ni `global.css`, sino `styles/partidos.css` con clases `mg-*`

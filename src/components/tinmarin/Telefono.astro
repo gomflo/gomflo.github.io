@@ -1,0 +1,48 @@
+---
+// El bloque amarillo de la app para Android: lo que trae de más y el enlace a Google Play con sus capturas.
+import { androidApps } from "../../data/android-apps";
+import { playLink } from "../../lib/play";
+
+interface Props {
+  titulo?: string;
+  puntos?: string[];
+  /** utm_campaign del enlace a Google Play. */
+  campaign: string;
+}
+
+const {
+  titulo = "En tu teléfono, el sorteo sale en video.",
+  puntos = [
+    "El giro en video, con fecha, hora y código, listo para el grupo de WhatsApp",
+    "Ruletas guardadas sin límite, con plantillas para empezar",
+    "Ocho temas y modo presentación para la tele o el salón",
+    "Funciona sin internet y no pide cuenta",
+  ],
+  campaign,
+} = Astro.props;
+const play = playLink(androidApps.find((a) => a.slug === "tinmarin")!.play!, campaign);
+const capturas = [
+  "La ruleta de Tin Marín con diez opciones para decidir qué comemos",
+  "Resultado en Tin Marín: ganó Pollo rostizado entre 10 participantes, con su código",
+  "Tin Marín ofrece compartir el sorteo como video o como imagen",
+];
+---
+
+<div class="marco">
+  <section class="tm-tarjeta tm-telefono" aria-labelledby="telefono-titulo">
+    <div>
+      <h2 id="telefono-titulo">{titulo}</h2>
+      <ul>
+        {puntos.map((p) => <li>{p}</li>)}
+      </ul>
+      <a class="tm-boton tm-boton--tinta" href={play} rel="noopener">Bájala gratis en Google Play</a>
+    </div>
+    <div class="tm-telefono__capturas">
+      {
+        capturas.map((alt, i) => (
+          <img src={`/img/android/tinmarin/captura-${i + 1}.webp`} alt={alt} width="540" height="1195" loading="lazy" decoding="async" />
+        ))
+      }
+    </div>
+  </section>
+</div>

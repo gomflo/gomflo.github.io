@@ -1,0 +1,64 @@
+---
+import TinMarinGuia from "../../layouts/TinMarinGuia.astro";
+
+const faq = [
+  {
+    q: "¿Hasta qué número llega la ruleta?",
+    a: "Caben hasta 10,000 números por ruleta: del 1 al 10,000, del 0 al 9,999 o el rango que necesites dentro de ese tope.",
+  },
+  {
+    q: "¿Puedo quitar los boletos que no se vendieron?",
+    a: "Sí. Pega solo los números vendidos, uno por renglón o separados por comas, o llena el rango completo y quita los que sobran en «Lista y boletos» con la cruz junto a cada número.",
+  },
+  {
+    q: "¿Puede salir dos veces el mismo número?",
+    a: "Solo si «Sacar al ganador» está apagado. Actívalo y cada número que sale deja la ruleta hasta que toques «Regresar a todos».",
+  },
+];
+---
+
+<TinMarinGuia
+  slug="ruleta-de-numeros"
+  metaTitle="Ruleta de números del 1 al 100 para rifas"
+  description="Ruleta de números gratis: llénala del 1 al 100 o hasta 10,000 en un toque, gira y el número ganador queda con fecha, hora y código. Ideal para rifas."
+  heading="Ruleta de números para rifas con boletos numerados."
+  lead="Escribe del número al número, toca «Poner los números» y gira. El número que gana queda con fecha, hora y un código para comprobarlo."
+  guiaTitulo="Cómo armar la ruleta de tu rifa"
+  faq={faq}
+  numeros
+>
+  <h3>Llénala en un toque</h3>
+  <p>
+    En el panel de nombres escribe el primer y el último número, como del 1 al 100, y toca «Poner los números». La ruleta se llena con cada número en
+    su casilla; si ya tenías otra lista, te pregunta antes de borrarla. Con cientos de números las casillas se vuelven delgadas, pero mientras gira
+    se ve arriba de la rueda el número que va pasando bajo el puntero.
+  </p>
+
+  <h3>Solo los boletos vendidos</h3>
+  <p>
+    Si no se vendieron todos, pega solo los números vendidos, uno por renglón o en un solo renglón separados por comas (<code>3, 17, 25, 48</code>).
+    «Ordenar A-Z» los acomoda de menor a mayor y «Quitar repetidos» limpia los que se anotaron dos veces.
+  </p>
+
+  <h3>¿Números o nombres con boletos?</h3>
+  <p>Hay dos formas de hacer una rifa con la misma probabilidad para cada boleto:</p>
+  <ul>
+    <li><strong>Un número por casilla:</strong> cuando cada boleto tiene su número impreso y lo que se anuncia es el número ganador.</li>
+    <li>
+      <strong>Un nombre con varios boletos:</strong> cuando solo tienes quién compró cuántos. En «Lista y boletos» le subes los boletos a cada
+      persona y ocupa más rueda: con tres boletos, el triple de probabilidad.
+    </li>
+  </ul>
+
+  <h3>Varios premios</h3>
+  <p>
+    Activa «Sacar al ganador» y cada número que sale deja la ruleta; el resultado dice si fue 1.º, 2.º o 3.º lugar. Lo explicamos con calma en
+    <a href="/tinmarin/sortear-sin-repetir/">sortear sin repetir</a>, y si la rifa es por redes, en
+    <a href="/tinmarin/sorteo-whatsapp-instagram/">sorteo por WhatsApp o Instagram</a>.
+  </p>
+
+  <p class="tm-nota">
+    El código del sorteo sirve para que quienes compraron boleto lo comprueben: no es una certificación ante ninguna autoridad. Si vendes boletos,
+    revisa los permisos que tu rifa pueda necesitar.
+  </p>
+</TinMarinGuia>

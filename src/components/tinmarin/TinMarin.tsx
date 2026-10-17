@@ -99,7 +99,14 @@ const collator = new Intl.Collator("es-MX", {
 
 type Recheck = { kind: "ok"; label: string } | { kind: "changed"; hash: string; winnerLeft: boolean } | { kind: "mismatch"; label: string };
 
-export default function TinMarin() {
+type Props = {
+  /** Con la lista de sorteos y el comprobador. Las guías la llevan sin ellos y enlazan a /tinmarin/. */
+  completa?: boolean;
+  /** Muestra el relleno «Del 1 al N» para rifas con boletos numerados. */
+  numeros?: boolean;
+};
+
+export default function TinMarin({ completa = true, numeros = false }: Props) {
   const [data, setData] = useState<Data>(starterData);
   const [ready, setReady] = useState(false);
   const [draft, setDraft] = useState(() => join(starterData().wheel.entries));
@@ -255,6 +262,18 @@ export default function TinMarin() {
   const sortAZ = () => {
     updateEntries((entries) => [...entries].sort((a, b) => collator.compare(a.label, b.label)));
     say("Lista ordenada de la A a la Z.");
+  };
+
+  const fillNumbers = (from: number, to: number) => {
+    const d = dataRef.current;
+    const own = d.wheel.entries.length > 0 && !isUntouchedStarter(d.wheel.entries);
+    if (own && !confirm("¿Cambiar tu lista por los números? La lista actual se borra.")) return;
+    // Lista nueva: sin boletos ni «ya salió» heredados de un número que ya estaba.
+    const count = to - from + 1;
+    const entries = Array.from({ length: count }, (_, i) => ({ id: d.nextId + i, label: String(from + i), weight: 1 }));
+    setDraft(join(entries));
+    commit({ ...d, wheel: { ...d.wheel, entries }, nextId: d.nextId + count });
+    say(`Ruleta del ${from.toLocaleString("es-MX")} al ${to.toLocaleString("es-MX")}.`);
   };
 
   const setWeight = (id: number, weight: number) =>
@@ -565,6 +584,7 @@ export default function TinMarin() {
                 Ordenar A-Z
               </button>
             </div>
+            {numeros && <Rango onFill={fillNumbers} />}
             <p className="tm-panel__cuenta">
               {plural(wheel.entries.length, "nombre", "nombres")}
               {tickets > active.length && ` · ${plural(tickets, "boleto", "boletos")}`}
@@ -638,6 +658,7 @@ export default function TinMarin() {
         </p>
       </div>
 
+      {completa && (
       <section className="tm-sorteos marco" id="sorteos" aria-labelledby="tm-sorteos-titulo">
         <div className="tm-sorteos__cabeza">
           <h2 id="tm-sorteos-titulo" className="tm-seccion__titulo">
@@ -807,8 +828,9 @@ export default function TinMarin() {
           </ol>
         )}
       </section>
+      )}
 
-      <Comprobador entries={active} wheelName={wheel.name} />
+      {completa && <Comprobador entries={active} wheelName={wheel.name} />}
 
       {reveal && (
         <Resultado
@@ -830,6 +852,45 @@ export default function TinMarin() {
         />
       )}
     </>
+  );
+}
+
+/** Llena la ruleta con los números de un rango, para rifas con boletos numerados. */
+function Rango({ onFill }: { onFill: (from: number, to: number) => void }) {
+  const [from, setFrom] = useState("1");
+  const [to, setTo] = useState("100");
+  const [error, setError] = useState("");
+
+  const fill = (e: React.FormEvent) => {
+    e.preventDefault();
+    const a = Number(from);
+    const b = Number(to);
+    if (!Number.isInteger(a) || !Number.isInteger(b) || a < 0 || b < 0) return setError("Usa números enteros, como del 1 al 100.");
+    if (b <= a) return setError("El segundo número tiene que ser mayor que el primero.");
+    if (b - a + 1 > MAX_NAMES) return setError(`Caben hasta ${MAX_NAMES.toLocaleString("es-MX")} números por ruleta.`);
+    setError("");
+    onFill(a, b);
+  };
+
+  return (
+    <form className="tm-rango" onSubmit={fill} noValidate>
+      <label className="tm-campo">
+        <span className="tm-campo__etiqueta">Del</span>
+        <input className="tm-entrada" inputMode="numeric" value={from} onChange={(e) => setFrom(e.target.value.trim())} aria-invalid={!!error} />
+      </label>
+      <label className="tm-campo">
+        <span className="tm-campo__etiqueta">al</span>
+        <input className="tm-entrada" inputMode="numeric" value={to} onChange={(e) => setTo(e.target.value.trim())} aria-invalid={!!error} />
+      </label>
+      <button type="submit" className="tm-pastilla">
+        Poner los números
+      </button>
+      {error && (
+        <p className="tm-error" role="alert">
+          {error}
+        </p>
+      )}
+    </form>
   );
 }
 

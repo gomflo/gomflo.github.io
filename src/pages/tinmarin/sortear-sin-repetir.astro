@@ -1,0 +1,59 @@
+---
+import TinMarinGuia from "../../layouts/TinMarinGuia.astro";
+
+const faq = [
+  {
+    q: "¿Cuántos ganadores puedo sacar?",
+    a: "Los que quieras, hasta que no quede nadie en la ruleta. Caben hasta 10,000 nombres, y cada giro guarda su acta con el lugar que tocó.",
+  },
+  {
+    q: "¿Cómo regreso a los que ya salieron?",
+    a: "Con «Regresar a todos», debajo de la ruleta: vuelven todos a sus casillas y puedes empezar otra ronda. Si apagas «Sacar al ganador», los siguientes giros pueden repetir.",
+  },
+  {
+    q: "¿Cómo compruebo el segundo o el tercer lugar?",
+    a: "Cada lugar se sorteó con la lista de ese momento. El 1.º, con la lista completa; el 2.º, con la lista sin el 1.º; el 3.º, sin los dos anteriores. En «Comprueba un sorteo» pega la lista de ese giro, en el mismo orden, con el código de su acta.",
+  },
+];
+---
+
+<TinMarinGuia
+  slug="sortear-sin-repetir"
+  metaTitle="Sortear sin repetir: varios ganadores y turnos"
+  description="Ruleta para sortear sin repetir: saca varios ganadores en orden, reparte turnos o tareas y cada quien sale una sola vez. Cada lugar queda con su código."
+  heading="Sortear sin repetir: varios ganadores, lugares y turnos."
+  lead="Activa «Sacar al ganador» y quien sale deja la ruleta. Así sacas primero, segundo y tercer lugar, o el orden completo de una lista, sin que nadie se repita."
+  guiaTitulo="Cómo sacar varios ganadores"
+  faq={faq}
+>
+  <h3>«Sacar al ganador», el botón que lo hace</h3>
+  <ul>
+    <li>Actívalo debajo de la ruleta antes del primer giro.</li>
+    <li>
+      Cada resultado dice en qué lugar salió (1.º, 2.º, 3.º…) y cuántos quedan. «Sortear el siguiente» gira de nuevo sin cerrar nada más.
+    </li>
+    <li>En «Lista y boletos», quien ya salió aparece marcado; en el cuadro de texto sigue en la lista, pero ya no entra a la rueda.</li>
+    <li>«Regresar a todos» los vuelve a poner para otra ronda.</li>
+  </ul>
+
+  <h3>Varios premios en una rifa</h3>
+  <p>
+    Antes de girar, anuncia qué premio se lleva cada lugar: si el primero que sale gana el premio mayor o si se sortea de menor a mayor. Cada giro deja su
+    acta con fecha, hora, código y «Lugar en la serie», y con «Compartir imagen» mandas la de cada ganador. Si la rifa tiene boletos, quien compró más
+    tiene más probabilidad en cada giro, pero sale una sola vez.
+  </p>
+
+  <h3>Turnos y orden completo</h3>
+  <p>
+    Para el orden de exposiciones, de turnos de limpieza o de quién escoge primero, sortea hasta que no quede nadie: el lugar de cada giro es su turno.
+    Si solo necesitas un orden y no un acta por cada lugar, «Revolver» mezcla la lista al azar de un jalón; ese orden no deja código para comprobarlo.
+  </p>
+
+  <h3>Comprobar una serie</h3>
+  <p>
+    Cada lugar se sorteó con quienes seguían en la ruleta en ese momento, en el orden de tu lista. Por eso, para revisar el 2.º lugar, la lista es la
+    original sin el 1.º. Cuando regresas a todos, la lista vuelve a ser la completa y el botón «Comprobar» del acta del 1.er lugar lo repite ahí
+    mismo, en <a href="/tinmarin/#sorteos">tus sorteos</a>. Para los demás lugares, o para revisar la serie de alguien más, usa
+    <a href="/tinmarin/#comprobar">Comprueba un sorteo</a> con la lista de cada giro.
+  </p>
+</TinMarinGuia>
