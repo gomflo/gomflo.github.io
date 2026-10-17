@@ -1,8 +1,10 @@
 ---
 // Preguntas frecuentes, abiertas una por una. El JSON-LD (FAQPage) lo arma cada página con las mismas.
+// `enlace` vuelve enlace la primera vez que su texto aparece en la respuesta; el JSON-LD se queda con `a` tal cual.
 export interface Faq {
   q: string;
   a: string;
+  enlace?: { texto: string; href: string };
 }
 
 interface Props {
@@ -20,7 +22,17 @@ const { faq, titulo = "Preguntas frecuentes" } = Astro.props;
       faq.map((f) => (
         <details>
           <summary>{f.q}</summary>
-          <p>{f.a}</p>
+          <p>
+            {f.enlace && f.a.includes(f.enlace.texto) ? (
+              <>
+                {f.a.slice(0, f.a.indexOf(f.enlace.texto))}
+                <a class="fj-enlace" href={f.enlace.href}>{f.enlace.texto}</a>
+                {f.a.slice(f.a.indexOf(f.enlace.texto) + f.enlace.texto.length)}
+              </>
+            ) : (
+              f.a
+            )}
+          </p>
         </details>
       ))
     }
