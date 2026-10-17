@@ -1,0 +1,15 @@
+import { chromium } from "playwright";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: "light", reducedMotion: "reduce" });
+await p.goto("http://localhost:4350/no-existe/", { waitUntil: "networkidle" });
+await p.screenshot({ path: ".taste-skill/otra-404.jpg", quality: 60 });
+await p.goto("http://localhost:4350/validar-clabe/", { waitUntil: "networkidle" });
+await p.evaluate(() => scrollTo(0, document.body.scrollHeight));
+await p.waitForTimeout(300);
+await p.screenshot({ path: ".taste-skill/otra-clabe-pie.jpg", quality: 60 });
+const m = await b.newPage({ viewport: { width: 390, height: 844 }, colorScheme: "dark", reducedMotion: "reduce" });
+await m.goto("http://localhost:4350/", { waitUntil: "networkidle" });
+await m.evaluate(() => scrollTo(0, document.body.scrollHeight));
+await m.waitForTimeout(300);
+await m.screenshot({ path: ".taste-skill/otra-movil-pie.jpg", quality: 60 });
+await b.close();
