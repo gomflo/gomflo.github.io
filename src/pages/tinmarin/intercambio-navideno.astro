@@ -1,0 +1,60 @@
+---
+import TinMarinGuia from "../../layouts/TinMarinGuia.astro";
+
+const faq = [
+  {
+    q: "¿Sirve la ruleta para el amigo secreto?",
+    a: "Para repartir quién le regala a quién, no: en la ruleta todos ven el nombre que sale, y el chiste del amigo secreto es que nadie sepa. Para esa parte usa papelitos (abajo está cómo hacerlo sin que a nadie le toque su propio nombre). La ruleta sí sirve para el orden en que se entregan los regalos y para la rifa.",
+  },
+  {
+    q: "¿Cómo hago la rifa de la posada con varios premios?",
+    a: "Pega la lista de invitados, activa «Sacar al ganador» y gira una vez por premio. Quien gana sale de la ruleta, así nadie se lleva dos. Cada giro queda con fecha, hora y un código para comprobarlo.",
+  },
+  {
+    q: "¿Cómo se juega el intercambio de regalos robados?",
+    a: "Cada quien lleva un regalo envuelto y se sortea el orden de turnos. En su turno, cada quien abre un regalo de la mesa o le roba uno ya abierto a alguien más; al que le roban escoge otro. Con la ruleta y «Sacar al ganador» sacas el orden completo frente a todos.",
+  },
+];
+---
+
+<TinMarinGuia
+  slug="intercambio-navideno"
+  metaTitle="Intercambio navideño y rifa de la posada"
+  description="Ruleta para el intercambio navideño y la posada: sortea el orden de los regalos, juega a los regalos robados y rifa varios premios sin repetir. Gratis."
+  heading="Intercambio navideño y rifa de la posada."
+  lead="Pega la lista de invitados y gira frente a todos: quién da su regalo primero, el orden de los regalos robados o los premios de la rifa, sin que nadie salga dos veces."
+  guiaTitulo="Cómo usarla en diciembre"
+  faq={faq}
+>
+  <h3>La rifa de la posada</h3>
+  <ul>
+    <li>Pega la lista de invitados: un nombre por línea, numerada o separada por comas.</li>
+    <li>Activa «Sacar al ganador» debajo de la ruleta y anuncia antes qué premio va con cada giro.</li>
+    <li>Gira una vez por premio. Quien gana deja la ruleta y el resultado dice qué lugar tocó y cuántos quedan.</li>
+    <li>
+      Si alguien compró más boletos, dale más en «Lista y boletos»: su parte de la ruleta crece, pero sale una sola vez. Más detalles en
+      <a href="/tinmarin/sortear-sin-repetir/">sortear sin repetir</a>.
+    </li>
+  </ul>
+
+  <h3>El intercambio de regalos robados</h3>
+  <p>
+    Cada quien lleva un regalo envuelto, del precio que acordaron, y se ponen todos en la mesa. Con «Sacar al ganador», gira hasta que no quede nadie:
+    el orden en que salen es el orden de turnos. En su turno, cada quien abre un regalo de la mesa o le roba uno ya abierto a otra persona, y a quien
+    le roban escoge otro. Pónganse de acuerdo antes en cuántas veces se puede robar el mismo regalo.
+  </p>
+
+  <h3>Quién da su regalo primero</h3>
+  <p>
+    En el intercambio de siempre, cuando ya todos saben a quién le regalan, gira para ver quién empieza. Quien entrega su regalo pasa a ser el
+    siguiente en girar, o sigan el orden que salga con «Sacar al ganador».
+  </p>
+
+  <h3>El amigo secreto, con papelitos</h3>
+  <p>
+    La ruleta no sirve para repartir quién le regala a quién: todos verían el nombre que sale. Para esa parte, escribe cada nombre en un papelito
+    igual, dóblalos y ponlos en una bolsa. Cada quien saca uno sin enseñarlo. Si a alguien le toca su propio nombre, todos regresan su papelito y se
+    vuelve a sacar desde el principio; así nadie sabe a quién le tocó cada quien. Si una persona no puede estar, alguien de confianza saca por ella sin
+    verlo y se lo da cerrado.
+  </p>
+</TinMarinGuia>
