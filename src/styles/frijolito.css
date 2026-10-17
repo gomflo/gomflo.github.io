@@ -1123,6 +1123,15 @@ a {
   color: var(--papel-suave);
 }
 
+/* Las mismas tarjetas sin número, cuando no son pasos (para quién es, en la portada en inglés). */
+.fj-pasos--lista .fj-paso {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.fj-pasos--lista .fj-paso::before {
+  content: none;
+}
+
 /* ---------- La app ---------- */
 
 .fj-app {

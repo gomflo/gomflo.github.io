@@ -8,16 +8,18 @@ interface Props {
   placa?: boolean;
   /** Las de arriba de la página no esperan al scroll. */
   lazy?: boolean;
+  /** Texto alternativo en otro idioma (la portada en inglés); sin él, el de la baraja en español. */
+  alt?: string;
 }
 
-const { carta, placa = true, lazy = true } = Astro.props;
+const { carta, placa = true, lazy = true, alt } = Astro.props;
 ---
 
 <div class="fj-cara">
   <div class="fj-cara__dibujo">
     <img
       src={imagen(carta)}
-      alt={textoAlt(carta)}
+      alt={alt ?? textoAlt(carta)}
       width="300"
       height="450"
       loading={lazy ? "lazy" : "eager"}
