@@ -13,6 +13,12 @@ import { androidApps } from "../../data/android-apps";
 const app = androidApps.find((a) => a.slug === "frijolito")!;
 const site = Astro.site!;
 const canonicalURL = new URL(Astro.url.pathname, site).href;
+// La misma portada en inglés vive en /frijolito/en/; las dos se anuncian una a la otra.
+const alternos = [
+  { hreflang: "es-MX", href: canonicalURL },
+  { hreflang: "en-US", href: new URL("/frijolito/en/", site).href },
+  { hreflang: "x-default", href: canonicalURL },
+];
 
 const title = "Cantador de lotería mexicana: Frijolito | gomflo.dev";
 const description =
@@ -98,6 +104,7 @@ const jsonLd = {
   jsonLd={jsonLd}
   campaign="frijolito"
   salto={{ href: "#cantador", texto: "Ir al cantador" }}
+  alternos={alternos}
 >
   <div class="fj-portada fj-portada--mesa fj-marco">
     <h1>Cantador de lotería mexicana, con voz y verso.</h1>
