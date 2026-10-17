@@ -1,0 +1,32 @@
+---
+// Enlaces a las otras páginas de Frijolito en la web, menos la página en la que estás.
+import { paginas, ruta } from "../../data/frijolito-paginas";
+
+interface Props {
+  titulo: string;
+  lead?: string;
+  /** Slug de la página actual ("" es la portada), para no enlazarla a sí misma. */
+  actual: string;
+}
+
+const { titulo, lead, actual } = Astro.props;
+---
+
+<section class="fj-seccion fj-marco" aria-labelledby="paginas-titulo">
+  <h2 id="paginas-titulo" class="fj-seccion__titulo">{titulo}</h2>
+  {lead && <p class="fj-seccion__lead">{lead}</p>}
+  <ul class="fj-paginas">
+    {
+      paginas
+        .filter((p) => p.slug !== actual)
+        .map((p) => (
+          <li>
+            <a class="fj-tarjeta" href={ruta(p)}>
+              <strong>{p.nombre}</strong>
+              <span>{p.resumen}</span>
+            </a>
+          </li>
+        ))
+    }
+  </ul>
+</section>

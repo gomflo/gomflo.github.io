@@ -1,0 +1,151 @@
+---
+// Las 54 cartas de la lotería con su número, nombre, verso e ilustración. Página de texto: todo sale en el
+// HTML, sin JavaScript.
+import FrijolitoLayout from "../../layouts/FrijolitoLayout.astro";
+import Cara from "../../components/frijolito/Cara.astro";
+import App from "../../components/frijolito/App.astro";
+import Faq from "../../components/frijolito/Faq.astro";
+import Paginas from "../../components/frijolito/Paginas.astro";
+import { cartas, imagen } from "../../data/frijolito-cartas";
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const slug = "cartas-de-la-loteria";
+const title = "Las 54 cartas de la lotería y sus versos | gomflo.dev";
+const description =
+  "Las 54 cartas de la lotería mexicana con su número, su nombre y el verso con que se cantan, de El Gallo a La Rana, con la baraja ilustrada propia de Frijolito.";
+
+const faq = [
+  {
+    q: "¿Cuántas cartas tiene la lotería mexicana?",
+    a: "54. Cada una tiene un número fijo, del 1 (El Gallo) al 54 (La Rana), y las tablas de 4 × 4 llevan 16 de ellas. Por eso cualquier baraja sirve con cualquier tabla: lo que importa es el nombre y el número.",
+  },
+  {
+    q: "¿De dónde salen los versos?",
+    a: "Son los versos populares con que los cantadores anuncian cada carta, de dominio público y con variantes en cada región. Algunos aquí van recortados para que se digan de corrido. Los de El Negrito (26) y El Apache (38) son propios: las dos cartas conservan su nombre tradicional y se dibujaron como retratos dignos.",
+  },
+  {
+    q: "¿Puedo usar estas cartas para jugar?",
+    a: "Sí, en casa o en el salón. El cantador de esta página las baraja y las canta, y en la página de tablas puedes imprimir tablas y las 54 cartas para recortar.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ItemList",
+      name: "Las 54 cartas de la lotería mexicana",
+      numberOfItems: cartas.length,
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      itemListElement: cartas.map((c) => ({
+        "@type": "ListItem",
+        position: c.n,
+        name: c.nombre,
+        url: `${canonicalURL}#${c.slug}`,
+        image: new URL(imagen(c, true), site).href,
+        description: c.verso,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Frijolito", item: new URL("/frijolito/", site).href },
+        { "@type": "ListItem", position: 3, name: "Cartas de la lotería", item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<FrijolitoLayout
+  title={title}
+  description={description}
+  image={`/img/frijolito/${slug}.jpeg`}
+  imageAlt="Las 54 cartas de la lotería mexicana y sus versos, con la baraja de Frijolito"
+  jsonLd={jsonLd}
+  campaign={`frijolito-${slug}`}
+>
+  <nav class="fj-migas fj-marco" aria-label="Estás en">
+    <ol>
+      <li><a href="/frijolito/">Frijolito</a></li>
+      <li aria-current="page">Cartas de la lotería</li>
+    </ol>
+  </nav>
+
+  <div class="fj-portada fj-marco">
+    <h1>Las 54 cartas de la lotería mexicana, con sus versos.</h1>
+    <p>
+      Cada carta tiene su número, su nombre y un verso con el que el cantador la anuncia. Aquí están las 54 en su orden de siempre, con la baraja
+      ilustrada propia de Frijolito. Los nombres y números son los tradicionales, así que coinciden con tus tablas de cartón.
+    </p>
+  </div>
+
+  <section class="fj-marco" aria-labelledby="indice-titulo">
+    <h2 id="indice-titulo" class="fj-rotulo">Ir a una carta</h2>
+    <ul class="fj-indice">
+      {
+        cartas.map((c) => (
+          <li>
+            <a href={`#${c.slug}`} aria-label={`${c.n}, ${c.nombre}`}>
+              {c.n}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="cartas-titulo" style="padding-top:2.5rem">
+    <h2 id="cartas-titulo" class="fj-seccion__titulo">Nombres y versos, del 1 al 54</h2>
+    <p class="fj-seccion__lead">
+      Cuando el cantador dice el verso antes del nombre, se juega a adivinar: «el farol de los enamorados» es La Luna. Pruébalo en voz alta con el <a
+        class="fj-enlace"
+        href="/frijolito/">cantador</a
+      >.
+    </p>
+    <ol class="fj-rejilla">
+      {
+        cartas.map((c, i) => (
+          <li id={c.slug} class="fj-ficha">
+            <Cara carta={c} lazy={i > 5} />
+            <div>
+              <h3>
+                <span>Carta {c.n}</span>
+                {c.nombre}
+              </h3>
+              <p>{c.verso}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="saber-titulo">
+    <h2 id="saber-titulo" class="fj-seccion__titulo">Lo que conviene saber de la baraja</h2>
+    <div class="fj-texto">
+      <p>
+        La baraja se juega con tablas de 4 × 4: cada tabla tiene 16 de las 54 cartas, y el cantador las va sacando una por una. Quien llena la figura
+        acordada (una línea, las cuatro esquinas, el centro o la tabla entera) grita ¡Lotería! Las reglas completas están en <a
+          href="/frijolito/como-jugar-loteria/">cómo jugar lotería</a
+        >.
+      </p>
+      <p>
+        Las ilustraciones de esta página son originales de Frijolito, al estilo de las estampas de feria antiguas, pero cada carta tiene pose y
+        encuadre propios. Para jugar en papel, imprime <a href="/frijolito/tablas-de-loteria-para-imprimir/">tablas y las 54 cartas para recortar</a>.
+      </p>
+    </div>
+  </section>
+
+  <App campaign={`frijolito-${slug}`} titulo="Estas mismas cartas, cantadas en tu teléfono." />
+
+  <Faq faq={faq} />
+
+  <Paginas titulo="Más para tu lotería" actual={slug} />
+</FrijolitoLayout>

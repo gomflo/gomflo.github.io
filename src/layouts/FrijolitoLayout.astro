@@ -1,0 +1,123 @@
+---
+// La plantilla de /frijolito/ y sus páginas: identidad de la app (la mesa de color y el papel crema,
+// styles/frijolito.css), sin Layout.astro ni global.css. Pone la cabeza (SEO, imagen para compartir,
+// JSON-LD), la barra y el pie. El aviso de privacidad de la app vive aparte, en public/frijolito/privacidad/.
+import { existsSync } from "node:fs";
+import "../styles/frijolito.css";
+import { androidApps } from "../data/android-apps";
+import { paginas, ruta } from "../data/frijolito-paginas";
+import { playLink } from "../lib/play";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Imagen para compartir (1200×630) en public/. Si no existe todavía, la página sale sin ella. */
+  image: string;
+  imageAlt: string;
+  jsonLd: object;
+  /** utm_campaign de los enlaces a Google Play. */
+  campaign: string;
+  /** A dónde salta el enlace «Ir al contenido». */
+  salto?: { href: string; texto: string };
+}
+
+const { title, description, image, imageAlt, jsonLd, campaign, salto = { href: "#contenido", texto: "Ir al contenido" } } = Astro.props;
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const imageURL = existsSync(new URL(`../../public${image}`, import.meta.url)) ? new URL(image, site).href : undefined;
+const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, campaign);
+const actual = Astro.url.pathname;
+const year = new Date().getFullYear();
+const barra = [
+  { href: "/frijolito/", texto: "Cantador" },
+  { href: "/frijolito/cartas-de-la-loteria/", texto: "Cartas" },
+  { href: "/frijolito/tablas-de-loteria-para-imprimir/", texto: "Tablas" },
+  { href: "/frijolito/como-jugar-loteria/", texto: "Cómo jugar" },
+];
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#192664" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/png" href="/img/android/frijolito/icono.png" />
+    <link rel="apple-touch-icon" href="/img/android/frijolito/icono.png" />
+    <link rel="preload" href="/fonts/fraunces-400_600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrument-sans-400_700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="gomflo.dev" />
+    {
+      imageURL && (
+        <>
+          <meta property="og:image" content={imageURL} />
+          <meta property="og:image:type" content="image/jpeg" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={imageAlt} />
+        </>
+      )
+    }
+    <meta name="twitter:card" content={imageURL ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageURL && <meta name="twitter:image" content={imageURL} />}
+    {imageURL && <meta name="twitter:image:alt" content={imageAlt} />}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href={salto.href} class="fj-salto">{salto.texto}</a>
+
+    <header class="fj-barra fj-marco">
+      <a class="fj-marca" href="/frijolito/" aria-label="Frijolito, cantador de lotería: inicio">
+        <img src="/img/android/frijolito/icono.png" alt="" width="36" height="36" />
+        Frijolito
+      </a>
+      <nav aria-label="Principal">
+        <ul class="fj-barra__ligas">
+          {
+            barra.map((l) => (
+              <li>
+                <a href={l.href} aria-current={actual === l.href ? "page" : undefined}>
+                  {l.texto}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="fj-play" href={play} rel="noopener" aria-label="Bájala en Google Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
+          <span><span class="fj-play__largo">Bájala en </span>Google Play</span>
+        </a>
+      </nav>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer class="fj-pie fj-marco">
+      <div class="fj-pie__fila">
+        <nav aria-label="Frijolito en la web">
+          <ul>
+            {paginas.filter((p) => ruta(p) !== actual).map((p) => <li><a href={ruta(p)}>{p.nombre}</a></li>)}
+          </ul>
+        </nav>
+        <ul>
+          <li><a href="/frijolito/privacidad/">Aviso de privacidad</a></li>
+          <li><a href="/android/">Más apps para Android</a></li>
+          <li><a href="/">Herramientas en gomflo.dev</a></li>
+        </ul>
+      </div>
+      <p style="margin-top:1rem">© {year} gomflo. Hecho en México. Las ilustraciones de la baraja son propias de Frijolito.</p>
+    </footer>
+  </body>
+</html>
