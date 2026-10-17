@@ -1,11 +1,11 @@
 ---
 /**
- * La caja de piezas: todas las herramientas como bloques de color, agrupadas
- * por categoría (el color es la categoría). La usan el inicio y el 404.
- * El buscador (src/motion/buscador.ts) filtra por `data-pieza` y cada bloque
- * muestra su resultado en vivo (src/motion/piezas.ts, `data-vivo`).
+ * La caja de piezas: todas las herramientas en una lista de dos extremos,
+ * agrupadas por categoría. El color de la categoría queda en un punto chico;
+ * a la izquierda el nombre y lo que hace, a la derecha su resultado en vivo.
+ * La usan el inicio y el 404. El buscador (src/motion/buscador.ts) filtra por
+ * `data-pieza` y cada fila muestra su resultado en vivo (src/motion/piezas.ts, `data-vivo`).
  */
-import Motif from "./brand/Motif.astro";
 import { categories, toolsIn } from "../lib/tools";
 
 interface Props {
@@ -21,25 +21,16 @@ const Titulo = `h${level}` as "h2" | "h3";
   {categories.map((category) => {
     const lista = toolsIn(category.id);
     return (
-      <section class="grupo" data-grupo data-cat={category.id} data-n={lista.length} aria-labelledby={`grupo-${category.id}`}>
-        <header class="grupo__cabeza" data-entra>
-          <p class="grupo__cuenta etiqueta"><span class="grupo__punto" aria-hidden="true" />{lista.length} piezas</p>
-          <Titulo id={`grupo-${category.id}`} class="grupo__titulo titular">{category.title}</Titulo>
-          <p class="grupo__desc">{category.desc}</p>
-        </header>
+      <section class="grupo" data-grupo data-cat={category.id} aria-labelledby={`grupo-${category.id}`}>
+        <Titulo id={`grupo-${category.id}`} class="grupo__titulo">{category.title}</Titulo>
         <ul class="grupo__lista" role="list">
           {lista.map((tool) => (
             <li data-pieza={`${tool.title} ${tool.desc} ${category.title}`} data-entra>
-              <a href={tool.href} class="pieza motif-trigger" data-cat={category.id}>
-                <span class="pieza__arriba">
-                  <Motif slug={tool.slug} class="pieza__dibujo" />
-                  <span class="pieza__flecha" aria-hidden="true">
-                    <svg viewBox="0 0 16 16" focusable="false"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" /></svg>
-                  </span>
-                </span>
-                <span class="pieza__nombre">{tool.title}</span>
-                <span class="pieza__desc">{tool.desc}</span>
-                <span class="pieza__vivo" data-vivo={tool.slug} data-muestra-color={tool.slug === "conversor-colores" ? "" : undefined} aria-hidden="true" />
+              <a href={tool.href} class="fila" data-cat={category.id}>
+                <span class="fila__punto" aria-hidden="true" />
+                <span class="fila__nombre" data-nombre>{tool.title}</span>
+                <span class="fila__desc">{tool.desc}</span>
+                <code class="fila__vivo" data-vivo={tool.slug} data-muestra-color={tool.slug === "conversor-colores" ? "" : undefined} aria-hidden="true" />
               </a>
             </li>
           ))}
@@ -50,19 +41,9 @@ const Titulo = `h${level}` as "h2" | "h3";
 </div>
 
 <style>
-  /*
-   * Una sola retícula para todo: secciones y listas son `display: contents`,
-   * así la cabeza de cada categoría es un bloque más de la caja.
-   */
   .piezas {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--hueco);
-  }
-
-  .grupo,
-  .grupo__lista {
-    display: contents;
+    gap: clamp(2rem, 3vw, 2.75rem);
   }
 
   .grupo[hidden],
@@ -70,97 +51,142 @@ const Titulo = `h${level}` as "h2" | "h3";
     display: none;
   }
 
+  /* La categoría: una palabra en la tinta suave, al tamaño del texto. */
+  .grupo__titulo {
+    margin: 0 0 0.375rem;
+    padding-inline: 0.75rem;
+    color: var(--gris);
+    font-size: var(--t-texto);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
   .grupo__lista {
+    display: grid;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .grupo__lista > li {
+  /* La fila: sin caja ni línea; al apuntarla sube un tono. */
+  .fila {
     display: grid;
-    min-width: 0;
+    grid-template-columns: 0.625rem minmax(0, 14.5rem) minmax(0, 1fr) minmax(0, 14rem);
+    align-items: baseline;
+    gap: 0 1rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--tinta);
+    text-decoration: none;
+    border-radius: var(--radio-sobrio);
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.18s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .fila:hover {
+      background: var(--crema-honda);
+    }
+    .fila:hover .fila__vivo {
+      color: var(--tinta);
+    }
+  }
+  .fila:active {
+    background: var(--crema-honda);
+  }
+  .fila:focus-visible {
+    background: var(--crema-honda);
+    border-radius: var(--radio-sobrio);
   }
 
-  /* Cabeza de categoría: bloque sin relleno, con el contorno de la tinta.
-     Con 6 piezas ocupa dos celdas y con 3 una: cada categoría cierra sus filas. */
-  .grupo__cabeza {
-    grid-column: span 2;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 12.5rem;
-    padding: clamp(0.875rem, 0.7rem + 0.7vw, 1.25rem);
-    border: 2px solid var(--tinta);
-    border-radius: var(--radio-pieza);
-  }
-  .grupo[data-n="3"] .grupo__cabeza {
-    grid-column: span 1;
-  }
-
-  .grupo__cuenta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-  }
-  .grupo__punto {
-    width: 0.875rem;
-    height: 0.875rem;
+  /* El punto se alinea con la primera línea del nombre. */
+  .fila__punto {
+    align-self: start;
+    margin-top: 0.4rem;
+    width: 0.625rem;
+    height: 0.625rem;
     border-radius: 50%;
     background: var(--pieza);
-    box-shadow: 0 0 0 2px var(--tinta);
+    transition: scale 0.3s var(--ease-spring);
+  }
+  @media (hover: hover) {
+    .fila:hover .fila__punto {
+      scale: 1.4;
+    }
   }
 
-  .grupo__titulo {
-    margin: auto 0 0;
-    padding-top: 1.5rem;
-    font-size: var(--t-l);
-    overflow-wrap: anywhere;
-  }
-  .grupo[data-n="3"] .grupo__titulo {
-    font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
-  }
-
-  .grupo__desc {
-    margin: 0.5rem 0 0;
-    max-width: 34ch;
-    color: var(--gris);
-    font-size: var(--t-s);
+  .fila__nombre {
+    font-size: var(--t-texto);
+    font-weight: 600;
     line-height: 1.35;
   }
 
-  /* Al filtrar, las cabezas estorban: quedan solo las piezas que coinciden. */
-  .piezas[data-filtrando] .grupo__cabeza {
-    display: none;
+  .fila__desc {
+    color: var(--gris);
+    font-size: var(--t-texto);
+    line-height: 1.4;
+  }
+
+  /* El resultado en vivo: código de verdad, en una línea, alineado a la derecha. */
+  .fila__vivo {
+    justify-self: end;
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--gris);
+    font-family: var(--font-code);
+    font-size: var(--t-chico);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: color 0.18s var(--ease-soft);
+  }
+  .fila__vivo[data-muestra-color]::before {
+    content: "";
+    display: inline-block;
+    width: 0.625rem;
+    height: 0.625rem;
+    margin-right: 0.4rem;
+    border-radius: 50%;
+    background: var(--muestra, var(--lila));
+  }
+  @keyframes vivo {
+    from {
+      opacity: 0.2;
+    }
+  }
+  :global(.motion) .fila__vivo:global(.cambia) {
+    animation: vivo 0.5s var(--ease-soft);
   }
 
   @media (max-width: 1100px) {
-    .piezas {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .fila {
+      grid-template-columns: 0.625rem minmax(0, 1fr) minmax(0, 13rem);
+      row-gap: 0.1rem;
     }
-    .grupo__cabeza,
-    .grupo[data-n="3"] .grupo__cabeza {
-      grid-column: 1 / -1;
-      min-height: 0;
+    .fila__desc {
+      grid-column: 2;
+      grid-row: 2;
     }
-    .grupo__titulo {
-      padding-top: 1rem;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .piezas {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    /* Tres piezas en dos columnas: la última ocupa la fila. */
-    .piezas:not([data-filtrando]) .grupo[data-n="3"] li:last-child {
-      grid-column: 1 / -1;
+    .fila__vivo {
+      grid-column: 3;
+      grid-row: 1;
     }
   }
 
-  @media (max-width: 460px) {
-    .piezas {
-      grid-template-columns: minmax(0, 1fr);
+  @media (max-width: 640px) {
+    .fila {
+      grid-template-columns: 0.625rem minmax(0, 1fr);
+      padding-block: 0.75rem;
+    }
+    .fila__nombre,
+    .fila__desc,
+    .fila__vivo {
+      grid-column: 2;
+      grid-row: auto;
+    }
+    .fila__vivo {
+      justify-self: start;
+      margin-top: 0.2rem;
     }
   }
 </style>

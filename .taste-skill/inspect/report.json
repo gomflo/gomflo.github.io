@@ -1,0 +1,1076 @@
+{
+ "url": "http://localhost:4350/",
+ "at": "2026-10-15T12:26:28.261Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 6,
+   "filled": [
+    0.26,
+    0.55,
+    0.3,
+    0.36,
+    0.58,
+    0.58
+   ],
+   "motion": {
+    "elements": 35,
+    "css": 3,
+    "transitions": 1,
+    "scripted": 31,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 4598,
+     "screens": 5.1,
+     "words": 665,
+     "img": 13,
+     "video": 0,
+     "canvas": 0,
+     "svg": 3,
+     "sections": 9,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 1,
+     "uiAbuse": false,
+     "realPictures": 3,
+     "videoCount": 0,
+     "uiPictures": 1,
+     "pictureSamples": [
+      "susurro.png",
+      "destello.png",
+      "brinco.png"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": []
+    },
+    "hero": {
+     "text": "Herramientas gratis en español.",
+     "words": 4,
+     "chars": 31,
+     "lines": 2,
+     "size": 70,
+     "vw": 4.9,
+     "font": "Bricolage Grotesque",
+     "weight": 600,
+     "tracking": -0.035,
+     "leading": 1.02,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.51,
+     "top": 250,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Herramientas gratis en español.",
+     "words": 4,
+     "lines": 2,
+     "size": 70,
+     "font": "Bricolage Grotesque"
+    },
+    "headings": [
+     {
+      "text": "Herramientas gratis en español.",
+      "words": 4,
+      "chars": 31,
+      "lines": 2,
+      "size": 70,
+      "vw": 4.9,
+      "font": "Bricolage Grotesque",
+      "weight": 600,
+      "tracking": -0.035,
+      "leading": 1.02,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.51,
+      "top": 250,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Tú escribes, la caja responde.",
+      "words": 5,
+      "chars": 30,
+      "lines": 1,
+      "size": 52,
+      "vw": 3.6,
+      "font": "Bricolage Grotesque",
+      "weight": 600,
+      "tracking": -0.03,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 1,
+      "top": 1309,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "gomflo",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 136.8,
+      "vw": 9.5,
+      "font": "Bricolage Grotesque",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.66,
+      "top": 4271,
+      "tag": "a",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 3,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 5,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Bricolage Grotesque",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "DM Mono",
+       "share": 0.2,
+       "mono": true
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      14,
+      15,
+      17,
+      24,
+      26,
+      52,
+      70,
+      137
+     ],
+     "sizeCount": 8,
+     "notLoaded": [],
+     "body": {
+      "font": "Bricolage Grotesque",
+      "size": 17,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 16.4
+     },
+     "measureChars": 48,
+     "max": {
+      "size": 136.8,
+      "vw": 9.5,
+      "font": "Bricolage Grotesque",
+      "text": "gomflo"
+     },
+     "monoShare": 0.2,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "DM Mono"
+     ],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.02,
+     "centerShare": 0,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#131120",
+     "bodyBgHsl": {
+      "h": 248,
+      "s": 0.31,
+      "l": 0.1
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#25223b",
+       "top": 784,
+       "hsl": {
+        "h": 247,
+        "s": 0.27,
+        "l": 0.18
+       }
+      },
+      {
+       "color": "#1c1930",
+       "top": 784,
+       "hsl": {
+        "h": 248,
+        "s": 0.32,
+        "l": 0.14
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#aca7c0",
+       "share": 0.55
+      },
+      {
+       "color": "#f8f0dd",
+       "share": 0.42
+      },
+      {
+       "color": "#fbf2e1",
+       "share": 0.01
+      },
+      {
+       "color": "#c9c4da",
+       "share": 0.01
+      },
+      {
+       "color": "#131120",
+       "share": 0.01
+      }
+     ],
+     "button": {
+      "bg": "#1c1a2e",
+      "hsl": {
+       "h": 246,
+       "s": 0.28,
+       "l": 0.14
+      },
+      "fg": "#fbf2e1"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 2,
+     "radius": 12,
+     "height": 49,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Ir al contenido principal",
+      "Ver las 24 piezas"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 8,
+     "boxRadius": 12,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 3,
+     "fixed": false,
+     "height": 80,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "bricolage grotesque",
+     "dm mono"
+    ]
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 6,
+   "filled": [
+    0.27,
+    0.41,
+    0.26,
+    0.3,
+    0.75,
+    0.83
+   ],
+   "motion": {
+    "elements": 35,
+    "css": 3,
+    "transitions": 1,
+    "scripted": 31,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 5302,
+     "screens": 5.2,
+     "words": 665,
+     "img": 13,
+     "video": 0,
+     "canvas": 0,
+     "svg": 3,
+     "sections": 9,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 1,
+     "uiAbuse": false,
+     "realPictures": 3,
+     "videoCount": 0,
+     "uiPictures": 1,
+     "pictureSamples": [
+      "susurro.png",
+      "destello.png",
+      "brinco.png"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": []
+    },
+    "hero": {
+     "text": "Herramientas gratis en español.",
+     "words": 4,
+     "chars": 31,
+     "lines": 2,
+     "size": 46.8,
+     "vw": 6.1,
+     "font": "Bricolage Grotesque",
+     "weight": 600,
+     "tracking": -0.035,
+     "leading": 1.02,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.94,
+     "top": 295,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Herramientas gratis en español.",
+     "words": 4,
+     "lines": 2,
+     "size": 46.8,
+     "font": "Bricolage Grotesque"
+    },
+    "headings": [
+     {
+      "text": "gomflo",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 26,
+      "vw": 3.4,
+      "font": "Bricolage Grotesque",
+      "weight": 800,
+      "tracking": -0.015,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.15,
+      "top": 12,
+      "tag": "a",
+      "kind": "heading"
+     },
+     {
+      "text": "Herramientas gratis en español.",
+      "words": 4,
+      "chars": 31,
+      "lines": 2,
+      "size": 46.8,
+      "vw": 6.1,
+      "font": "Bricolage Grotesque",
+      "weight": 600,
+      "tracking": -0.035,
+      "leading": 1.02,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 295,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Tú escribes, la caja responde.",
+      "words": 5,
+      "chars": 30,
+      "lines": 1,
+      "size": 36,
+      "vw": 4.7,
+      "font": "Bricolage Grotesque",
+      "weight": 600,
+      "tracking": -0.03,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 1,
+      "top": 1374,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "gomflo",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 169,
+      "vw": 22,
+      "font": "Bricolage Grotesque",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.97,
+      "top": 4531,
+      "tag": "a",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 4,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Bricolage Grotesque",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "DM Mono",
+       "share": 0.2,
+       "mono": true
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      14,
+      15,
+      17,
+      21,
+      26,
+      36,
+      47,
+      169
+     ],
+     "sizeCount": 8,
+     "notLoaded": [],
+     "body": {
+      "font": "Bricolage Grotesque",
+      "size": 17,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 16.4
+     },
+     "measureChars": 55,
+     "max": {
+      "size": 169,
+      "vw": 22,
+      "font": "Bricolage Grotesque",
+      "text": "gomflo"
+     },
+     "monoShare": 0.2,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "DM Mono"
+     ],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.02,
+     "centerShare": 0,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#131120",
+     "bodyBgHsl": {
+      "h": 248,
+      "s": 0.31,
+      "l": 0.1
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#25223b",
+       "top": 804,
+       "hsl": {
+        "h": 247,
+        "s": 0.27,
+        "l": 0.18
+       }
+      },
+      {
+       "color": "#1c1930",
+       "top": 804,
+       "hsl": {
+        "h": 248,
+        "s": 0.32,
+        "l": 0.14
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#aca7c0",
+       "share": 0.55
+      },
+      {
+       "color": "#f8f0dd",
+       "share": 0.42
+      },
+      {
+       "color": "#fbf2e1",
+       "share": 0.01
+      },
+      {
+       "color": "#c9c4da",
+       "share": 0.01
+      },
+      {
+       "color": "#131120",
+       "share": 0.01
+      }
+     ],
+     "button": {
+      "bg": "#1c1a2e",
+      "hsl": {
+       "h": 246,
+       "s": 0.28,
+       "l": 0.14
+      },
+      "fg": "#fbf2e1"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 2,
+     "radius": 12,
+     "height": 49,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Ir al contenido principal",
+      "Ver las 24 piezas"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 8,
+     "boxRadius": 12,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 5109
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 3,
+     "fixed": false,
+     "height": 68,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "bricolage grotesque",
+     "dm mono"
+    ]
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 8,
+   "filled": [
+    0.62,
+    0.41,
+    0.41,
+    0.41,
+    0.39,
+    0.37,
+    0.72,
+    0.92
+   ],
+   "motion": {
+    "elements": 35,
+    "css": 3,
+    "transitions": 1,
+    "scripted": 31,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 6322,
+     "screens": 7.5,
+     "words": 660,
+     "img": 13,
+     "video": 0,
+     "canvas": 0,
+     "svg": 3,
+     "sections": 9,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 1,
+     "uiAbuse": false,
+     "realPictures": 3,
+     "videoCount": 0,
+     "uiPictures": 1,
+     "pictureSamples": [
+      "susurro.png",
+      "destello.png",
+      "brinco.png"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": []
+    },
+    "hero": {
+     "text": "Herramientas gratis en español.",
+     "words": 4,
+     "chars": 31,
+     "lines": 2,
+     "size": 38,
+     "vw": 9.7,
+     "font": "Bricolage Grotesque",
+     "weight": 600,
+     "tracking": -0.035,
+     "leading": 1.02,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.92,
+     "top": 124,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Herramientas gratis en español.",
+     "words": 4,
+     "lines": 2,
+     "size": 38,
+     "font": "Bricolage Grotesque"
+    },
+    "headings": [
+     {
+      "text": "gomflo",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 22,
+      "vw": 5.6,
+      "font": "Bricolage Grotesque",
+      "weight": 800,
+      "tracking": -0.015,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.26,
+      "top": 12,
+      "tag": "a",
+      "kind": "heading"
+     },
+     {
+      "text": "Herramientas gratis en español.",
+      "words": 4,
+      "chars": 31,
+      "lines": 2,
+      "size": 38,
+      "vw": 9.7,
+      "font": "Bricolage Grotesque",
+      "weight": 600,
+      "tracking": -0.035,
+      "leading": 1.02,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 124,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Tú escribes, la caja responde.",
+      "words": 5,
+      "chars": 30,
+      "lines": 2,
+      "size": 30,
+      "vw": 7.7,
+      "font": "Bricolage Grotesque",
+      "weight": 600,
+      "tracking": -0.03,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 1,
+      "top": 678,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "gomflo",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 85.8,
+      "vw": 22,
+      "font": "Bricolage Grotesque",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.95,
+      "top": 5498,
+      "tag": "a",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 4,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Bricolage Grotesque",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "DM Mono",
+       "share": 0.2,
+       "mono": true
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      13,
+      14,
+      17,
+      18,
+      20,
+      22,
+      30,
+      38,
+      86
+     ],
+     "sizeCount": 9,
+     "notLoaded": [],
+     "body": {
+      "font": "Bricolage Grotesque",
+      "size": 17,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 16.4
+     },
+     "measureChars": 36,
+     "max": {
+      "size": 85.8,
+      "vw": 22,
+      "font": "Bricolage Grotesque",
+      "text": "gomflo"
+     },
+     "monoShare": 0.2,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "DM Mono"
+     ],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.02,
+     "centerShare": 0,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#131120",
+     "bodyBgHsl": {
+      "h": 248,
+      "s": 0.31,
+      "l": 0.1
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#1c1930",
+       "top": 829,
+       "hsl": {
+        "h": 248,
+        "s": 0.32,
+        "l": 0.14
+       }
+      },
+      {
+       "color": "#131120",
+       "top": 853,
+       "hsl": {
+        "h": 248,
+        "s": 0.31,
+        "l": 0.1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#aca7c0",
+       "share": 0.55
+      },
+      {
+       "color": "#f8f0dd",
+       "share": 0.42
+      },
+      {
+       "color": "#fbf2e1",
+       "share": 0.01
+      },
+      {
+       "color": "#131120",
+       "share": 0.01
+      },
+      {
+       "color": "#c9c4da",
+       "share": 0.01
+      }
+     ],
+     "button": {
+      "bg": "#1c1a2e",
+      "hsl": {
+       "h": 246,
+       "s": 0.28,
+       "l": 0.14
+      },
+      "fg": "#fbf2e1"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 2,
+     "radius": 12,
+     "height": 49,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Ir al contenido principal",
+      "Ver las 24 piezas"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 8,
+     "boxRadius": 12,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 6041
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 3,
+     "fixed": false,
+     "height": 68,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "bricolage grotesque",
+     "dm mono"
+    ]
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "palette-cream",
+   "width": 1440,
+   "message": "Yellow-cream background (text #f8f0dd, text #fbf2e1).",
+   "fix": "Use the drawn palette. If you want warmth, take a low-chroma stone or bone, not a yellow cream.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "no-footage",
+   "width": 1440,
+   "message": "No video anywhere on the page.",
+   "fix": "Look for one honest clip with scripts/assets.mjs --video (the place, the material, the process) and use it as a muted loop with a poster frame. Defend its absence only if no clip fits the subject."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/desktop-fold.jpg",
+   "pages": [
+    "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/desktop-page-01.jpg",
+    "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/desktop-page-02.jpg"
+   ]
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/tablet-fold.jpg",
+   "pages": [
+    "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/tablet-page-01.jpg"
+   ]
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/mobile-fold.jpg",
+   "pages": [
+    "/Users/gomflo/code/gomflo.github.io/.taste-skill/inspect/mobile-page-01.jpg"
+   ]
+  }
+ ]
+}

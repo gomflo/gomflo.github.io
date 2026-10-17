@@ -81,6 +81,15 @@
   --t-s: 0.9375rem;
   --t-xs: 0.8125rem;
 
+  /* Los cinco tamaños del inicio y la caja */
+  --t-display: clamp(2.375rem, 1.1rem + 3.8vw, 4.375rem);
+  --t-titulo: clamp(1.875rem, 1.1rem + 2.4vw, 3.25rem);
+  --t-destacado: clamp(1.25rem, 1.1rem + 0.45vw, 1.5rem);
+  --t-texto: 1.0625rem;
+  --t-chico: 0.875rem;
+  /* Un solo radio para botones, campos, filas y mosaicos del inicio y el pie. */
+  --radio-sobrio: 0.75rem;
+
   /* Retícula */
   --max-width: 82rem;
   --gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
