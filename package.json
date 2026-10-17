@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "og": "node scripts/og-images.mjs",
+    "og:tinmarin": "node scripts/og-tinmarin.mjs",
     "partidos": "node scripts/partidos.mjs"
   },
   "dependencies": {

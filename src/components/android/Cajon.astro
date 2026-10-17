@@ -3,6 +3,7 @@
 // y adentro lo que trae (capturas reales, qué hace, qué no hace, la tienda).
 import type { App } from "./contenido";
 import { tintaSobre } from "./contenido";
+import { playLink } from "../../lib/play";
 
 interface Props {
   app: App;
@@ -62,7 +63,7 @@ const red =
         <div class="cajon__acciones">
           {
             app.play ? (
-              <a class="tienda" href={app.play} rel="noopener">
+              <a class="tienda" href={playLink(app.play, "android")} rel="noopener">
                 <span class="tienda__relleno" aria-hidden="true" />
                 <span class="tienda__texto">Bájala en Google Play</span>
               </a>

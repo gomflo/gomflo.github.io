@@ -1,0 +1,115 @@
+---
+// Una guía de Tin Marín (/tinmarin/<slug>/): la ruleta arriba, lista para usarse, y abajo cómo hacerlo para
+// ese caso, la app, preguntas frecuentes y las otras guías. El contenido de la guía va en el slot.
+import TinMarinLayout from "./TinMarinLayout.astro";
+import TinMarin from "../components/tinmarin/TinMarin";
+import Telefono from "../components/tinmarin/Telefono.astro";
+import Guias from "../components/tinmarin/Guias.astro";
+import { guias } from "../data/tinmarin-guias";
+
+export interface Faq {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  slug: string;
+  /** Título de la pestaña y de buscadores, sin el sufijo del sitio (≤ 60 caracteres con él). */
+  metaTitle: string;
+  description: string;
+  heading: string;
+  lead: string;
+  /** Título de la sección con la guía. */
+  guiaTitulo: string;
+  faq: Faq[];
+  /** Muestra el relleno «Del 1 al N» en la ruleta. */
+  numeros?: boolean;
+  telefono?: { titulo?: string; puntos?: string[] };
+}
+
+const { slug, metaTitle, description, heading, lead, guiaTitulo, faq, numeros = false, telefono } = Astro.props;
+const guia = guias.find((g) => g.slug === slug)!;
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const campaign = `tinmarin-${slug}`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: metaTitle,
+      url: canonicalURL,
+      description,
+      inLanguage: "es-MX",
+      isPartOf: { "@type": "WebSite", name: "gomflo.dev", url: new URL("/", site).href },
+      about: { "@type": "WebApplication", name: "Tin Marín: ruleta de nombres", url: new URL("/tinmarin/", site).href },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Tin Marín", item: new URL("/tinmarin/", site).href },
+        { "@type": "ListItem", position: 3, name: guia.nombre, item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<TinMarinLayout
+  title={`${metaTitle} | gomflo.dev`}
+  description={description}
+  image={`/img/tinmarin/${slug}.jpeg`}
+  imageAlt={`${guia.nombre} con Tin Marín, la ruleta de nombres de gomflo.dev`}
+  jsonLd={jsonLd}
+  campaign={campaign}
+>
+  <nav class="tm-migas marco" aria-label="Estás en">
+    <ol>
+      <li><a href="/tinmarin/">Tin Marín</a></li>
+      <li aria-current="page">{guia.nombre}</li>
+    </ol>
+  </nav>
+
+  <div class="tm-portada marco">
+    <h1>{heading}</h1>
+    <p>{lead}</p>
+  </div>
+
+  <TinMarin client:load completa={false} numeros={numeros} />
+
+  <p class="tm-tras marco">
+    Cada sorteo queda guardado con su acta en este navegador: míralo en <a href="/tinmarin/#sorteos">tus sorteos</a> o revisa el de alguien más en
+    <a href="/tinmarin/#comprobar">Comprueba un sorteo</a>.
+  </p>
+
+  <section class="tm-seccion marco" aria-labelledby="guia-titulo">
+    <h2 id="guia-titulo" class="tm-seccion__titulo">{guiaTitulo}</h2>
+    <div class="tm-guia">
+      <slot />
+    </div>
+  </section>
+
+  <Telefono campaign={campaign} {...telefono} />
+
+  <section class="tm-seccion marco" aria-labelledby="faq-titulo">
+    <h2 id="faq-titulo" class="tm-seccion__titulo">Preguntas frecuentes</h2>
+    <div class="tm-faq">
+      {
+        faq.map((f) => (
+          <details class="tm-tarjeta">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <Guias titulo="Otras formas de usar Tin Marín" actual={slug} />
+</TinMarinLayout>

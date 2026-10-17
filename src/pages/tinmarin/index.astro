@@ -1,21 +1,20 @@
 ---
 // Tin Marín en la web: la ruleta de la app para Android, con su identidad (tema Feria) y el mismo sorteo,
 // así que un código hecho en el teléfono se comprueba aquí. No usa Layout.astro (como /partidos-de-hoy/ y
-// /android/). El aviso de privacidad de la app vive aparte, en public/tinmarin/privacidad/.
-import { existsSync } from "node:fs";
-import "../../styles/tinmarin.css";
+// /android/) sino TinMarinLayout, que comparte con las guías (/tinmarin/<slug>/). El aviso de privacidad
+// de la app vive aparte, en public/tinmarin/privacidad/.
+import TinMarinLayout from "../../layouts/TinMarinLayout.astro";
 import TinMarin from "../../components/tinmarin/TinMarin";
+import Telefono from "../../components/tinmarin/Telefono.astro";
+import Guias from "../../components/tinmarin/Guias.astro";
 import { androidApps } from "../../data/android-apps";
 
 const app = androidApps.find((a) => a.slug === "tinmarin")!;
-const play = app.play!;
 
 const title = "Ruleta de nombres para sortear: Tin Marín | gomflo.dev";
 const description =
   "Ruleta de nombres gratis y sin anuncios: pega tu lista, gira y cada sorteo queda con fecha, hora y un código para comprobarlo. Hasta 10,000 nombres y con boletos.";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
-const imagePath = "/img/tinmarin.jpeg";
-const hasImage = existsSync(new URL(`../../../public${imagePath}`, import.meta.url));
 
 const faq = [
   {
@@ -29,6 +28,10 @@ const faq = [
   {
     q: "¿Cuántos nombres caben y qué son los boletos?",
     a: "Hasta 10,000 nombres por ruleta. Los boletos sirven para rifas: quien compró tres boletos ocupa el triple de rueda y tiene el triple de probabilidad. Se ajustan en «Lista y boletos».",
+  },
+  {
+    q: "¿Puedo sacar varios ganadores sin que se repitan?",
+    a: "Sí. Activa «Sacar al ganador»: cada quien que sale deja la ruleta y su acta dice en qué lugar quedó (1.º, 2.º, 3.º…). Cuando termines, «Regresar a todos» los vuelve a poner.",
   },
   {
     q: "¿Se guardan mis nombres en algún lado?",
@@ -61,7 +64,7 @@ const jsonLd = {
       name: "Tin Marín",
       operatingSystem: "Android",
       applicationCategory: "UtilitiesApplication",
-      installUrl: play,
+      installUrl: app.play,
       image: new URL("/img/android/tinmarin/icono.png", site).href,
       offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
     },
@@ -94,139 +97,58 @@ const pasos = [
     d: "Si agregaste, quitaste o moviste nombres, el sorteo ya no se puede repetir con esa lista. Nunca se da por comprobado algo que no se volvió a correr.",
   },
 ];
-
-const year = new Date().getFullYear();
 ---
 
-<!doctype html>
-<html lang="es-MX">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="theme-color" content="#FFF8EC" />
-    <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" type="image/png" href="/img/android/tinmarin/icono.png" />
-    <link rel="apple-touch-icon" href="/img/android/tinmarin/icono.png" />
-    <link rel="preload" href="/fonts/bricolage-grotesque-200_800-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/dm-sans-100_1000-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:locale" content="es_MX" />
-    <meta property="og:site_name" content="gomflo.dev" />
-    {hasImage && <meta property="og:image" content={new URL(imagePath, site).href} />}
-    {hasImage && <meta property="og:image:width" content="1200" />}
-    {hasImage && <meta property="og:image:height" content="630" />}
-    <meta name="twitter:card" content={hasImage ? "summary_large_image" : "summary"} />
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  </head>
-  <body>
-    <a href="#ruleta" class="tm-salto">Ir a la ruleta</a>
+<TinMarinLayout
+  title={title}
+  description={description}
+  image="/img/tinmarin.jpeg"
+  imageAlt="Ruleta de nombres para sortear: Tin Marín, en gomflo.dev"
+  jsonLd={jsonLd}
+  campaign="tinmarin"
+>
+  <div class="tm-portada marco">
+    <h1>Ruleta de nombres para sortear frente a todos.</h1>
+    <p>Pega tu lista, gira y sale un ganador. Cada sorteo queda con fecha, hora y un código para comprobarlo. Gratis, sin anuncios y sin cuenta.</p>
+  </div>
 
-    <header class="tm-barra marco">
-      <a class="tm-marca" href="/tinmarin/" aria-label="Tin Marín, inicio">
-        <img src="/img/android/tinmarin/icono.png" alt="" width="36" height="36" />
-        Tin Marín
-      </a>
-      <nav aria-label="Principal">
-        <a class="tm-barra__liga" href="#comprobar">Comprobar un sorteo</a>
-        <a class="tm-play" href={play} rel="noopener" aria-label="Bájala en Google Play">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
-          <span><span class="tm-play__largo">Bájala en </span>Google Play</span>
-        </a>
-      </nav>
-    </header>
+  <TinMarin client:load />
 
-    <main>
-      <div class="tm-portada marco">
-        <h1>Ruleta de nombres para sortear frente a todos.</h1>
-        <p>Pega tu lista, gira y sale un ganador. Cada sorteo queda con fecha, hora y un código para comprobarlo. Gratis, sin anuncios y sin cuenta.</p>
-      </div>
+  <section class="tm-seccion marco" aria-labelledby="como-titulo">
+    <h2 id="como-titulo" class="tm-seccion__titulo">Así se elige al ganador</h2>
+    <p class="tm-seccion__lead">Es la regla que no se negocia: el resultado no depende del gesto, del tiempo ni del dibujo, y no existe un modo para fijarlo.</p>
+    <ol class="tm-pasos">
+      {
+        pasos.map((p) => (
+          <li class="tm-tarjeta tm-paso">
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="tm-nota">
+      Lo que nadie puede saber es quién armó la lista ni cuántas veces se giró antes. Por eso conviene enseñar la lista y sortear en vivo, frente a
+      quienes participan. Sirve para dar confianza entre ustedes: no es una certificación ante ninguna autoridad ni sustituye los permisos que una rifa
+      pueda necesitar.
+    </p>
+  </section>
 
-      <TinMarin client:load />
+  <Guias titulo="Para qué la usan" lead="Paso a paso para los sorteos más comunes, con la ruleta lista en cada página." />
 
-      <section class="tm-seccion marco" aria-labelledby="como-titulo">
-        <h2 id="como-titulo" class="tm-seccion__titulo">Así se elige al ganador</h2>
-        <p class="tm-seccion__lead">Es la regla que no se negocia: el resultado no depende del gesto, del tiempo ni del dibujo, y no existe un modo para fijarlo.</p>
-        <ol class="tm-pasos">
-          {
-            pasos.map((p) => (
-              <li class="tm-tarjeta tm-paso">
-                <h3>{p.t}</h3>
-                <p>{p.d}</p>
-              </li>
-            ))
-          }
-        </ol>
-        <p class="tm-nota">
-          Lo que nadie puede saber es quién armó la lista ni cuántas veces se giró antes. Por eso conviene enseñar la lista y sortear en vivo, frente a
-          quienes participan. Sirve para dar confianza entre ustedes: no es una certificación ante ninguna autoridad ni sustituye los permisos que una rifa
-          pueda necesitar.
-        </p>
-      </section>
+  <Telefono campaign="tinmarin" />
 
-      <div class="marco">
-        <section class="tm-tarjeta tm-telefono" aria-labelledby="telefono-titulo">
-          <div>
-            <h2 id="telefono-titulo">En tu teléfono, el sorteo sale en video.</h2>
-            <ul>
-              <li>El giro en video, con fecha, hora y código, listo para el grupo de WhatsApp</li>
-              <li>Ruletas guardadas sin límite, con plantillas para empezar</li>
-              <li>Ocho temas y modo presentación para la tele o el salón</li>
-              <li>Funciona sin internet y no pide cuenta</li>
-            </ul>
-            <a class="tm-boton tm-boton--tinta" href={play} rel="noopener">Bájala gratis en Google Play</a>
-          </div>
-          <div class="tm-telefono__capturas">
-            {
-              [1, 2, 3].map((n) => (
-                <img
-                  src={`/img/android/tinmarin/captura-${n}.webp`}
-                  alt={
-                    [
-                      "La ruleta de Tin Marín con diez opciones para decidir qué comemos",
-                      "Resultado en Tin Marín: ganó Pollo rostizado entre 10 participantes, con su código",
-                      "Tin Marín ofrece compartir el sorteo como video o como imagen",
-                    ][n - 1]
-                  }
-                  width="540"
-                  height="1195"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ))
-            }
-          </div>
-        </section>
-      </div>
-
-      <section class="tm-seccion marco" aria-labelledby="faq-titulo">
-        <h2 id="faq-titulo" class="tm-seccion__titulo">Preguntas frecuentes</h2>
-        <div class="tm-faq">
-          {
-            faq.map((f) => (
-              <details class="tm-tarjeta">
-                <summary>{f.q}</summary>
-                <p>{f.a}</p>
-              </details>
-            ))
-          }
-        </div>
-      </section>
-    </main>
-
-    <footer class="tm-pie marco">
-      <div class="tm-pie__fila">
-        <ul>
-          <li><a href="/tinmarin/privacidad/">Aviso de privacidad</a></li>
-          <li><a href="/android/">Más apps para Android</a></li>
-          <li><a href="/">Herramientas en gomflo.dev</a></li>
-        </ul>
-        <p>© {year} gomflo. Hecho en México.</p>
-      </div>
-    </footer>
-  </body>
-</html>
+  <section class="tm-seccion marco" aria-labelledby="faq-titulo">
+    <h2 id="faq-titulo" class="tm-seccion__titulo">Preguntas frecuentes</h2>
+    <div class="tm-faq">
+      {
+        faq.map((f) => (
+          <details class="tm-tarjeta">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+</TinMarinLayout>

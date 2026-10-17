@@ -1,0 +1,84 @@
+---
+import TinMarinGuia from "../../layouts/TinMarinGuia.astro";
+
+const faq = [
+  {
+    q: "¿La ruleta saca sola los comentarios de Instagram?",
+    a: "No. La página no se conecta a Instagram ni a WhatsApp y no te pide tu cuenta: copias los nombres y los pegas. Así la lista de tus seguidores se queda en tu navegador y no pasa por ningún servidor.",
+  },
+  {
+    q: "¿Qué hago si alguien comentó varias veces?",
+    a: "Depende de tus reglas. Si es una participación por persona, toca «Quitar repetidos» y se queda un renglón por nombre, sin importar mayúsculas. Si cada comentario cuenta, déjalos: cada renglón es una casilla más en la rueda.",
+  },
+  {
+    q: "¿Cómo grabo el sorteo para el grupo?",
+    a: "En la web, con la grabación de pantalla de tu teléfono o de tu computadora mientras giras. En la app Tin Marín para Android el giro sale en video directamente, con la fecha, la hora y el código, listo para mandarlo.",
+  },
+  {
+    q: "¿Cómo saben los participantes que no hubo trampa?",
+    a: "Publica la lista tal como la pegaste y el código del sorteo. Cualquiera puede ponerlos en «Comprueba un sorteo» y le sale el mismo ganador; la huella le confirma que la lista es la misma, con los mismos nombres en el mismo orden.",
+  },
+];
+---
+
+<TinMarinGuia
+  slug="sorteo-whatsapp-instagram"
+  metaTitle="Ruleta para sorteos en WhatsApp e Instagram"
+  description="Haz tu sorteo de WhatsApp o Instagram con una ruleta gratis: pega la lista o los comentarios, gira en vivo y comparte el código para que todos lo comprueben."
+  heading="Sorteo por WhatsApp o Instagram, con ruleta y código."
+  lead="Pega la lista del grupo o los nombres de quienes comentaron, gira frente a todos y manda el resultado con su código. Quien quiera, lo comprueba."
+  guiaTitulo="Cómo hacer el sorteo, paso a paso"
+  faq={faq}
+  telefono={{ titulo: "En tu teléfono, el sorteo sale en video para el grupo." }}
+>
+  <p>
+    Un sorteo en redes se gana la confianza de la gente con tres cosas: reglas claras antes, sorteo a la vista durante y algo que cualquiera pueda
+    revisar después. Así se hace con Tin Marín.
+  </p>
+
+  <h3>1. Publica las reglas antes de sortear</h3>
+  <p>
+    Di cuándo cierra la participación, a qué hora sorteas y si cuenta una participación por persona o una por comentario. Si vas a sortear varios
+    premios, di también en qué orden se entregan.
+  </p>
+
+  <h3>2. Arma la lista</h3>
+  <ul>
+    <li>
+      <strong>WhatsApp:</strong> la clásica lista que se va armando en el grupo (<code>1. Ana</code>, <code>2. Beto</code>…) se pega tal cual. Los números
+      y las viñetas se quitan solos. Si la lista viene en un solo renglón separada por comas, también se reparte un nombre por casilla.
+    </li>
+    <li>
+      <strong>Instagram:</strong> copia los usuarios de los comentarios y pégalos uno por renglón, con todo y la <code>@</code>. El botón «Pegar» los
+      toma directo del portapapeles.
+    </li>
+    <li>
+      ¿Alguien comentó de más? Si es una participación por persona, toca «Quitar repetidos». Caben hasta 10,000 nombres por ruleta.
+    </li>
+    <li>Ponle nombre a la ruleta, como «Sorteo de la sudadera»: sale en el resultado y en la imagen que vas a compartir.</li>
+  </ul>
+
+  <h3>3. Sortea en vivo</h3>
+  <p>
+    Comparte pantalla en una videollamada, haz un en vivo o graba la pantalla mientras giras. El ganador se decide en cuanto empieza el giro con un
+    número del generador criptográfico del navegador; la fuerza con la que gires no cambia nada. Si hay varios premios, activa «Sacar al ganador»:
+    quien gana deja la ruleta y el siguiente giro sale como 2.º lugar, luego 3.º, y así.
+  </p>
+
+  <h3>4. Comparte el resultado y la lista</h3>
+  <ul>
+    <li>
+      «Compartir imagen» arma una tarjeta con el ganador, el nombre de la ruleta, cuántos participaron, la fecha, la hora, el código del sorteo y la
+      huella de la lista. Desde el teléfono se manda directo al grupo.
+    </li>
+    <li>Publica también la lista exacta, en el mismo orden en que la pegaste. Sin ella nadie puede repetir el sorteo.</li>
+    <li>
+      Quien quiera revisarlo entra a <a href="/tinmarin/#comprobar">Comprueba un sorteo</a>, pone el código y la lista, y le sale el mismo ganador.
+    </li>
+  </ul>
+
+  <p class="tm-nota">
+    El código sirve para dar confianza entre ustedes: no es una certificación ante ninguna autoridad. Si vendes boletos, revisa los permisos que tu rifa
+    pueda necesitar.
+  </p>
+</TinMarinGuia>

@@ -1,0 +1,64 @@
+---
+import TinMarinGuia from "../../layouts/TinMarinGuia.astro";
+
+const faq = [
+  {
+    q: "¿Necesito crear una cuenta o instalar algo?",
+    a: "No. Abres la página en el navegador de la computadora del salón, pegas la lista y giras. Es gratis y no tiene anuncios.",
+  },
+  {
+    q: "¿Se guarda la lista para la siguiente clase?",
+    a: "Sí, en el navegador de esa computadora: al volver a abrir la página, la ruleta está como la dejaste. La web guarda una ruleta a la vez; para tener una por grupo, guarda cada lista en un documento y pégala al empezar, o usa la app para Android, que guarda ruletas sin límite.",
+  },
+  {
+    q: "¿Los nombres de mis alumnos se suben a algún lado?",
+    a: "No. La página no tiene servidor ni cuenta: la lista y los sorteos se quedan en el navegador donde los escribiste.",
+  },
+];
+---
+
+<TinMarinGuia
+  slug="elegir-alumno-al-azar"
+  metaTitle="Elegir alumno al azar: ruleta para la clase"
+  description="Ruleta para elegir alumno al azar: pega la lista del grupo, proyéctala en pantalla completa y gira. Sin repetir hasta que pasen todos. Gratis y sin cuenta."
+  heading="Elegir alumno al azar con una ruleta en el pizarrón."
+  lead="Pega la lista del grupo, proyecta la ruleta y gira. Nadie puede decir que siempre le toca a los mismos, y con «Sacar al ganador» pasan todos antes de repetir."
+  guiaTitulo="Cómo usarla en clase"
+  faq={faq}
+>
+  <h3>Pega la lista del grupo</h3>
+  <p>
+    Copia la columna de nombres de tu lista de asistencia en Excel o Google Sheets y pégala en el cuadro de texto: cada celda queda como un nombre. Si
+    la lista viene numerada, los números se quitan solos. Ponle a la ruleta el nombre del grupo, como «3.º B · Matemáticas», para que se vea arriba de
+    la rueda.
+  </p>
+
+  <h3>Proyéctala</h3>
+  <ul>
+    <li>
+      El botón de pantalla completa, junto al del sonido, deja solo la ruleta en pantalla: ideal para el proyector o la tele del salón. Sales con
+      <code>Esc</code>.
+    </li>
+    <li>
+      Puedes girar desde la computadora sin tocar el mouse: con la rueda seleccionada, <code>Enter</code> o la barra espaciadora la echan a andar.
+    </li>
+    <li>Si el salón está en silencio o en examen, apaga el sonido con su botón.</li>
+  </ul>
+
+  <h3>Que pasen todos antes de repetir</h3>
+  <p>
+    Activa «Sacar al ganador». Quien sale deja la ruleta y abajo se lleva la cuenta de cuántos ya pasaron. Cuando ya no queda nadie, la ruleta te lo
+    dice y «Regresar a todos» empieza otra ronda. Si alguien faltó, quítalo en «Lista y boletos» con la cruz junto a su nombre.
+  </p>
+
+  <h3>Ideas para usarla</h3>
+  <ul>
+    <li>Quién pasa al pizarrón o responde la siguiente pregunta</li>
+    <li>Quién lee en voz alta o revisa la tarea</li>
+    <li>El orden de las exposiciones: sortea hasta que no quede nadie y anota el lugar de cada quien</li>
+    <li>Quién reparte el material o borra el pizarrón esta semana</li>
+  </ul>
+  <p>
+    Para el orden de exposiciones con más detalle, mira <a href="/tinmarin/sortear-sin-repetir/">cómo sortear sin repetir</a>.
+  </p>
+</TinMarinGuia>

@@ -1,0 +1,42 @@
+---
+// Enlaces a las guías de Tin Marín, menos la página en la que estás.
+import { guias } from "../../data/tinmarin-guias";
+
+interface Props {
+  titulo: string;
+  lead?: string;
+  /** Slug de la guía actual, para no enlazarla a sí misma. */
+  actual?: string;
+}
+
+const { titulo, lead, actual } = Astro.props;
+---
+
+<section class="tm-seccion marco" aria-labelledby="guias-titulo">
+  <h2 id="guias-titulo" class="tm-seccion__titulo">{titulo}</h2>
+  {lead && <p class="tm-seccion__lead">{lead}</p>}
+  <ul class="tm-guias">
+    {
+      guias
+        .filter((g) => g.slug !== actual)
+        .map((g) => (
+          <li>
+            <a class="tm-tarjeta" href={`/tinmarin/${g.slug}/`}>
+              <strong>{g.nombre}</strong>
+              <span>{g.resumen}</span>
+            </a>
+          </li>
+        ))
+    }
+    {
+      actual && (
+        <li>
+          <a class="tm-tarjeta" href="/tinmarin/">
+            <strong>La ruleta completa</strong>
+            <span>Tus sorteos con su acta y el comprobador de códigos, en la página de Tin Marín.</span>
+          </a>
+        </li>
+      )
+    }
+  </ul>
+</section>

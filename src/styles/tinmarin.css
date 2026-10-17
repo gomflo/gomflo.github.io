@@ -1441,3 +1441,153 @@ svg[aria-hidden="true"] {
     font-size: 0.9375rem;
   }
 }
+
+/* ——— Relleno de números (ruleta de números) ——— */
+
+.tm-rango {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 10px;
+}
+
+.tm-rango .tm-campo {
+  gap: 4px;
+}
+
+.tm-rango .tm-entrada {
+  min-height: 48px;
+  padding: 8px 16px;
+  box-shadow: 0 3px 0 var(--tinta);
+}
+
+.tm-rango .tm-pastilla {
+  min-height: 48px;
+}
+
+.tm-rango .tm-error {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 420px) {
+  .tm-rango {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tm-rango .tm-pastilla {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+}
+
+/* ——— Guías ——— */
+
+.tm-migas {
+  padding-top: clamp(4px, 1vw, 12px);
+  font-size: 0.9375rem;
+  color: var(--tinta-suave);
+}
+
+.tm-migas ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.tm-migas li + li::before {
+  content: "›";
+  margin-right: 8px;
+}
+
+.tm-migas a {
+  font-weight: 700;
+  color: var(--tinta);
+}
+
+.tm-tras {
+  margin-top: 20px;
+  color: var(--tinta-suave);
+}
+
+.tm-tras a {
+  font-weight: 700;
+  color: var(--tinta);
+}
+
+.tm-guia {
+  display: grid;
+  gap: 16px;
+  max-width: 72ch;
+  margin-top: 28px;
+  font-size: 1.0625rem;
+}
+
+.tm-guia h3 {
+  margin-top: 12px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.375rem;
+  line-height: 1.15;
+}
+
+.tm-guia ul,
+.tm-guia ol {
+  display: grid;
+  gap: 8px;
+  padding-left: 1.4em;
+}
+
+.tm-guia ul {
+  list-style: disc;
+}
+
+.tm-guia ol {
+  list-style: decimal;
+}
+
+.tm-guia code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--superficie-alt);
+  font-family: var(--mono);
+  font-size: 0.9375em;
+}
+
+.tm-guias {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+
+.tm-guias a {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  height: 100%;
+  padding: 22px;
+  text-decoration: none;
+  transition:
+    transform 120ms var(--suave),
+    box-shadow 120ms var(--suave);
+}
+
+.tm-guias a:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 var(--tinta);
+}
+
+.tm-guias strong {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1.15;
+}
+
+.tm-guias strong::after {
+  content: " →";
+}
+
+.tm-guias span {
+  color: var(--tinta-suave);
+}
