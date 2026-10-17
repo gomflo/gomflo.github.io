@@ -30,4 +30,9 @@ export const guias: Guia[] = [
     nombre: "Ruleta de números",
     resumen: "Del 1 al 100 o del 1 al 500: arma la ruleta de tu rifa con boletos numerados en un toque.",
   },
+  {
+    slug: "intercambio-navideno",
+    nombre: "Intercambio navideño y posada",
+    resumen: "El orden de los regalos, los regalos robados y la rifa de la posada con varios premios, sin repetir.",
+  },
 ];
