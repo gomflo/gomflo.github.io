@@ -1,7 +1,7 @@
 // Las apps para Android. Cada una vive en su propio repositorio en ~/code/<slug>.
 // Imágenes en public/img/android/<slug>/: icono.png (256 px, cuadrado sin máscara)
 // y captura-1..3.webp (540 px de ancho, pantalla completa del teléfono).
-// Sin `play` la app sale como "muy pronto": ninguna está publicada todavía.
+// Sin `play` la app sale como "muy pronto"; con la URL de su ficha, el botón se vuelve enlace.
 
 export type AndroidApp = {
   slug: string;
@@ -18,6 +18,8 @@ export type AndroidApp = {
   color: string;
   group: "dinero" | "juntos" | "casa";
   play?: string;
+  /** Versión web de la app, si la tiene. */
+  web?: string;
   privacy?: string;
 };
 
@@ -116,6 +118,8 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Una ruleta de colores que gira con el dedo",
     color: "#FF3D2E",
     group: "juntos",
+    play: "https://play.google.com/store/apps/details?id=com.gomflo.tinmarin",
+    web: "/tinmarin/",
     privacy: "/tinmarin/privacidad/",
   },
   {

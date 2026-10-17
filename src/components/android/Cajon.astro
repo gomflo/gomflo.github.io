@@ -74,6 +74,13 @@ const red =
             )
           }
           {
+            app.web && (
+              <a class="utilidad" href={app.web}>
+                Úsala en la web<span class="sr"> ({app.name})</span>
+              </a>
+            )
+          }
+          {
             app.privacy && (
               <a class="utilidad" href={app.privacy}>
                 Aviso de privacidad<span class="sr"> de {app.name}</span>

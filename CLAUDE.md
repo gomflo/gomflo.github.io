@@ -60,7 +60,7 @@ public/                  # Static assets (favicon, fonts/ propias en woff2, robo
 - `trailingSlash: 'always'`: GitHub Pages redirige `/ruta` a `/ruta/` con 301, así que todos los enlaces internos llevan barra final
 - Páginas satélite (`variants` en `tools.ts`): reutilizan una herramienta para otra búsqueda (`/contador-de-palabras/`, `/dias-feriados/`). Usan `ToolLayout` con `variant`, no cuentan para el panel del inicio y se enlazan desde la herramienta madre
 - El inicio (`index.astro`) arma la portada (título y mesa de pruebas), la caja de piezas con buscador a partir de `src/lib/tools.ts` y las apps; publica WebSite + ItemList
-- Enlaces a páginas que no pasan por `Layout.astro` (`/susurro/`, `/destello/`, `/partidos-de-hoy/`, `/android/`) llevan `data-astro-reload`
+- Enlaces a páginas que no pasan por `Layout.astro` (`/susurro/`, `/destello/`, `/partidos-de-hoy/`, `/android/`, `/tinmarin/`) llevan `data-astro-reload`
 - Pages use semantic HTML (`<main>`, `<section>`, `<header>`, `<nav>`)
 
 ### Agregar una herramienta
@@ -145,14 +145,22 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/contador-de-palabras` | CharacterCounter (`focus="words"`) | variante de contar-caracteres |
 | `/dias-feriados` | HolidayCalendar (Astro) | variante de dias-habiles |
 | `/partidos-de-hoy` | MatchGuide | fuera del catálogo, identidad propia |
+| `/tinmarin` | TinMarin | fuera del catálogo, identidad de la app |
 | `/android` | El cajón (Astro) | fuera del catálogo, identidad propia |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
 - Catálogo en `src/data/android-apps.ts`; el copy de la página en `src/components/android/contenido.ts`; estilos en `styles/android.css`; movimiento en `motion/android.ts` (usa `src/engine` sin ClientRouter)
 - Imágenes en `public/img/android/<slug>/` (`icono.png` cuadrado sin máscara, `captura-1..3.webp` de 540 px). Imagen para compartir: `public/img/android.jpeg` (captura del primer pliegue a 1200×630)
-- Ninguna está en Google Play: al publicar una, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace
+- Solo Tin Marín está en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
 - El inicio la enlaza con el bloque oscuro de `#apps`
+
+### Tin Marín en la web (`/tinmarin/`)
+- La ruleta de la app para Android (`~/code/tinmarin`) en el navegador, con su identidad (tema Feria; sistema en `~/code/tinmarin/DESIGN.md`): no usa `Layout.astro` ni `global.css`, sino `styles/tinmarin.css` con clases `tm-*`
+- El sorteo está portado tal cual de la app: `src/lib/tinmarin/sorteo.ts` (FairDraw: SplitMix64 con BigInt, huella SHA-256), `lista.ts` (ListParser) y `rueda.ts` (WheelLayout, SpinPlan). Un código del teléfono se comprueba en la web y al revés: no cambies nada ahí sin volver a cotejarlo contra el Kotlin de la app (mismo ganador, punto de parada, código y huella)
+- Interfaz en `src/components/tinmarin/`: `Rueda.tsx` (canvas, gesto y giro, sin re-render durante el giro), `cara.ts` (la cara de la rueda en un canvas aparte), `Resultado.tsx` (el ganador), `tarjeta.ts` (imagen para compartir), `TinMarin.tsx` (estado en `localStorage` "tinmarin", editor, sorteos y comprobador)
+- Lo que se queda en la app (video, varias ruletas, temas, Pro) es la razón para bajarla: la página la enlaza a Google Play. El aviso de privacidad de la app sigue en `public/tinmarin/privacidad/`
+- Sonidos de la app en `public/tinmarin/sonidos/`; DM Sans en `public/fonts/dm-sans-100_1000-normal.woff2`. Imagen para compartir: `public/img/tinmarin.jpeg` (captura del primer pliegue a 1200×630)
 
 ### Guía de partidos (`/partidos-de-hoy/`)
 - Diseño independiente (app deportiva clara/oscura, comparte la preferencia `theme` del sitio): no usa `Layout.astro` ni `global.css`, sino `styles/partidos.css` con clases `mg-*`
