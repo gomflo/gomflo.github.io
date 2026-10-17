@@ -14,7 +14,7 @@ export function start(setup?: () => void) {
     // El color sale de la pieza que se tocó y lleva escrito el destino.
     const link = e.sourceElement?.closest?.("a");
     const r = link?.getBoundingClientRect();
-    const label = link?.querySelector(".pieza__nombre")?.textContent ?? link?.dataset.destino ?? "";
+    const label = link?.querySelector(".pieza__nombre, [data-nombre]")?.textContent ?? link?.dataset.destino ?? "";
     setCurtain({
       label: label.replace(/\s+/g, " ").trim().slice(0, 48),
       cat: link?.closest<HTMLElement>("a[data-cat], li[data-cat]")?.dataset.cat,

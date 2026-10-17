@@ -1,0 +1,24 @@
+import { chromium } from "playwright";
+const b = await chromium.launch({ channel: "chrome" });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const errores = [];
+p.on("pageerror", (e) => errores.push(e.message));
+await p.goto("http://localhost:4350/", { waitUntil: "networkidle" });
+await p.fill("[data-muestra]", "Hola 2026");
+await p.waitForTimeout(200);
+console.log("mesa:", await p.textContent('.mesa [data-vivo="convertir-mayusculas-minusculas"]'));
+console.log("fila:", await p.textContent('.fila [data-vivo="calculadora-iva"]'));
+// Las apps: se turnan solas y la fila apuntada manda.
+await p.locator("#apps").scrollIntoViewIfNeeded();
+await p.hover('[data-obra="3"]');
+await p.waitForTimeout(300);
+console.log("vista activa:", await p.getAttribute('.vista__toma[data-activa]', "data-toma"));
+await p.mouse.move(5, 5);
+await p.fill("[data-buscador]", "clabe");
+await p.waitForTimeout(200);
+console.log("cuenta:", await p.textContent("[data-cuenta]"), "visibles:", await p.locator("[data-pieza]:visible").count());
+await p.keyboard.press("Enter");
+await p.waitForURL("**/validar-clabe/", { timeout: 5000 });
+console.log("navegó a:", p.url());
+console.log("errores:", errores.length ? errores : "ninguno");
+await b.close();

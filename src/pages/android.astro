@@ -41,6 +41,8 @@ const jsonLd = {
 };
 
 const conPrivacidad = apps.filter((a) => a.privacy);
+const enPlay = apps.filter((a) => a.play);
+const nombresEnPlay = new Intl.ListFormat("es-MX", { type: "conjunction" }).format(enPlay.map((a) => a.name));
 const year = new Date().getFullYear();
 ---
 
@@ -123,7 +125,11 @@ const year = new Date().getFullYear();
               <span class="btn__rodillo"><span>Abre el cajón</span><span aria-hidden="true">Abre el cajón</span></span>
               <svg class="btn__flecha" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v11M3 8.5 8 13.5l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
             </a>
-            <p class="portada__estado estado"><span class="tienda__punto" aria-hidden="true"></span>Todavía no están en Google Play. Salen muy pronto.</p>
+            <p class="portada__estado estado"><span class="tienda__punto" aria-hidden="true"></span>{
+              enPlay.length === 0
+                ? "Todavía no están en Google Play. Salen muy pronto."
+                : `${nombresEnPlay} ya ${enPlay.length === 1 ? "está" : "están"} en Google Play. Las demás salen muy pronto.`
+            }</p>
           </div>
         </div>
         <div class="portada__cajon">
@@ -190,7 +196,7 @@ const year = new Date().getFullYear();
       <div class="marco">
         <div class="pie__frente">
           <div class="pie__arriba">
-            <p class="pie__grande">Muy pronto en Google&nbsp;Play.</p>
+            <p class="pie__grande">{enPlay.length === 0 ? "Muy pronto" : "Las demás, muy pronto"} en Google&nbsp;Play.</p>
             <span class="jaladera jaladera--pie" aria-hidden="true"></span>
           </div>
           <div class="pie__cols">
