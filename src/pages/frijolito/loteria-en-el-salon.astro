@@ -1,0 +1,89 @@
+---
+import FrijolitoGuia from "../../layouts/FrijolitoGuia.astro";
+
+const faq = [
+  {
+    q: "¿Necesito instalar algo o crear una cuenta?",
+    a: "No. Abres la página en la computadora del salón, la proyectas y cantas. Es gratis, sin anuncios y sin registro. La partida se queda guardada en ese navegador.",
+  },
+  {
+    q: "¿Cómo imprimo tablas para todo el grupo?",
+    a: "En la página de tablas eliges cuántas (hasta 12 por vez, todas distintas) y las imprimes una por hoja carta. Para un grupo de 30, imprime tres juegos de 10, o formen equipos de dos o tres por tabla: así también platican y se ayudan.",
+  },
+  {
+    q: "¿Los versos son adecuados para niñas y niños?",
+    a: "Son los versos populares, revisados: los de El Negrito y El Apache son propios de Frijolito, y las dos cartas se dibujaron como retratos dignos. Aun así, léelos antes, porque algunos usan palabras de otra época que vale la pena explicar en clase.",
+  },
+];
+---
+
+<FrijolitoGuia
+  slug="loteria-en-el-salon"
+  title="Lotería en el salón: ideas para docentes | gomflo.dev"
+  description="Usa la lotería mexicana en clase: vocabulario, lectura en voz alta con los versos y una partida para Día de Muertos. Cantador en línea y tablas para imprimir."
+  heading="Lotería en el salón: vocabulario, lectura y tradición en una partida."
+  lead="Proyecta el cantador, reparte tablas impresas y deja que el grupo marque con frijolitos. Las cartas se ven grandes y se oyen con su verso, para que todos sigan el juego."
+  guiaTitulo="Cómo usarla en clase"
+  faq={faq}
+  app={{
+    titulo: "En el teléfono, sin internet ni proyector.",
+    puntos: [
+      "Canta sin internet: sirve en el patio, la excursión o un salón sin red",
+      "Adivinanza: primero el verso, con la carta boca abajo, para que el grupo adivine",
+      "Tablas en PDF tamaño carta, todas distintas",
+      "Sin anuncios y sin cuenta: nada que revisar antes de dársela al grupo",
+    ],
+  }}
+>
+  <h3>Prepara la partida</h3>
+  <ul>
+    <li>Abre esta página en la computadora del salón y proyéctala. La carta en turno se ve grande, con su número, su nombre y su verso.</li>
+    <li>
+      <a href="/frijolito/tablas-de-loteria-para-imprimir/">Imprime tablas</a> distintas: una por estudiante o una por equipo. Con equipos de dos o tres,
+      también se practica la conversación.
+    </li>
+    <li>Para marcar: frijoles, semillas, papelitos o una crayola si las tablas son desechables.</li>
+    <li>Explica las reglas en dos minutos con <a href="/frijolito/como-jugar-loteria/">cómo jugar lotería</a> y acuerden la forma de ganar.</li>
+  </ul>
+
+  <h3>Vocabulario</h3>
+  <p>
+    Las 54 cartas son un repaso de palabras concretas: animales (el gallo, la garza, el venado, la rana), frutas (la sandía, la pera, el melón),
+    instrumentos (el arpa, el tambor, el violoncello), objetos de la casa (el cazo, el cantarito, la maceta) y la naturaleza (el sol, la luna, la
+    estrella).
+  </p>
+  <ul>
+    <li>Antes de jugar, repasen la lista de <a href="/frijolito/cartas-de-la-loteria/">las 54 cartas</a> y que cada quien diga cuáles no conoce.</li>
+    <li>En clase de inglés, que el grupo diga la carta en inglés antes de marcarla: <em>the rooster, the moon, the star</em>.</li>
+    <li>Juega por categorías: solo gana quien completa una línea de puros animales, o de cosas que hay en una cocina.</li>
+  </ul>
+
+  <h3>Lectura en voz alta y comprensión</h3>
+  <ul>
+    <li>Turnen al cantador: cada estudiante lee en voz alta el nombre y el verso de una carta. El cantador de la página les da el modelo de lectura.</li>
+    <li>
+      Juega a la adivinanza: lee solo el verso y que el grupo adivine la carta antes de verla. «La cobija de los pobres» es El Sol; «el farol de los
+      enamorados», La Luna.
+    </li>
+    <li>Pide que cada quien invente un verso nuevo para una carta, con rima, y canten la siguiente partida con los versos del grupo.</li>
+    <li>Refranes y dichos: «Camarón que se duerme, se lo lleva la corriente» o «El que a buen árbol se arrima» dan para hablar de su sentido.</li>
+  </ul>
+
+  <h3>Una partida para Día de Muertos</h3>
+  <p>
+    La lotería es parte de las tradiciones de noviembre: cartas como La Muerte, La Calavera, La Campana, El Cantarito o La Rosa sirven para hablar del
+    altar, el cempasúchil y las calaveritas literarias.
+  </p>
+  <ul>
+    <li>Antes de jugar, platiquen qué cartas pondrían en un altar y por qué.</li>
+    <li>Después de la partida, que cada equipo escriba una calaverita literaria con las cartas que llenaron su tabla.</li>
+    <li>Para el 2 de noviembre, una ronda a la tabla llena con el salón decorado y la carta en turno proyectada en grande.</li>
+  </ul>
+
+  <h3>Para que funcione con todo el grupo</h3>
+  <ul>
+    <li>Canta carta por carta al principio; cuando ya estén en ritmo, el botón redondo deja que cante solo con una pausa de 6 u 8 segundos.</li>
+    <li>Si el salón es ruidoso, apaga la voz en «Cómo se canta» y lee tú: la carta sigue grande en pantalla.</li>
+    <li>Para revisar a quien gritó ¡Lotería!, la fila de cantadas muestra todas las cartas que salieron, de la última a la primera.</li>
+  </ul>
+</FrijolitoGuia>

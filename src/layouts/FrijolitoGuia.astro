@@ -1,0 +1,103 @@
+---
+// Una guía de Frijolito (/frijolito/<slug>/): el cantador arriba, listo para usarse, y abajo cómo hacerlo para
+// ese caso, la app, preguntas frecuentes y las otras páginas. El contenido de la guía va en el slot.
+import FrijolitoLayout from "./FrijolitoLayout.astro";
+import Cantador from "../components/frijolito/Cantador";
+import App from "../components/frijolito/App.astro";
+import Faq from "../components/frijolito/Faq.astro";
+import Paginas from "../components/frijolito/Paginas.astro";
+import { paginas } from "../data/frijolito-paginas";
+
+interface Pregunta {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  slug: string;
+  /** Título de la pestaña y de buscadores, con el sufijo del sitio (≤ 60 caracteres). */
+  title: string;
+  description: string;
+  heading: string;
+  lead: string;
+  /** Título de la sección con la guía. */
+  guiaTitulo: string;
+  faq: Pregunta[];
+  app?: { titulo?: string; puntos?: string[] };
+}
+
+const { slug, title, description, heading, lead, guiaTitulo, faq, app } = Astro.props;
+const pagina = paginas.find((p) => p.slug === slug)!;
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const campaign = `frijolito-${slug}`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: title,
+      url: canonicalURL,
+      description,
+      inLanguage: "es-MX",
+      isPartOf: { "@type": "WebSite", name: "gomflo.dev", url: new URL("/", site).href },
+      about: { "@type": "WebApplication", name: "Frijolito: cantador de lotería mexicana", url: new URL("/frijolito/", site).href },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Frijolito", item: new URL("/frijolito/", site).href },
+        { "@type": "ListItem", position: 3, name: pagina.nombre, item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<FrijolitoLayout
+  title={title}
+  description={description}
+  image={`/img/frijolito/${slug}.jpeg`}
+  imageAlt={`${pagina.titulo}, con Frijolito, el cantador de lotería de gomflo.dev`}
+  jsonLd={jsonLd}
+  campaign={campaign}
+  salto={{ href: "#cantador", texto: "Ir al cantador" }}
+>
+  <nav class="fj-migas fj-marco" aria-label="Estás en">
+    <ol>
+      <li><a href="/frijolito/">Frijolito</a></li>
+      <li aria-current="page">{pagina.nombre}</li>
+    </ol>
+  </nav>
+
+  <div class="fj-portada fj-marco">
+    <h1>{heading}</h1>
+    <p>{lead}</p>
+  </div>
+
+  <Cantador client:visible />
+  <noscript>
+    <p class="fj-marco fj-nota">
+      El cantador necesita JavaScript. Mientras, aquí están <a href="/frijolito/cartas-de-la-loteria/">las 54 cartas con sus versos</a>.
+    </p>
+  </noscript>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="guia-titulo">
+    <h2 id="guia-titulo" class="fj-seccion__titulo">{guiaTitulo}</h2>
+    <div class="fj-texto">
+      <slot />
+    </div>
+  </section>
+
+  <App campaign={campaign} {...app} />
+
+  <Faq faq={faq} />
+
+  <Paginas titulo="Más para tu lotería" actual={slug} />
+</FrijolitoLayout>

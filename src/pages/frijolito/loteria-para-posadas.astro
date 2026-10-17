@@ -1,0 +1,74 @@
+---
+import FrijolitoGuia from "../../layouts/FrijolitoGuia.astro";
+
+const faq = [
+  {
+    q: "¿Cuántas tablas necesito para la posada?",
+    a: "Una por persona, más unas cuantas de repuesto para quien llega tarde. En la página de tablas imprimes hasta 12 distintas de una vez; si son más, imprime otro juego y revisa que no haya dos iguales. Las de cartón que ya tengas también sirven.",
+  },
+  {
+    q: "¿Se oye la voz en un salón con mucha gente?",
+    a: "La voz sale por la bocina del equipo. Con un grupo grande conecta la computadora o el teléfono a una bocina, y en el cantador baja la pausa entre cartas solo cuando todos ya agarraron el ritmo. Las cartas también se ven grandes en pantalla, por si alguien no oyó.",
+  },
+  {
+    q: "¿Puedo dejar que cante solo mientras atiendo la cena?",
+    a: "Sí. Toca el botón redondo y canta una carta cada 2 a 8 segundos, según la pausa que elijas en «Cómo se canta». Se detiene en cuanto alguien grita ¡Lotería! y tocas el botón otra vez.",
+  },
+];
+---
+
+<FrijolitoGuia
+  slug="loteria-para-posadas"
+  title="Lotería para posadas: cantador y tablas | gomflo.dev"
+  description="Arma la lotería de la posada: el cantador dice las 54 cartas con su verso, imprime tablas distintas para todos y juega por línea, esquinas o tabla llena."
+  heading="Lotería para la posada, sin que nadie se quede a cantar toda la noche."
+  lead="El cantador de abajo baraja las 54 cartas y las dice en voz alta con su verso. Tú repartes las tablas, sirves el ponche y también juegas."
+  guiaTitulo="Cómo armar la lotería de la posada"
+  faq={faq}
+  app={{
+    titulo: "Para la posada, el cantador en el teléfono.",
+    puntos: [
+      "Canta sin internet: en el patio, el salón de fiestas o el rancho",
+      "Dos voces de cantador, Ramón y Jess, que se oyen igual en cualquier teléfono",
+      "La baraja de papel picado, para que la lotería combine con la fiesta",
+      "Tablas en el teléfono para quien llegó sin tabla, y PDF para imprimir",
+      "Sin anuncios que interrumpan la partida",
+    ],
+  }}
+>
+  <h3>Antes de la posada</h3>
+  <ul>
+    <li>
+      <strong>Tablas</strong>: cuenta a los invitados y <a href="/frijolito/tablas-de-loteria-para-imprimir/">imprime tablas distintas</a>, una por persona
+      y algunas de más. En cartulina aguantan todas las posadas de la temporada.
+    </li>
+    <li><strong>Frijolitos</strong>: un puño por tabla, en vasitos o bolsitas. También sirven maíz, garbanzos o cacahuates.</li>
+    <li>
+      <strong>Quién canta</strong>: el cantador de esta página, en una laptop conectada a una bocina o a la tele. Si alguien quiere cantar a la antigua,
+      que lo haga con la pantalla al lado para no perder la cuenta.
+    </li>
+    <li><strong>Las reglas de la casa</strong>: acuerden la forma de ganar y qué pasa si dos gritan a la vez. Las comunes están en <a href="/frijolito/como-jugar-loteria/">cómo jugar lotería</a>.</li>
+  </ul>
+
+  <h3>Durante la partida</h3>
+  <ul>
+    <li>Arranca con «¡Corre y se va corriendo con…!»: el cantador lo dice solo antes de la primera carta.</li>
+    <li>
+      Empieza a tu ritmo, carta por carta. Cuando la mesa ya va en confianza, toca el botón redondo para que cante solo, con una pausa de 4 o 6 segundos
+      para un grupo grande.
+    </li>
+    <li>Cuando alguien grite ¡Lotería!, pausa y revisa su tabla contra la fila de cantadas. Si se cantó una de más, «Regresar la última».</li>
+    <li>Para la siguiente ronda, «Barajar de nuevo» revuelve las 54 cartas otra vez. Quiten los frijolitos y a jugar.</li>
+  </ul>
+
+  <h3>Rondas para toda la noche</h3>
+  <ul>
+    <li><strong>De calentamiento</strong>: a la línea, que sale rápido y todos le agarran la idea.</li>
+    <li><strong>Con los niños</strong>: a la adivinanza, diciendo el verso antes de mostrar la carta.</li>
+    <li><strong>La última</strong>: a la tabla llena, la más larga, mientras sale el ponche.</li>
+    <li><strong>Entre piñata y piñata</strong>: al pozo o a las esquinas, que se juegan en pocos minutos.</li>
+  </ul>
+  <p>
+    ¿Quieres ver las cartas antes, o repasar los versos para cantarlos tú? Están las 54 en <a href="/frijolito/cartas-de-la-loteria/">cartas de la lotería</a>.
+  </p>
+</FrijolitoGuia>

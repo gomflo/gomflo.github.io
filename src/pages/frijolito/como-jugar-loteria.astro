@@ -1,0 +1,205 @@
+---
+// Reglas de la lotería mexicana. Página de texto, sin JavaScript. Publica HowTo y FAQPage.
+import FrijolitoLayout from "../../layouts/FrijolitoLayout.astro";
+import App from "../../components/frijolito/App.astro";
+import Faq from "../../components/frijolito/Faq.astro";
+import Paginas from "../../components/frijolito/Paginas.astro";
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const slug = "como-jugar-loteria";
+const title = "Cómo jugar lotería mexicana: reglas | gomflo.dev";
+const description =
+  "Reglas de la lotería mexicana: qué hace el cantador, cómo se marcan las tablas con frijolitos y las formas de ganar: línea, esquinas, pozo y tabla llena.";
+
+const pasos = [
+  {
+    t: "Reparte las tablas",
+    d: "Cada quien toma una tabla de 4 × 4 con 16 de las 54 cartas, y un puño de frijolitos (o maíz, piedritas, corcholatas) para marcar. Una tabla por persona, o dos si la mesa es chica y el grupo es hábil.",
+  },
+  {
+    t: "Elijan la forma de ganar",
+    d: "Antes de empezar se acuerda qué figura gana: una línea, las cuatro esquinas, el pozo (las cuatro del centro) o la tabla llena. Si no se dice nada, casi siempre se juega a la línea.",
+  },
+  {
+    t: "El cantador baraja y arranca",
+    d: "Quien canta revuelve la baraja y anuncia el comienzo con el arranque tradicional: «¡Corre y se va corriendo con…!», y saca la primera carta.",
+  },
+  {
+    t: "Canta cada carta",
+    d: "Dice el nombre de la carta y, si quiere, su verso: «El que le cantó a San Pedro no le volverá a cantar: ¡El Gallo!». Deja un momento para que todos busquen y saca la siguiente. Las cartas cantadas se apartan en orden.",
+  },
+  {
+    t: "Marca con un frijolito",
+    d: "Quien tiene la carta cantada en su tabla le pone un frijolito encima. Si la tabla no la tiene, espera la siguiente.",
+  },
+  {
+    t: "Grita ¡Lotería!",
+    d: "Cuando alguien completa la figura acordada, grita ¡Lotería! antes de que se cante otra carta. El cantador revisa su tabla contra las cartas apartadas: si todo salió, gana esa ronda. Si se equivocó, se sigue cantando.",
+  },
+];
+
+const formas = [
+  { t: "Línea", d: "Cuatro en fila: de lado a lado, de arriba abajo o en diagonal.", si: [4, 5, 6, 7] },
+  { t: "Esquinas", d: "Las cuatro cartas de las esquinas de la tabla.", si: [0, 3, 12, 15] },
+  { t: "Pozo", d: "Las cuatro cartas del centro. En algunas casas le dicen «centrito».", si: [5, 6, 9, 10] },
+  { t: "Tabla llena", d: "Las 16 cartas marcadas. Es la ronda más larga.", si: Array.from({ length: 16 }, (_, i) => i) },
+];
+
+const faq = [
+  {
+    q: "¿Cuántas cartas tiene la lotería y cuántas lleva cada tabla?",
+    a: "La baraja tiene 54 cartas, numeradas del 1 al 54, y cada tabla tiene 16, en una rejilla de 4 × 4. Por eso no todas las cartas cantadas salen en tu tabla.",
+  },
+  {
+    q: "¿Qué pasa si dos gritan ¡Lotería! con la misma carta?",
+    a: "Las dos tablas ganan esa ronda, si las dos están completas. Es la regla más común; también hay casas donde se desempata con la siguiente carta. Lo importante es acordarlo antes de empezar.",
+  },
+  {
+    q: "¿Qué es jugar a la adivinanza?",
+    a: "El cantador dice primero el verso y deja un momento para que adivinen la carta antes de decir el nombre: «El farol de los enamorados…» ¡La Luna! Es la variante favorita de niñas y niños, y la app de Frijolito tiene un modo así, con la carta boca abajo.",
+  },
+  {
+    q: "¿Se puede jugar sin baraja?",
+    a: "Sí. El cantador de Frijolito baraja las 54 cartas en el navegador y las canta en voz alta, y en la página de tablas puedes imprimir las que falten.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "HowTo",
+      name: "Cómo jugar lotería mexicana",
+      description,
+      inLanguage: "es-MX",
+      totalTime: "PT20M",
+      supply: [
+        { "@type": "HowToSupply", name: "Una tabla de lotería de 4 × 4 por persona" },
+        { "@type": "HowToSupply", name: "Frijolitos, maíz o fichas para marcar" },
+      ],
+      tool: [{ "@type": "HowToTool", name: "Una baraja de 54 cartas o un cantador como Frijolito" }],
+      step: pasos.map((p, i) => ({ "@type": "HowToStep", position: i + 1, name: p.t, text: p.d, url: `${canonicalURL}#paso-${i + 1}` })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Frijolito", item: new URL("/frijolito/", site).href },
+        { "@type": "ListItem", position: 3, name: "Cómo jugar lotería", item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<FrijolitoLayout
+  title={title}
+  description={description}
+  image={`/img/frijolito/${slug}.jpeg`}
+  imageAlt="Cómo jugar lotería mexicana: reglas y formas de ganar"
+  jsonLd={jsonLd}
+  campaign={`frijolito-${slug}`}
+>
+  <nav class="fj-migas fj-marco" aria-label="Estás en">
+    <ol>
+      <li><a href="/frijolito/">Frijolito</a></li>
+      <li aria-current="page">Cómo jugar lotería</li>
+    </ol>
+  </nav>
+
+  <div class="fj-portada fj-marco">
+    <h1>Cómo jugar lotería mexicana.</h1>
+    <p>
+      Una persona canta las cartas, las demás marcan su tabla con frijolitos y gana quien primero llena la figura acordada y grita ¡Lotería! Aquí van las
+      reglas, paso a paso, y las variantes más comunes.
+    </p>
+  </div>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="quien-titulo" style="padding-top:1rem">
+    <h2 id="quien-titulo" class="fj-seccion__titulo">Lo que se necesita</h2>
+    <div class="fj-texto">
+      <ul>
+        <li>
+          <strong>Un cantador o gritón</strong>: la persona que baraja y canta las cartas. No juega con tabla, o juega y canta a la vez si es muy hábil.
+          También puede cantar un teléfono o el <a href="/frijolito/">cantador de Frijolito</a>.
+        </li>
+        <li>
+          <strong>La baraja</strong>: 54 cartas con número, nombre y verso, de El Gallo a La Rana. Míralas todas en <a
+            href="/frijolito/cartas-de-la-loteria/">las cartas de la lotería</a
+          >.
+        </li>
+        <li>
+          <strong>Tablas</strong>: rejillas de 4 × 4 con 16 cartas cada una, todas distintas. Si no tienes, <a
+            href="/frijolito/tablas-de-loteria-para-imprimir/">imprime tablas</a
+          >.
+        </li>
+        <li><strong>Frijolitos</strong> para marcar las cartas que van saliendo. De ahí el nombre de la app.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="pasos-titulo">
+    <h2 id="pasos-titulo" class="fj-seccion__titulo">Las reglas, paso a paso</h2>
+    <ol class="fj-pasos">
+      {
+        pasos.map((p, i) => (
+          <li id={`paso-${i + 1}`} class="fj-tarjeta fj-paso">
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="formas-titulo">
+    <h2 id="formas-titulo" class="fj-seccion__titulo">Formas de ganar</h2>
+    <p class="fj-seccion__lead">Se elige una antes de cada ronda. Para que dure, se puede jugar primero a la línea y, con las mismas cartas, seguir a la tabla llena.</p>
+    <ul class="fj-formas">
+      {
+        formas.map((f) => (
+          <li class="fj-tarjeta fj-forma">
+            <div class="fj-mini" role="img" aria-label={`Tabla de 4 × 4 con ${f.t.toLowerCase()} marcada`}>
+              {Array.from({ length: 16 }, (_, i) => (
+                <span class={f.si.includes(i) ? "si" : undefined} />
+              ))}
+            </div>
+            <h3>{f.t}</h3>
+            <p>{f.d}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="cantar-titulo">
+    <h2 id="cantar-titulo" class="fj-seccion__titulo">Cómo canta un buen cantador</h2>
+    <div class="fj-texto">
+      <p>El cantador es el alma de la mesa. Arranca la partida con la frase de siempre:</p>
+      <blockquote>¡Corre y se va corriendo con…!</blockquote>
+      <p>
+        Luego dice cada carta con su verso, con el sonsonete de feria: «Para el sol y para el agua: ¡el paraguas!». No hay prisa; conviene dejar unos
+        segundos entre carta y carta para que todos busquen, y repetir el nombre si alguien no oyó.
+      </p>
+      <h3>Variantes</h3>
+      <ul>
+        <li><strong>Adivinanza</strong>: el verso primero, y la mesa adivina la carta antes de oír el nombre.</li>
+        <li><strong>Nombre dos veces</strong>: «¡La Sirena, la sirena!», para que nadie se quede atrás.</li>
+        <li><strong>Solo el nombre</strong>: más rápido, para rondas largas o con mucha gente.</li>
+        <li><strong>Doble tabla</strong>: cada quien juega con dos tablas a la vez.</li>
+      </ul>
+      <p>Con el <a href="/frijolito/">cantador de Frijolito</a> eliges si se dice solo el nombre o nombre y verso, con o sin arranque, y cada cuántos segundos canta solo.</p>
+    </div>
+  </section>
+
+  <App campaign={`frijolito-${slug}`} titulo="Que el teléfono cante, y tú juegas también." />
+
+  <Faq faq={faq} />
+
+  <Paginas titulo="Más para tu lotería" actual={slug} />
+</FrijolitoLayout>

@@ -131,6 +131,8 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Cartas de lotería sobre la mesa, el cantador",
     color: "#1D2D76",
     group: "juntos",
+    play: "https://play.google.com/store/apps/details?id=com.gomflo.frijolito",
+    web: "/frijolito/",
     privacy: "/frijolito/privacidad/",
   },
 ];

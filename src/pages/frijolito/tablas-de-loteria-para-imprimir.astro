@@ -1,0 +1,123 @@
+---
+// Generador de tablas de lotería para imprimir. Sin JavaScript se ven (y se imprimen) cuatro tablas hechas
+// en el build con una semilla fija; en el navegador cada visita trae tablas nuevas.
+import FrijolitoLayout from "../../layouts/FrijolitoLayout.astro";
+import Tablas from "../../components/frijolito/Tablas";
+import App from "../../components/frijolito/App.astro";
+import Faq from "../../components/frijolito/Faq.astro";
+import Paginas from "../../components/frijolito/Paginas.astro";
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const slug = "tablas-de-loteria-para-imprimir";
+const title = "Tablas de lotería para imprimir gratis | gomflo.dev";
+const description =
+  "Genera de 1 a 12 tablas de lotería mexicana de 4 × 4, distintas entre sí, e imprímelas en hoja carta con su ilustración. También las 54 cartas para recortar.";
+
+const faq = [
+  {
+    q: "¿Las tablas salen repetidas?",
+    a: "No dentro de un mismo juego: ninguna tabla tiene las mismas 16 cartas que otra. Si imprimes dos juegos por separado, alguna podría repetirse; para un grupo grande, imprime todas las que necesitas de una vez (hasta 12) y, si hacen falta más, revisa que no haya dos iguales.",
+  },
+  {
+    q: "¿Cómo imprimo una tabla por hoja?",
+    a: "Toca «Imprimir» y en la ventana de tu navegador elige tamaño carta, escala al 100 % y, si aparece, activa «Gráficos de fondo» para que salgan los colores de cada carta. Cada tabla queda en su hoja, con su número y el pie de la página.",
+  },
+  {
+    q: "¿Necesito las cartas para cantar?",
+    a: "No. Puedes cantar con el cantador de Frijolito en el navegador o en el teléfono, que dice el nombre y el verso de cada carta. Si prefieres cantar con cartas en la mano, imprime las 54 para recortar: salen 12 por hoja, en cinco hojas.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      name: "Tablas de lotería para imprimir",
+      url: canonicalURL,
+      description,
+      applicationCategory: "GameApplication",
+      operatingSystem: "Cualquiera con navegador",
+      inLanguage: "es-MX",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Frijolito", item: new URL("/frijolito/", site).href },
+        { "@type": "ListItem", position: 3, name: "Tablas para imprimir", item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<FrijolitoLayout
+  title={title}
+  description={description}
+  image={`/img/frijolito/${slug}.jpeg`}
+  imageAlt="Tablas de lotería mexicana para imprimir, con la baraja de Frijolito"
+  jsonLd={jsonLd}
+  campaign={`frijolito-${slug}`}
+  salto={{ href: "#generador", texto: "Ir a las tablas" }}
+>
+  <nav class="fj-migas fj-marco fj-solo-pantalla" aria-label="Estás en">
+    <ol>
+      <li><a href="/frijolito/">Frijolito</a></li>
+      <li aria-current="page">Tablas para imprimir</li>
+    </ol>
+  </nav>
+
+  <div class="fj-portada fj-marco fj-solo-pantalla">
+    <h1>Tablas de lotería para imprimir, todas distintas.</h1>
+    <p>
+      Elige cuántas necesitas, de 1 a 12, y mándalas a la impresora: sale una tabla de 4 × 4 por hoja carta, con la ilustración, el número y el nombre
+      de cada carta. Si te faltan las cartas para cantar, imprímelas también.
+    </p>
+  </div>
+
+  <div class="fj-marco">
+    <Tablas client:load semillaInicial="46524A4F4C49544F" />
+  </div>
+
+  <section class="fj-seccion fj-marco fj-solo-pantalla" aria-labelledby="usar-titulo">
+    <h2 id="usar-titulo" class="fj-seccion__titulo">Para que salgan bien</h2>
+    <div class="fj-texto">
+      <ul>
+        <li>En la ventana de impresión elige <strong>tamaño carta</strong> y escala al 100 %.</li>
+        <li>Activa <strong>Gráficos de fondo</strong> (o «Imprimir fondos») para que cada carta salga con su color.</li>
+        <li>En cartulina o papel grueso aguantan más partidas; enmicadas duran toda la temporada.</li>
+        <li>
+          ¿Mucha gente? Imprime 12, pide «Otras tablas» e imprime otras 12. Para cantar no necesitas cartas: usa el <a href="/frijolito/">cantador</a>.
+        </li>
+      </ul>
+      <p>
+        Las reglas, el arranque y las formas de ganar (línea, esquinas, pozo y tabla llena) están en <a href="/frijolito/como-jugar-loteria/"
+          >cómo jugar lotería</a
+        >. Si es para una fiesta de diciembre, mira la guía de <a href="/frijolito/loteria-para-posadas/">lotería para posadas</a>.
+      </p>
+    </div>
+  </section>
+
+  <div class="fj-solo-pantalla">
+    <App
+      campaign={`frijolito-${slug}`}
+      titulo="Tablas en el teléfono, que avisan cuando ganas."
+      puntos={[
+        "Una tabla nueva en cada teléfono, distinta a las demás, hasta 60",
+        "Se marcan con frijolitos y avisan cuando hay línea, esquinas, pozo o tabla llena",
+        "Tablas en PDF tamaño carta para mandar al grupo",
+        "El cantador canta las 54 con voz y verso, sin internet",
+      ]}
+    />
+    <Faq faq={faq} />
+    <Paginas titulo="Más para tu lotería" actual={slug} />
+  </div>
+</FrijolitoLayout>
