@@ -1,0 +1,51 @@
+---
+// El bloque de papel de la app para Android: lo que trae de más y el enlace a Google Play con sus capturas.
+import { androidApps } from "../../data/android-apps";
+import { playLink } from "../../lib/play";
+
+interface Props {
+  titulo?: string;
+  puntos?: string[];
+  /** utm_campaign del enlace a Google Play. */
+  campaign: string;
+}
+
+const {
+  titulo = "En el teléfono, Frijolito canta toda la noche.",
+  puntos = [
+    "Dos voces de cantador, Ramón y Jess, que suenan igual en cualquier teléfono",
+    "Cuatro barajas ilustradas: de feria, grabado en linóleo, neón y papel picado",
+    "Tablas en el teléfono que se marcan con frijolitos y avisan cuando hay línea, esquinas, pozo o tabla llena",
+    "Tablas en PDF tamaño carta, distintas entre sí, para imprimir o mandar al grupo",
+    "Adivinanza: primero el verso, con la carta boca abajo",
+    "Funciona sin internet, sin anuncios y sin cuenta",
+  ],
+  campaign,
+} = Astro.props;
+const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, campaign);
+const capturas = [
+  { src: "mesa", alt: "Frijolito en el teléfono canta la carta 1, El Gallo, con su verso, sobre la mesa azul" },
+  { src: "tabla", alt: "Una tabla de lotería en Frijolito marcada con frijolitos, con el aviso de ¡Lotería!" },
+  { src: "barajas", alt: "Los ajustes de Frijolito con las cuatro barajas: de feria, grabado, neón y papel picado" },
+];
+---
+
+<div class="fj-marco">
+  <section class="fj-app" aria-labelledby="app-titulo">
+    <div>
+      <p class="fj-rotulo" style="color:#5b5048">Lotería Mexicana: Frijolito, para Android</p>
+      <h2 id="app-titulo" style="margin-top:0.5rem">{titulo}</h2>
+      <ul>
+        {puntos.map((p) => <li>{p}</li>)}
+      </ul>
+      <a class="fj-boton" href={play} rel="noopener">Bájala gratis en Google Play</a>
+      <p class="fj-app__letra">
+        Gratis y completa con la baraja de feria. Las voces de Ramón y Jess (sintéticas) y las otras tres barajas vienen con Pro, un pago único y
+        opcional.
+      </p>
+    </div>
+    <div class="fj-app__capturas">
+      {capturas.map((c) => <img src={`/img/frijolito/captura-${c.src}.webp`} alt={c.alt} width="540" height="1212" loading="lazy" decoding="async" />)}
+    </div>
+  </section>
+</div>

@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "og": "node scripts/og-images.mjs",
     "og:tinmarin": "node scripts/og-tinmarin.mjs",
+    "og:frijolito": "node scripts/og-frijolito.mjs",
     "partidos": "node scripts/partidos.mjs"
   },
   "dependencies": {

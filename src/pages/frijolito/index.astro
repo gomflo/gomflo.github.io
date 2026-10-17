@@ -1,0 +1,150 @@
+---
+// Frijolito en la web: el cantador de lotería de la app para Android, en el navegador, con su identidad
+// (la mesa de color y el papel crema). No usa Layout.astro sino FrijolitoLayout, que comparte con las demás
+// páginas de /frijolito/. Lo que se queda en la app (voces grabadas, barajas, tablas en el teléfono, PDF)
+// es la razón para bajarla: la página la enlaza a Google Play.
+import FrijolitoLayout from "../../layouts/FrijolitoLayout.astro";
+import Cantador from "../../components/frijolito/Cantador";
+import App from "../../components/frijolito/App.astro";
+import Faq from "../../components/frijolito/Faq.astro";
+import Paginas from "../../components/frijolito/Paginas.astro";
+import { androidApps } from "../../data/android-apps";
+
+const app = androidApps.find((a) => a.slug === "frijolito")!;
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+
+const title = "Cantador de lotería mexicana: Frijolito | gomflo.dev";
+const description =
+  "Canta la lotería mexicana en el navegador: baraja las 54 cartas y dice nombre y verso en voz alta. Lleva las cantadas, sin anuncios y sin cuenta. Gratis.";
+
+const faq = [
+  {
+    q: "¿La baraja de verdad sale al azar?",
+    a: "Sí. Al barajar, el generador criptográfico de tu navegador revuelve las 54 cartas de una sola vez, antes de cantar la primera. Desde ese momento el orden ya está decidido: cantar rápido o lento, pausar o tocar más veces no cambia qué carta sigue. Regresar la última la devuelve a su lugar; no vuelve a barajar.",
+  },
+  {
+    q: "¿Por qué no oigo la voz?",
+    a: "El cantador usa la voz que trae tu navegador, y necesita una en español. Si no hay ninguna, la página te avisa y las cartas se siguen viendo con su nombre y su verso. En la mayoría de los equipos se agrega una voz en español desde los ajustes de idioma o de accesibilidad. Revisa también que el sonido esté encendido y que «Cantar en voz alta» esté marcado.",
+  },
+  {
+    q: "¿Sirve con mis tablas de cartón?",
+    a: "Sí. Son las 54 cartas de siempre, con sus nombres y números tradicionales, de El Gallo (1) a La Rana (54). Las ilustraciones son propias de Frijolito, pero el nombre y el número coinciden con los de cualquier tabla.",
+  },
+  {
+    q: "¿Cómo reviso la tabla de quien gritó ¡Lotería!?",
+    a: "Abajo del cantador se van quedando las cartas que ya salieron, de la última a la primera. Pide la tabla y compara carta por carta. Si se cantó una de más, «Regresar la última» la devuelve a la baraja.",
+  },
+  {
+    q: "¿Se guarda la partida si cierro la página?",
+    a: "Sí, en este navegador: al volver sigue en la misma carta, con la misma baraja y tus ajustes. No hay servidor ni cuenta; nada sale de tu equipo.",
+  },
+  {
+    q: "¿Qué hace de más la app para Android?",
+    a: "Canta sin internet y trae dos voces de cantador, Ramón y Jess (sintéticas), que suenan igual en cualquier teléfono; cuatro barajas ilustradas; tablas en el teléfono que se marcan con frijolitos y avisan cuando hay línea, esquinas, pozo o tabla llena; y tablas en PDF. Es gratis y sin anuncios; las voces y las otras barajas vienen con Pro, un pago único y opcional.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      name: "Frijolito: cantador de lotería mexicana",
+      url: canonicalURL,
+      description,
+      applicationCategory: "GameApplication",
+      operatingSystem: "Cualquiera con navegador",
+      inLanguage: "es-MX",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+      author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+    },
+    {
+      "@type": "MobileApplication",
+      name: "Lotería Mexicana: Frijolito",
+      operatingSystem: "Android",
+      applicationCategory: "GameApplication",
+      installUrl: app.play,
+      image: new URL("/img/android/frijolito/icono.png", site).href,
+      inLanguage: "es-MX",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+        { "@type": "ListItem", position: 2, name: "Frijolito", item: canonicalURL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ],
+};
+---
+
+<FrijolitoLayout
+  title={title}
+  description={description}
+  image="/img/frijolito.jpeg"
+  imageAlt="Cantador de lotería mexicana: Frijolito, en gomflo.dev"
+  jsonLd={jsonLd}
+  campaign="frijolito"
+  salto={{ href: "#cantador", texto: "Ir al cantador" }}
+>
+  <div class="fj-portada fj-portada--mesa fj-marco">
+    <h1>Cantador de lotería mexicana, con voz y verso.</h1>
+    <p>Baraja las 54 cartas, cántalas en voz alta y ve cuáles ya salieron. Para la mesa de la casa, la posada o el salón. Sin anuncios y sin cuenta.</p>
+  </div>
+
+  <Cantador client:load />
+  <noscript>
+    <p class="fj-marco fj-nota">
+      El cantador necesita JavaScript. Mientras, aquí están <a href="/frijolito/cartas-de-la-loteria/">las 54 cartas con sus versos</a> y
+      <a href="/frijolito/tablas-de-loteria-para-imprimir/">tablas para imprimir</a>.
+    </p>
+  </noscript>
+
+  <section class="fj-seccion fj-marco" aria-labelledby="como-titulo">
+    <h2 id="como-titulo" class="fj-seccion__titulo">Así se canta</h2>
+    <ol class="fj-pasos">
+      <li class="fj-tarjeta fj-paso">
+        <h3>Reparte las tablas</h3>
+        <p>
+          Las de cartón sirven: son las 54 cartas con sus números de siempre. Si no tienes, <a class="fj-enlace"
+            href="/frijolito/tablas-de-loteria-para-imprimir/">imprime tablas distintas</a> para cada quien.
+        </p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>Canta la primera carta</h3>
+        <p>
+          La baraja ya está revuelta. Cada carta sale grande, con su número y su nombre, y se dice en voz alta con su verso. La página se viste del color
+          de la carta.
+        </p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>A tu ritmo o que cante solo</h3>
+        <p>Canta carta por carta, o toca el botón redondo para que siga sola con una pausa de 2 a 8 segundos. Se detiene cuando lo vuelves a tocar.</p>
+      </li>
+      <li class="fj-tarjeta fj-paso">
+        <h3>Revisa a quien gritó ¡Lotería!</h3>
+        <p>
+          Las cartas cantadas se quedan en fila, de la última a la primera. Las reglas y las formas de ganar están en <a class="fj-enlace"
+            href="/frijolito/como-jugar-loteria/">cómo se juega</a>.
+        </p>
+      </li>
+    </ol>
+    <p class="fj-nota">
+      La baraja completa se revuelve de una vez al barajar, con el generador de azar seguro del navegador. Ni el ritmo ni los toques cambian qué carta
+      sigue. Es un juego de mesa para jugar con quien está contigo, sin dinero de por medio.
+    </p>
+  </section>
+
+  <App campaign="frijolito" />
+
+  <Faq faq={faq} />
+
+  <Paginas titulo="Más para tu lotería" actual="" />
+</FrijolitoLayout>
