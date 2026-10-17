@@ -1,6 +1,7 @@
 // Movimiento global del sitio: corre una vez en el cliente, antes de la primera página.
 import { onPage } from "../engine";
 import { startBuscador } from "./buscador";
+import { startObras } from "./obras";
 import { startPiezas } from "./piezas";
 import { startTema } from "./tema";
 
@@ -8,6 +9,7 @@ export function setupMotion() {
   startTema();
   startBuscador();
   startPiezas();
+  startObras();
 
   // El dibujo de la cabeza de una herramienta se anima al llegar y al apuntarlo.
   onPage(() => {
