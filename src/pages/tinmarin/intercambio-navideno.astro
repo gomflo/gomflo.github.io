@@ -3,8 +3,8 @@ import TinMarinGuia from "../../layouts/TinMarinGuia.astro";
 
 const faq = [
   {
-    q: "¿Sirve la ruleta para el amigo secreto?",
-    a: "Para repartir quién le regala a quién, no: en la ruleta todos ven el nombre que sale, y el chiste del amigo secreto es que nadie sepa. Para esa parte usa papelitos (abajo está cómo hacerlo sin que a nadie le toque su propio nombre). La ruleta sí sirve para el orden en que se entregan los regalos y para la rifa.",
+    q: "¿Sirve para el amigo secreto?",
+    a: "La app para Android tiene un modo Amigo secreto: reparte en el teléfono sin que a nadie le toque su propio nombre, se pasa el teléfono y cada quien ve solo a quién le regala. Al terminar se revela el reparto con un código. La ruleta de esta página no reparte el amigo secreto, porque todos verían el nombre que sale; desde la compu, usa papelitos (abajo está cómo).",
   },
   {
     q: "¿Cómo hago la rifa de la posada con varios premios?",
@@ -20,10 +20,18 @@ const faq = [
 <TinMarinGuia
   slug="intercambio-navideno"
   metaTitle="Intercambio navideño y rifa de la posada"
-  description="Ruleta para el intercambio navideño y la posada: sortea el orden de los regalos, juega a los regalos robados y rifa varios premios sin repetir. Gratis."
+  description="Amigo secreto en el teléfono, orden de los regalos robados y rifa de la posada sin repetir. Gratis, sin anuncios y sin cuenta."
   heading="Intercambio navideño y rifa de la posada."
   lead="Pega la lista de invitados y gira frente a todos: quién da su regalo primero, el orden de los regalos robados o los premios de la rifa, sin que nadie salga dos veces."
   guiaTitulo="Cómo usarla en diciembre"
+  telefono={{
+    titulo: "En tu teléfono, también el amigo secreto.",
+    puntos: [
+      "Reparte el amigo secreto sin que a nadie le toque su nombre.",
+      "Pasen el teléfono: cada quien ve solo su papelito.",
+      "Al final se revela el reparto con su código.",
+    ],
+  }}
   faq={faq}
 >
   <h3>La rifa de la posada</h3>
@@ -50,9 +58,17 @@ const faq = [
     siguiente en girar, o sigan el orden que salga con «Sacar al ganador».
   </p>
 
-  <h3>El amigo secreto, con papelitos</h3>
+  <h3>El amigo secreto en el teléfono</h3>
   <p>
-    La ruleta no sirve para repartir quién le regala a quién: todos verían el nombre que sale. Para esa parte, escribe cada nombre en un papelito
+    En la app para Android, abre «Mis ruletas», toca las opciones de la ruleta con los invitados y elige «Amigo secreto». El reparto se sortea en
+    cuanto tocas «Repartir los papelitos», y a nadie le toca su propio nombre. Pasen el teléfono: cada quien toca su nombre, confirma que es
+    quien dice ser y ve a quién le regala. Si alguien abre un papelito que no es suyo, o el suyo otra vez, queda a la vista en la lista. Cuando
+    termine el intercambio, «Revelar el reparto» enseña todo con un código, por si alguien quiere comprobarlo.
+  </p>
+
+  <h3>Sin teléfono, con papelitos</h3>
+  <p>
+    La ruleta de esta página no reparte el amigo secreto: todos verían el nombre que sale. Sin la app, escribe cada nombre en un papelito
     igual, dóblalos y ponlos en una bolsa. Cada quien saca uno sin enseñarlo. Si a alguien le toca su propio nombre, todos regresan su papelito y se
     vuelve a sacar desde el principio; así nadie sabe a quién le tocó cada quien. Si una persona no puede estar, alguien de confianza saca por ella sin
     verlo y se lo da cerrado.
