@@ -82,6 +82,13 @@ const red =
             )
           }
           {
+            app.pagina && (
+              <a class="utilidad" href={app.pagina}>
+                Conoce la app<span class="sr"> ({app.name})</span>
+              </a>
+            )
+          }
+          {
             app.privacy && (
               <a class="utilidad" href={app.privacy}>
                 Aviso de privacidad<span class="sr"> de {app.name}</span>

@@ -4,6 +4,7 @@
 // Sin `play` la app sale como "muy pronto"; con la URL de su ficha, el botón se vuelve enlace.
 
 import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY } from "../lib/guardadito";
+import { PASTILLERO_PLAY } from "../lib/pastillero";
 
 export type AndroidApp = {
   slug: string;
@@ -22,6 +23,8 @@ export type AndroidApp = {
   play?: string;
   /** Versión web de la app, si la tiene. */
   web?: string;
+  /** Página de la app en gomflo.dev, si la tiene (sin versión web). */
+  pagina?: string;
   privacy?: string;
 };
 
@@ -80,6 +83,8 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Un pastillero de plástico translúcido con un compartimento por hora",
     color: "#2A60DA",
     group: "casa",
+    play: PASTILLERO_PLAY,
+    pagina: "/pastillero/",
     privacy: "/pastillero/privacidad/",
   },
   {
