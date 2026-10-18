@@ -18,7 +18,7 @@ import {
 } from "@/lib/tinmarin/rueda";
 import { renderFace } from "./cara";
 import { feria, sobre } from "./feria";
-import { buzz, play, prepareSounds } from "./sonido";
+import { buzz, play, prepareSounds, warmSounds } from "./sonido";
 
 export type Outcome = {
   seed: bigint;
@@ -316,6 +316,19 @@ export default function Rueda({ ref, slices, enabled, sound, description, pointe
   }));
 
   // Tamaño del lienzo y entrada de la rueda: llega girando un tramo corto y se asienta con rebote.
+  // El audio se prepara en un momento ocioso después de cargar, para que el primer giro no espere al contexto.
+  useEffect(() => {
+    let idle = 0;
+    const timer = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) idle = requestIdleCallback(() => warmSounds(), { timeout: 2000 });
+      else warmSounds();
+    }, 3000);
+    return () => {
+      clearTimeout(timer);
+      if (idle) cancelIdleCallback(idle);
+    };
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current!;
     const box = canvas.parentElement!;
