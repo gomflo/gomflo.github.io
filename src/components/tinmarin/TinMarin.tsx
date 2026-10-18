@@ -2,7 +2,7 @@
 // Todo vive en este navegador (localStorage); no hay servidor ni cuenta. El sorteo es el mismo de la app,
 // así que un código hecho en el teléfono se comprueba aquí con la misma lista.
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MAX_NAMES, MAX_WEIGHT, interpret, key, parse } from "@/lib/tinmarin/lista";
 import { layout, type Entry } from "@/lib/tinmarin/rueda";
 import { listHash, parseSeedCode, pick, seedCode } from "@/lib/tinmarin/sorteo";
@@ -298,7 +298,8 @@ export default function TinMarin({ completa = true, numeros = false }: Props) {
     });
   };
 
-  const onStart = useCallback(() => setSpinning(true), []);
+  // En transición: el primer cuadro del giro se pinta antes de volver a dibujar el editor y la mesa (INP).
+  const onStart = useCallback(() => startTransition(() => setSpinning(true)), []);
 
   const onResult = useCallback(async (outcome: Outcome) => {
     const hash = await listHash(outcome.slices.map((s) => ({ label: s.label, weight: s.weight })));
