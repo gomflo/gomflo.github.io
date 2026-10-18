@@ -50,7 +50,24 @@ const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, ca
       <p class="fj-app__letra">{letra}</p>
     </div>
     <div class="fj-app__capturas">
-      {capturas.map((c) => <img src={`/img/frijolito/${c.src.includes("/") ? c.src : `captura-${c.src}`}.webp`} alt={c.alt} width="540" height="1212" loading="lazy" decoding="async" />)}
+      {
+        capturas.map((c) => {
+          const base = `/img/frijolito/${c.src.includes("/") ? c.src : `captura-${c.src}`}`;
+          // En el teléfono cada captura mide ~100 px: la de 270 px basta; la de 540 px, para pantallas densas.
+          return (
+            <img
+              src={`${base}.webp`}
+              srcset={`${base}-270.webp 270w, ${base}.webp 540w`}
+              sizes="(min-width: 56rem) 11rem, calc((100vw - 6.5rem) / 3)"
+              alt={c.alt}
+              width="540"
+              height="1212"
+              loading="lazy"
+              decoding="async"
+            />
+          );
+        })
+      }
     </div>
   </section>
 </div>

@@ -54,7 +54,7 @@ const barra: { href: string; texto: string; lang?: string; hreflang?: string }[]
     <meta name="theme-color" content="#192664" />
     <link rel="canonical" href={canonicalURL} />
     {alternos.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
-    <link rel="icon" type="image/png" href="/img/android/frijolito/icono.png" />
+    <link rel="icon" type="image/png" href="/img/android/frijolito/icono-64.png" />
     <link rel="apple-touch-icon" href="/img/android/frijolito/icono.png" />
     <link rel="preload" href="/fonts/fraunces-400_600-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/instrument-sans-400_700-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -83,7 +83,8 @@ const barra: { href: string; texto: string; lang?: string; hreflang?: string }[]
     {imageURL && <meta name="twitter:image:alt" content={imageAlt} />}
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <!-- Visitas en el mismo Umami propio del resto del sitio (Layout.astro), sin cookies. La regla de
-         "sin analítica" es de la app, no de estas páginas. Sin query ni hash, como allá. -->
+         "sin analítica" es de la app, no de estas páginas. Sin query ni hash, como allá. Se queda con
+         defer: pedirlo después del primer cuadro no bajó el LCP en Lighthouse y en /frijolito/en/ lo subió. -->
     <script
       is:inline
       defer
@@ -99,7 +100,7 @@ const barra: { href: string; texto: string; lang?: string; hreflang?: string }[]
 
     <header class="fj-barra fj-marco">
       <a class="fj-marca" href={en ? "/frijolito/en/" : "/frijolito/"} aria-label={en ? "Frijolito, Mexican lotería caller: home" : "Frijolito, cantador de lotería: inicio"}>
-        <img src="/img/android/frijolito/icono.png" alt="" width="36" height="36" />
+        <img src="/img/android/frijolito/icono-96.webp" alt="" width="36" height="36" />
         Frijolito
       </a>
       <nav aria-label={en ? "Main" : "Principal"}>
