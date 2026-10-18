@@ -1,0 +1,454 @@
+---
+/**
+ * Calculadora de aguinaldo: la herramienta de la caja (categoría "mexico") que vive junto a
+ * Guardadito. Sin React: el HTML sale calculado con el ejemplo y un script chico recalcula al
+ * teclear. La lógica y sus pruebas están en src/lib/aguinaldo.ts (npm test).
+ */
+import ToolLayout, { type Faq } from "../../layouts/ToolLayout.astro";
+import { DIAS_MINIMOS, EXENTO, SOBRES, UMA, UMAS_EXENTAS, calcularAguinaldo, repartir, type Resultado } from "@/lib/aguinaldo";
+import { GUARDADITO_EN_PLAY, guardaditoPlay } from "@/lib/guardadito";
+import { inputClass, labelClass } from "@/components/tool-kit";
+import { cn } from "@/lib/utils";
+
+const anio = UMA.anio;
+const LFT = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf";
+const LISR = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LISR.pdf";
+const CPEUM = "https://www.diputados.gob.mx/LeyesBiblio/pdf/CPEUM.pdf";
+
+const money = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+const fmt = (n: number) => money.format(n);
+const umaTexto = fmt(UMA.diario);
+const exentoTexto = fmt(EXENTO);
+
+// El ejemplo con el que sale la página: 12,000 al mes, año completo.
+const inicial = calcularAguinaldo({ salario: 12000, tipoSalario: "mensual", diasAguinaldo: DIAS_MINIMOS, periodo: { tipo: "completo" }, anio }) as Resultado;
+const repartoInicial = repartir(inicial.bruto);
+
+const faq: Faq[] = [
+  {
+    q: "¿Cuándo se paga el aguinaldo?",
+    a: `Antes del 20 de diciembre. El artículo 87 de la Ley Federal del Trabajo obliga al patrón a pagarlo antes de ese día y fija el mínimo en 15 días de salario. Tu contrato o tu empresa pueden darte más días, nunca menos.`,
+    fuentes: [{ texto: "Ley Federal del Trabajo, artículo 87", href: LFT }],
+  },
+  {
+    q: "Si renuncio o me despiden, ¿me toca aguinaldo?",
+    a: `Sí, la parte proporcional al tiempo que trabajaste en el año. El artículo 87 dice que quien no cumplió el año tiene derecho a esa parte, esté trabajando o no cuando se paga el aguinaldo. Suele venir en el finiquito. Para calcularlo, elige «Días trabajados» y escribe los días desde el 1 de enero (o desde que entraste) hasta tu último día.`,
+    fuentes: [{ texto: "Ley Federal del Trabajo, artículo 87", href: LFT }],
+  },
+  {
+    q: "¿Cuánto del aguinaldo está exento de ISR?",
+    a: `Hasta 30 veces la UMA. En ${anio} la UMA vale ${umaTexto} al día, así que el exento es de ${exentoTexto}. Lo que pase de ahí se suma a tu sueldo del mes y paga ISR según tu tabla. La ley del ISR (artículo 93, fracción XIV) habla de salarios mínimos, pero desde la reforma de 2016 esas referencias se leen como UMA.`,
+    fuentes: [
+      { texto: `Valor de la UMA ${anio}, INEGI`, href: UMA.fuente },
+      { texto: "Ley del ISR, artículo 93, fracción XIV", href: LISR },
+    ],
+  },
+];
+
+const segmento =
+  "text-foreground/70 hover:text-foreground peer-checked:bg-card peer-checked:text-foreground peer-focus-visible:ring-ring/50 flex min-h-9 items-center rounded-md px-4 text-sm font-semibold transition-[background-color,color,box-shadow] duration-200 peer-checked:shadow-sm peer-focus-visible:ring-[3px]";
+const grupo = "bg-muted inline-flex flex-wrap gap-1 rounded-3xl p-1";
+const fila = "grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 rounded-xl px-3 py-2.5 odd:bg-muted/60";
+const filaEtiqueta = "text-muted-foreground text-sm font-semibold";
+const filaValor = "font-code text-sm tabular-nums";
+const error = "text-destructive text-sm font-medium";
+---
+
+<ToolLayout
+  slug="calculadora-aguinaldo"
+  metaTitle={`Calculadora de aguinaldo ${anio}: proporcional | gomflo.dev`}
+  description={`Calcula tu aguinaldo ${anio} con salario diario o mensual, completo o proporcional por fecha de ingreso, y cuánto queda exento de ISR con la UMA del INEGI.`}
+  heading="Calculadora de aguinaldo"
+  lead={`Calcula tu aguinaldo de ${anio}, completo o proporcional, y cuánto queda exento de ISR.`}
+  sectionLabel="Calculadora de aguinaldo"
+  faq={faq}
+  avisos={false}
+>
+  <div class="tool-view grid gap-5" role="region" aria-label="Calculadora de aguinaldo" data-aguinaldo data-anio={anio}>
+    <form class="grid gap-5" data-agui-form novalidate>
+      <fieldset data-reveal class="m-0 grid gap-3 border-0 p-0">
+        <legend class={cn(labelClass, "mb-3")}>Tu salario</legend>
+        <div role="radiogroup" aria-label="Cómo cobras" class={cn(grupo, "justify-self-start")}>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="tipo" value="mensual" checked class="peer sr-only" />
+            <span class={segmento}>Mensual</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="tipo" value="diario" class="peer sr-only" />
+            <span class={segmento}>Diario</span>
+          </label>
+        </div>
+        <label for="agui-salario" class="sr-only" data-salario-etiqueta>Salario mensual bruto</label>
+        <input
+          id="agui-salario"
+          name="salario"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          value="12,000"
+          placeholder="12,000"
+          aria-describedby="agui-salario-ayuda"
+          class={cn(inputClass, "text-lg tabular-nums")}
+        />
+        <p id="agui-salario-ayuda" class="text-muted-foreground m-0 text-sm" data-salario-ayuda>
+          El de tu contrato, antes de descuentos. El mensual se divide entre 30 para sacar el diario.
+        </p>
+        <p class={error} role="alert" hidden data-error="salario">Escribe tu salario, por ejemplo 9500 o 9,500.00.</p>
+      </fieldset>
+
+      <div data-reveal style="animation-delay: 40ms" class="grid gap-3">
+        <label for="agui-dias" class={labelClass}>Días de aguinaldo</label>
+        <input
+          id="agui-dias"
+          name="dias"
+          inputmode="numeric"
+          autocomplete="off"
+          value={DIAS_MINIMOS}
+          aria-describedby="agui-dias-ayuda"
+          class={cn(inputClass, "max-w-[9rem] text-lg tabular-nums")}
+        />
+        <p id="agui-dias-ayuda" class="text-muted-foreground m-0 text-sm" data-dias-ayuda>
+          La ley pide al menos 15. Si tu empresa da más (20, 30), cámbialo.
+        </p>
+        <p class={error} role="alert" hidden data-error="dias-aguinaldo">Escribe los días de aguinaldo, de 1 a 365.</p>
+      </div>
+
+      <fieldset data-reveal style="animation-delay: 80ms" class="m-0 grid gap-3 border-0 p-0">
+        <legend class={cn(labelClass, "mb-3")}>Tiempo trabajado en {anio}</legend>
+        <div role="radiogroup" aria-label="Tiempo trabajado" class={cn(grupo, "justify-self-start")}>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="periodo" value="completo" checked class="peer sr-only" />
+            <span class={segmento}>Todo el año</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="periodo" value="fecha" class="peer sr-only" />
+            <span class={segmento}>Entré en {anio}</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="periodo" value="dias" class="peer sr-only" />
+            <span class={segmento}>Días trabajados</span>
+          </label>
+        </div>
+        <div class="grid gap-2" hidden data-campo="fecha">
+          <label for="agui-ingreso" class={labelClass}>Fecha de ingreso</label>
+          <input
+            id="agui-ingreso"
+            name="ingreso"
+            type="date"
+            value={`${anio}-07-01`}
+            max={`${anio}-12-31`}
+            class={cn(inputClass, "max-w-[13rem] text-base")}
+          />
+          <p class="text-muted-foreground m-0 text-sm">Cuenta del día que entraste al 31 de diciembre.</p>
+          <p class={error} role="alert" hidden data-error="fecha">Escribe una fecha de ingreso de {anio} o antes.</p>
+        </div>
+        <div class="grid gap-2" hidden data-campo="dias">
+          <label for="agui-trabajados" class={labelClass}>Días trabajados en {anio}</label>
+          <input
+            id="agui-trabajados"
+            name="trabajados"
+            inputmode="numeric"
+            autocomplete="off"
+            value="180"
+            class={cn(inputClass, "max-w-[9rem] text-lg tabular-nums")}
+          />
+          <p class="text-muted-foreground m-0 text-sm">Si saliste antes de diciembre, del 1 de enero (o de tu ingreso) a tu último día.</p>
+          <p class={error} role="alert" hidden data-error="dias-trabajados">Escribe los días trabajados, de 1 a {inicial.diasDelAnio}.</p>
+        </div>
+      </fieldset>
+    </form>
+
+    <section
+      data-reveal
+      style="animation-delay: 120ms"
+      class="bg-card text-card-foreground grid gap-5 rounded-2xl border border-solid border-border py-6"
+      aria-labelledby="agui-resultado-titulo"
+      data-resultado
+    >
+      <div class="grid gap-1 px-6" aria-live="polite" aria-atomic="true">
+        <h3 id="agui-resultado-titulo" class="text-muted-foreground m-0 text-sm font-semibold">Tu aguinaldo, antes de impuestos</h3>
+        <p class="m-0 text-3xl font-bold tabular-nums sm:text-4xl" data-salida="bruto">{fmt(inicial.bruto)}</p>
+        <p class="text-muted-foreground m-0 text-sm" data-salida="explica">{DIAS_MINIMOS} días de salario por el año completo.</p>
+      </div>
+      <dl class="m-0 grid gap-1 px-6">
+        <div class={fila}>
+          <dt class={filaEtiqueta}>Salario diario</dt>
+          <dd class={cn(filaValor, "m-0")} data-salida="diario">{fmt(inicial.salarioDiario)}</dd>
+        </div>
+        <div class={fila}>
+          <dt class={filaEtiqueta}>Días que te tocan</dt>
+          <dd class={cn(filaValor, "m-0")} data-salida="dias">{inicial.diasPagados} de {DIAS_MINIMOS}</dd>
+        </div>
+        <div class={cn(fila, "bg-pieza/35 odd:bg-pieza/35")}>
+          {/* Sobre el resaltado el gris no da contraste de noche: va en la tinta. */}
+          <dt class={cn(filaEtiqueta, "text-foreground")}>
+            Exento de ISR
+            <span class="block text-xs font-normal">Hasta {UMAS_EXENTAS} UMA: {UMAS_EXENTAS} × {umaTexto} = {exentoTexto}</span>
+          </dt>
+          <dd class={cn(filaValor, "m-0")} data-salida="exento">{fmt(inicial.exento)}</dd>
+        </div>
+        <div class={fila}>
+          <dt class={filaEtiqueta}>
+            Gravado
+            <span class="block text-xs font-normal">Paga ISR según tu tabla</span>
+          </dt>
+          <dd class={cn(filaValor, "m-0")} data-salida="gravado">{fmt(inicial.gravado)}</dd>
+        </div>
+      </dl>
+      <p class="text-muted-foreground m-0 px-6 text-sm leading-relaxed">
+        La parte gravada se suma a tu sueldo del mes y paga ISR con la tarifa del
+        <a class="enlace" href={LISR} rel="noopener">artículo 96 de la Ley del ISR</a>. Cuánto te retienen depende de tu nómina, por eso aquí no se calcula.
+        UMA {anio}: {umaTexto} al día, según el <a class="enlace" href={UMA.fuente} rel="noopener">INEGI</a>.
+      </p>
+    </section>
+
+    <p data-reveal style="animation-delay: 160ms" class="text-muted-foreground m-0 text-sm leading-relaxed">
+      El <a class="enlace" href={LFT} rel="noopener">artículo 87 de la Ley Federal del Trabajo</a> dice que el aguinaldo se paga antes del 20 de diciembre, que son al menos 15 días de salario y que, si no completaste el año, te toca la parte proporcional, sigas en el trabajo o no.
+    </p>
+  </div>
+
+  <section slot="despues" class="reparto" aria-labelledby="reparto-heading" data-reparto>
+    <h2 id="reparto-heading" class="reparto__titulo titular">Cómo repartir tu aguinaldo</h2>
+    <p class="reparto__entrada">
+      Antes de gastarlo, dale a cada peso un lugar: un sobre para cada cosa. Un ejemplo con tus
+      <strong data-salida="reparto-total">{fmt(inicial.bruto)}</strong>:
+    </p>
+    <ul class="sobres" role="list">
+      {SOBRES.map((s, i) => (
+        <li class="sobre pieza" data-sobre-color={s.id}>
+          <span class="sobre__pct etiqueta">{s.pct} %</span>
+          <span class="sobre__nombre titular">{s.nombre}</span>
+          <span class="sobre__monto" data-sobre={s.id}>{fmt(repartoInicial[i].monto)}</span>
+          <span class="sobre__para">{s.para}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="reparto__nota">
+      Si una parte paga ISR te llegará menos: usa los mismos porcentajes con lo que te depositen. Los centavos van al guardadito.
+    </p>
+
+    <div class="puente">
+      <p class="puente__texto">
+        <strong>Guardadito</strong> es una app de presupuesto por sobres para Android: llevas esos sobres en el teléfono, periodo
+        tras periodo, y cada gasto sale de uno. Sin cuenta, sin anuncios y sin conectar tu banco.
+      </p>
+      {
+        GUARDADITO_EN_PLAY ? (
+          <a
+            class="puente__boton"
+            href={guardaditoPlay("aguinaldo")}
+            rel="noopener"
+            data-umami-event="play-guardadito"
+            data-umami-event-pagina="aguinaldo"
+          >
+            Bájala en Google Play
+          </a>
+        ) : (
+          <p class="puente__estado">Muy pronto en Google Play.</p>
+        )
+      }
+      <a class="enlace puente__mas" href="/guardadito/">Qué hace Guardadito</a>
+    </div>
+  </section>
+</ToolLayout>
+
+<script>
+  import { calcularAguinaldo, leerMonto, repartir, type Periodo, type TipoSalario } from "@/lib/aguinaldo";
+
+  const money = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+  const fmt = (n: number) => money.format(n);
+  const dias = (n: number) => n.toLocaleString("es-MX", { maximumFractionDigits: 2 });
+  const entero = (t: string) => (/^\s*\d+\s*$/.test(t) ? Number(t) : NaN);
+
+  function iniciar() {
+    const raiz = document.querySelector<HTMLElement>("[data-aguinaldo]");
+    const form = raiz?.querySelector<HTMLFormElement>("[data-agui-form]");
+    if (!raiz || !form) return;
+    const anio = Number(raiz.dataset.anio);
+    const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel);
+    const salida = (k: string) => $(`[data-salida="${k}"]`);
+    const campo = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+    let contado = false;
+
+    const calcular = () => {
+      const tipoSalario = (form.querySelector<HTMLInputElement>('input[name="tipo"]:checked')?.value ?? "mensual") as TipoSalario;
+      const tipoPeriodo = form.querySelector<HTMLInputElement>('input[name="periodo"]:checked')?.value ?? "completo";
+      const etiqueta = $("[data-salario-etiqueta]");
+      if (etiqueta) etiqueta.textContent = tipoSalario === "mensual" ? "Salario mensual bruto" : "Salario diario bruto";
+      for (const el of form.querySelectorAll<HTMLElement>("[data-campo]")) el.hidden = el.dataset.campo !== tipoPeriodo;
+
+      const periodo: Periodo =
+        tipoPeriodo === "fecha"
+          ? { tipo: "fecha", ingreso: campo("ingreso").value }
+          : tipoPeriodo === "dias"
+            ? { tipo: "dias", dias: entero(campo("trabajados").value) }
+            : { tipo: "completo" };
+      const diasAguinaldo = entero(campo("dias").value);
+      const r = calcularAguinaldo({ salario: leerMonto(campo("salario").value) ?? NaN, tipoSalario, diasAguinaldo, periodo, anio });
+
+      const fallo = typeof r === "string" ? r : null;
+      for (const el of form.querySelectorAll<HTMLElement>("[data-error]")) el.hidden = el.dataset.error !== fallo;
+      for (const [name, clave] of [["salario", "salario"], ["dias", "dias-aguinaldo"], ["ingreso", "fecha"], ["trabajados", "dias-trabajados"]]) {
+        campo(name).toggleAttribute("aria-invalid", fallo === clave);
+      }
+      const ayudaDias = $("[data-dias-ayuda]");
+      if (ayudaDias) {
+        ayudaDias.textContent =
+          diasAguinaldo > 0 && diasAguinaldo < 15
+            ? "Ojo: la ley pide al menos 15 días. Menos que eso no cumple con el artículo 87."
+            : "La ley pide al menos 15. Si tu empresa da más (20, 30), cámbialo.";
+      }
+      if (typeof r === "string") return;
+
+      salida("bruto")!.textContent = fmt(r.bruto);
+      salida("explica")!.textContent = r.proporcional
+        ? `Proporcional: ${r.diasTrabajados} de ${r.diasDelAnio} días trabajados en ${anio}.`
+        : `${dias(diasAguinaldo)} días de salario por el año completo.`;
+      salida("diario")!.textContent = fmt(r.salarioDiario);
+      salida("dias")!.textContent = `${dias(r.diasPagados)} de ${dias(diasAguinaldo)}`;
+      salida("exento")!.textContent = fmt(r.exento);
+      salida("gravado")!.textContent = fmt(r.gravado);
+      salida("reparto-total")!.textContent = fmt(r.bruto);
+      for (const p of repartir(r.bruto)) {
+        const el = $(`[data-sobre="${p.id}"]`);
+        if (el) el.textContent = fmt(p.monto);
+      }
+    };
+
+    const alCambiar = () => {
+      calcular();
+      // Una visita que usa la calculadora cuenta una vez; no viaja nada de lo que se escribe.
+      if (!contado) {
+        contado = true;
+        (window as { umami?: { track: (e: string) => void } }).umami?.track("aguinaldo-calcula");
+      }
+    };
+    form.addEventListener("input", alCambiar);
+    form.addEventListener("change", alCambiar);
+    form.addEventListener("submit", (e) => e.preventDefault());
+    // Si el navegador restauró lo escrito (atrás/adelante), el resultado lo sigue.
+    calcular();
+  }
+
+  // Con ClientRouter los scripts del bundle corren una vez: astro:page-load corre en cada visita.
+  document.addEventListener("astro:page-load", iniciar);
+</script>
+
+<style>
+  .reparto {
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  /* Como .seccion-titulo de ToolLayout, que es de su ámbito. */
+  .reparto__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .reparto__entrada,
+  .reparto__nota {
+    max-width: 62ch;
+    margin: 0 0 1rem;
+    line-height: 1.5;
+  }
+
+  .reparto__nota {
+    margin: 1rem 0 0;
+    color: var(--gris);
+    font-size: var(--t-s);
+  }
+
+  .sobres {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sobre {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem 1rem;
+    color: var(--tinta-fija);
+  }
+  .sobre[data-sobre-color="deudas"] {
+    background: var(--coral);
+  }
+  .sobre[data-sobre-color="guardadito"] {
+    background: var(--menta);
+  }
+  .sobre[data-sobre-color="regalos"] {
+    background: var(--lila);
+  }
+  .sobre[data-sobre-color="enero"] {
+    background: var(--cielo);
+  }
+
+  .sobre__pct {
+    font-size: var(--t-s);
+  }
+
+  .sobre__nombre {
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+    line-height: 1.05;
+  }
+
+  .sobre__monto {
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sobre__para {
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+
+  /* El puente a la app: un bloque oscuro, como el de las apps del inicio. */
+  .puente {
+    display: grid;
+    gap: 0.875rem;
+    justify-items: start;
+    margin-top: 1.5rem;
+    padding: clamp(1.125rem, 2.5vw, 1.75rem);
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+    border-radius: var(--radio-pieza);
+  }
+
+  .puente__texto {
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .puente__estado {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .puente__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    background: var(--pieza);
+    color: var(--tinta-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+  }
+
+  .puente__mas {
+    font-weight: 700;
+  }
+  @media (hover: hover) {
+    .puente__mas:hover {
+      color: var(--tinta-fija);
+    }
+  }
+</style>

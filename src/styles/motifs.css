@@ -233,6 +233,15 @@
     stroke 0.25s var(--ease-out);
 }
 
+/* ---------- Aguinaldo: la moneda brinca sobre el sobre y la solapa se abre ---------- */
+.motif[data-motif="calculadora-aguinaldo"] .m-agui-moneda {
+  transition: stroke 0.25s var(--ease-out);
+}
+.motif[data-motif="calculadora-aguinaldo"] .m-agui-solapa {
+  transform-origin: center top;
+  transition: transform 0.4s var(--ease-spring);
+}
+
 /* ---------- Días hábiles: se encienden los cinco días de la semana ---------- */
 .motif[data-motif="dias-habiles"] .m-wk-on {
   fill: transparent;
@@ -372,6 +381,10 @@
   /* calculadora-iva */
   & .m-iva-tag { animation: motif-swing 0.8s var(--ease-out) both; }
   & .m-iva-pct { transform: scale(1.2); stroke: var(--acento-dibujo, var(--acento)); }
+
+  /* calculadora-aguinaldo */
+  & .m-agui-moneda { stroke: var(--acento-dibujo, var(--acento)); animation: motif-hop 0.45s var(--ease-out) both; }
+  & .m-agui-solapa { transform: scaleY(0.55); }
 
   /* dias-habiles */
   & .m-wk-on { fill: var(--acento-dibujo, var(--acento)); animation: motif-hop 0.35s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }

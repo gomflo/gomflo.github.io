@@ -61,6 +61,7 @@ const SALIDAS: Record<string, Salida> = {
   "user-agent": navegador,
   "validar-clabe": () => "banco · plaza · cuenta · control",
   "calculadora-iva": (t) => `$${largo(t)}.00 + IVA = $${(largo(t) * 1.16).toFixed(2)}`,
+  "calculadora-aguinaldo": (t) => `$${largo(t) * 25}/día × 15 días = $${(largo(t) * 375).toLocaleString("es-MX")}`,
   "dias-habiles": () => {
     const d = new Date().getDay();
     return `hoy es ${DIAS[d]}: ${d === 0 || d === 6 ? "fin de semana" : "entre semana"}`;
