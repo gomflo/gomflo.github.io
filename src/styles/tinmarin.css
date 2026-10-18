@@ -4,10 +4,12 @@
    - Toda pieza presionable tiene cuerpo: baja sobre su sombra como una tecla.
    - Bricolage Grotesque para lo que grita (nombres, cifras, botones) y DM Sans para leer. */
 
+/* Copias solo para Tin Marín: latín con acentos y los pesos que usa (700–800 y 400–700). Pesan 27 % menos que
+   las del resto del sitio, y el párrafo de la portada (el LCP) se pinta antes. Se arman con scripts/fuentes-tinmarin.sh. */
 @font-face {
   font-family: "Bricolage Grotesque";
-  src: url("/fonts/bricolage-grotesque-200_800-normal.woff2") format("woff2");
-  font-weight: 200 800;
+  src: url("/fonts/tm/bricolage-grotesque-700_800.woff2") format("woff2");
+  font-weight: 700 800;
   font-stretch: 75% 100%;
   font-style: normal;
   font-display: swap;
@@ -15,8 +17,8 @@
 
 @font-face {
   font-family: "DM Sans";
-  src: url("/fonts/dm-sans-100_1000-normal.woff2") format("woff2");
-  font-weight: 100 1000;
+  src: url("/fonts/tm/dm-sans-400_700.woff2") format("woff2");
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
