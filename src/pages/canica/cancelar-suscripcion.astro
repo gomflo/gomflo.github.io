@@ -1,0 +1,914 @@
+---
+/**
+ * Cómo cancelar una suscripción o una prueba gratis: la herramienta de la caja (categoría "mexico")
+ * que vive junto a Canica. Arriba, la calculadora de cuánto pagas en suscripciones; abajo, la guía
+ * (la ley desde el 13 de diciembre de 2025, los pasos, la queja en Profeco y las pruebas gratis) y
+ * el puente a la app. Sin React: el HTML sale calculado con el ejemplo y un script chico recalcula al
+ * teclear. Nada se guarda: ni en un servidor ni en el navegador.
+ *
+ * Las citas de la ley y de Profeco van tal cual sus fuentes (DOF del 12-12-2025, comunicado de
+ * Profeco del mismo día y el texto vigente de la LFPC en diputados.gob.mx). Si cambian, manda la fuente.
+ * Canica no cancela nada, no ve el banco ni hace cumplir la ley: no lo digas.
+ * La lógica y sus pruebas están en src/lib/suscripciones.ts (npm test).
+ */
+import ToolLayout, { type Faq } from "../../layouts/ToolLayout.astro";
+import { EJEMPLO, PERIODICIDADES, alAnio, alMes, totales, type Renglon } from "@/lib/suscripciones";
+import { CANICA_EN_PLAY, canicaPlay } from "@/lib/canica";
+import { inputClass } from "@/components/tool-kit";
+import { cn } from "@/lib/utils";
+
+const DOF = "https://dof.gob.mx/nota_detalle.php?codigo=5775999&fecha=12/12/2025";
+const PROFECO_COMUNICADO =
+  "https://www.gob.mx/profeco/prensa/profeco-garantiza-cumplimiento-a-las-fracciones-recien-agregadas-al-articulo-76-bis-de-la-ley-federal-de-proteccion-al-consumidor";
+const LFPC = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPC.pdf";
+const PROFECO_QUEJA = "https://www.gob.mx/profeco/documentos/tuviste-algun-problema-de-consumo";
+const CONCILIANET = "https://concilianet.profeco.gob.mx/Concilianet/";
+const CONCILIANET_PROVEEDORES = "https://concilianet.profeco.gob.mx/Concilianet/proveedores_que_concilian.jsp";
+const ODECO = "https://www.gob.mx/profeco/acciones-y-programas/oficinas-de-defensa-del-consumidor-en-el-pais";
+const CONDUSEF = "https://www.condusef.gob.mx/";
+const PLAY_AYUDA = "https://support.google.com/googleplay/answer/7018481?hl=es-419";
+const APPLE_AYUDA = "https://support.apple.com/es-mx/118428";
+
+const money = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+const fmt = (n: number) => money.format(n);
+
+const inicial = totales(EJEMPLO);
+
+const porFila = (r: Renglon) =>
+  r.monto === null ? "" : `${fmt(alAnio(r.monto, r.periodicidad))} al año · ${fmt(alMes(r.monto, r.periodicidad))} al mes`;
+const suscripciones = (n: number) => `${n} ${n === 1 ? "suscripción" : "suscripciones"}`;
+const lasMarcadas = (n: number) => (n === 1 ? "Si cancelas la que marcaste" : `Si cancelas las ${n} que marcaste`);
+
+const faq: Faq[] = [
+  {
+    q: "¿Desinstalar la app cancela la suscripción?",
+    a: "No. Borrar la app del teléfono no cancela nada: el cobro sigue hasta que la cancelas en la tienda de apps o en tu cuenta del servicio. La ayuda de Google Play lo dice así: «Si desinstalas la app, no se cancelará la suscripción».",
+    fuentes: [{ texto: "Ayuda de Google Play", href: PLAY_AYUDA }],
+  },
+  {
+    q: "¿Me pueden cobrar una penalización por cancelar?",
+    a: "Desde el 13 de diciembre de 2025, si tu contrato se renueva solo, el proveedor debe avisarte al menos cinco días naturales antes y permitir que canceles sin penalización (artículo 76 Bis, fracción VIII, de la Ley Federal de Protección al Consumidor). Si firmaste un plazo forzoso, lee tu contrato: la fracción IX pide cancelar de inmediato «sin contravenir a las disposiciones contractuales».",
+    fuentes: [{ texto: "Decreto en el DOF del 12 de diciembre de 2025", href: DOF }],
+  },
+  {
+    q: "¿Con cuánta anticipación cancelo una prueba gratis?",
+    a: "Antes de que termine, y mejor con un par de días de margen. En el iPhone, Apple pide cancelarla al menos 24 horas antes de que acabe la prueba. Anota la fecha el mismo día que la activas.",
+    fuentes: [{ texto: "Ayuda de Apple", href: APPLE_AYUDA }],
+  },
+];
+---
+
+<ToolLayout
+  slug="cancelar-suscripcion"
+  metaTitle="Cómo cancelar una suscripción o prueba gratis | gomflo.dev"
+  description="Suma cuánto pagas al año en suscripciones y cuánto ahorras al cancelar. Pasos para cancelar en Google Play, en el servicio o en el banco, y qué dice la ley."
+  heading="Cómo cancelar una suscripción o una prueba gratis antes de que te cobren"
+  lead="Suma cuánto pagas en suscripciones y marca las que vas a cancelar. Abajo, los pasos para cancelar y lo que dice la ley desde diciembre de 2025."
+  sectionLabel="Calculadora de cuánto pagas en suscripciones"
+  faq={faq}
+  avisos={false}
+  tituloLargo
+>
+  <div class="tool-view sx" role="region" aria-labelledby="sx-titulo" data-suscripciones>
+    <h3 id="sx-titulo" class="titular sx__titulo">¿Cuánto pagas al año en suscripciones?</h3>
+    <p class="sx__ayuda">
+      Escribe cada una con lo que te cobran y cada cuánto. Marca «La cancelo» en las que ya no usas para ver cuánto ahorras.
+    </p>
+
+    <section class="sx-resultado" aria-labelledby="sx-resultado-titulo">
+      <div class="sx-total" aria-live="polite" aria-atomic="true">
+        <h4 id="sx-resultado-titulo" class="sx-resultado__etiqueta">Pagas al mes</h4>
+        <p class="sx-total__mes" data-salida="mensual">{fmt(inicial.mensual)}</p>
+        <p class="sx-total__anio">
+          <span data-salida="anual">{fmt(inicial.anual)}</span> al año · <span data-salida="contadas">{suscripciones(inicial.contadas)}</span>
+        </p>
+      </div>
+      <div class="sx-ahorro" aria-live="polite" aria-atomic="true" data-ahorro>
+        <p class="sx-ahorro__titulo" data-salida="marcadas">{lasMarcadas(inicial.marcadas)}</p>
+        <p class="sx-ahorro__cifra">
+          Ahorras <strong data-salida="ahorro-anual">{fmt(inicial.ahorroAnual)}</strong> al año
+          (<span data-salida="ahorro-mensual">{fmt(inicial.ahorroMensual)}</span> al mes).
+        </p>
+        <p class="sx-ahorro__queda">
+          Te quedan <span data-salida="queda-mensual">{fmt(inicial.quedaMensual)}</span> al mes
+          (<span data-salida="queda-anual">{fmt(inicial.quedaAnual)}</span> al año).
+        </p>
+      </div>
+      <p class="sx-ahorro sx-ahorro--vacio" hidden data-sin-marcar>Marca «La cancelo» en las que ya no usas para ver cuánto ahorras.</p>
+    </section>
+
+    <form class="sx-form" data-sx-form autocomplete="off" novalidate>
+      <div class="sx-encabezado" aria-hidden="true">
+        <span>Nombre</span><span>Monto</span><span>Cada</span><span></span><span></span>
+      </div>
+      <ul class="sx-filas" role="list" data-filas>
+        {EJEMPLO.map((r, i) => (
+          <li class="sx-fila" data-fila>
+            <div class="sx-campo sx-campo--nombre">
+              <label class="sx-etiqueta" for={`sx-nombre-${i + 1}`}>Nombre</label>
+              <input id={`sx-nombre-${i + 1}`} name="nombre" value={r.nombre} maxlength="60" spellcheck="false" placeholder="Ej. música" class={inputClass} />
+            </div>
+            <div class="sx-campo sx-campo--monto">
+              <label class="sx-etiqueta" for={`sx-monto-${i + 1}`}>Monto</label>
+              <input id={`sx-monto-${i + 1}`} name="monto" inputmode="decimal" value={String(r.monto)} placeholder="0.00" class={cn(inputClass, "tabular-nums")} />
+            </div>
+            <div class="sx-campo sx-campo--cada">
+              <label class="sx-etiqueta" for={`sx-cada-${i + 1}`}>Cada</label>
+              <select id={`sx-cada-${i + 1}`} name="cada" class={inputClass}>
+                {PERIODICIDADES.map((p) => (
+                  <option value={p.id} selected={p.id === r.periodicidad}>{p.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <label class="sx-cancelar">
+              <input type="checkbox" name="cancelar" checked={r.cancelar} />
+              <span>La cancelo</span>
+            </label>
+            <button type="button" class="sx-quitar" data-quitar aria-label={`Quitar ${r.nombre}`}>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+            </button>
+            <p class="sx-fila__cuenta" data-cuenta>{porFila(r)}</p>
+          </li>
+        ))}
+      </ul>
+
+      <template data-plantilla>
+        <li class="sx-fila" data-fila>
+          <div class="sx-campo sx-campo--nombre">
+            <label class="sx-etiqueta" for="sx-nombre-N">Nombre</label>
+            <input id="sx-nombre-N" name="nombre" maxlength="60" spellcheck="false" placeholder="Ej. música" class={inputClass} />
+          </div>
+          <div class="sx-campo sx-campo--monto">
+            <label class="sx-etiqueta" for="sx-monto-N">Monto</label>
+            <input id="sx-monto-N" name="monto" inputmode="decimal" placeholder="0.00" class={cn(inputClass, "tabular-nums")} />
+          </div>
+          <div class="sx-campo sx-campo--cada">
+            <label class="sx-etiqueta" for="sx-cada-N">Cada</label>
+            <select id="sx-cada-N" name="cada" class={inputClass}>
+              {PERIODICIDADES.map((p) => (
+                <option value={p.id} selected={p.id === "mensual"}>{p.nombre}</option>
+              ))}
+            </select>
+          </div>
+          <label class="sx-cancelar">
+            <input type="checkbox" name="cancelar" />
+            <span>La cancelo</span>
+          </label>
+          <button type="button" class="sx-quitar" data-quitar aria-label="Quitar suscripción">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+          </button>
+          <p class="sx-fila__cuenta" data-cuenta></p>
+        </li>
+      </template>
+
+      <div class="sx-acciones">
+        <button type="button" class="sx-boton" data-agregar>Agregar suscripción</button>
+        <button type="button" class="sx-boton sx-boton--suave" data-limpiar>Empezar de cero</button>
+      </div>
+    </form>
+
+
+    <p class="sx__nota">
+      Todo se calcula en tu navegador: lo que escribes no se envía a ningún servidor ni se guarda en el teléfono. Si recargas
+      la página, vuelve el ejemplo. Una semanal cuenta 52 cobros al año, y al mes es lo del año entre 12.
+    </p>
+  </div>
+
+  <div slot="despues" class="guia">
+    <nav class="guia__indice" aria-label="En esta guía">
+      <p class="etiqueta">En esta guía</p>
+      <ol role="list">
+        <li><a class="enlace" href="#ley">Qué dice la ley</a></li>
+        <li><a class="enlace" href="#pasos">Cómo cancelar</a></li>
+        <li><a class="enlace" href="#siguen-cobrando">Si te siguen cobrando</a></li>
+        <li><a class="enlace" href="#prueba-gratis">Pruebas gratis</a></li>
+      </ol>
+    </nav>
+
+    <section aria-labelledby="ley">
+      <h2 id="ley" class="titular guia__titulo">Qué dice la ley desde el 13 de diciembre de 2025</h2>
+      <p>
+        El 12 de diciembre de 2025 se publicó en el Diario Oficial de la Federación un decreto que agregó las fracciones VIII y
+        IX al artículo 76 Bis de la Ley Federal de Protección al Consumidor. El decreto dice: «El presente Decreto entrará en
+        vigor el día siguiente de su publicación en el Diario Oficial de la Federación». Es decir, desde el 13 de diciembre de
+        2025. El artículo 76 Bis es el de las compras por internet y otros medios electrónicos: «Las disposiciones del
+        presente Capítulo aplican a las relaciones entre proveedores y consumidores en las transacciones efectuadas a través
+        del uso de medios electrónicos, ópticos o de cualquier otra tecnología».
+      </p>
+      <p>Las dos fracciones nuevas dicen, tal cual:</p>
+      <blockquote class="cita" cite={DOF}>
+        <p>
+          VIII. El proveedor deberá informar de forma clara, destacada y accesible si el servicio contratado implica cobros
+          automáticos recurrentes, su periodicidad, monto y fecha de cobro.
+        </p>
+        <p>
+          Los cobros señalados en el párrafo anterior, requerirán consentimiento expreso e informado de la persona
+          consumidora. En los casos en los que, de acuerdo al contrato, proceda la renovación automática del servicio, se
+          deberá notificar al menos con cinco días naturales de anticipación, permitiendo su cancelación sin penalización, y
+        </p>
+        <p>
+          IX. El proveedor deberá implementar mecanismos que, sin contravenir a las disposiciones contractuales, permita a la
+          persona consumidora cancelar el servicio, suscripción o membresía de manera inmediata.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={DOF} rel="noopener">decreto del 12 de diciembre de 2025 en el DOF</a>. Texto vigente
+        de la ley en la <a class="enlace" href={LFPC} rel="noopener">Cámara de Diputados</a>.
+      </p>
+      <p>En palabras sencillas, el proveedor de un servicio con cobro automático tiene que:</p>
+      <ul class="guia__lista">
+        <li>Decirte con claridad que te cobrará solo, cada cuánto, cuánto y en qué fecha.</li>
+        <li>Pedir tu consentimiento expreso para esos cobros.</li>
+        <li>Si el contrato se renueva solo, avisarte al menos cinco días naturales antes y dejarte cancelar sin penalización.</li>
+        <li>Darte una forma de cancelar de inmediato, sin contravenir lo que dice tu contrato.</li>
+      </ul>
+      <p>El mismo día, Profeco lo confirmó en un comunicado:</p>
+      <blockquote class="cita" cite={PROFECO_COMUNICADO}>
+        <p>
+          Además, con esta modificación a la Ley, los proveedores facilitarán la cancelación inmediata de servicios,
+          suscripciones o membresías.
+        </p>
+        <p>
+          La aplicación de esta modificación surtirá efectos a partir del 13 de diciembre de este año; por lo que, en caso de
+          incumplimiento por parte de los proveedores con lo antes referido, serán susceptibles de sanciones en términos de la
+          Ley Federal de Protección al Consumidor.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={PROFECO_COMUNICADO} rel="noopener">comunicado de Profeco del 12 de diciembre de 2025</a>.
+        El comunicado lo explica con la televisión de paga, la telefonía y el internet; la ley habla del proveedor en general.
+      </p>
+      <p class="guia__aviso">
+        Esto es información general, no asesoría legal. Para tu caso, el Teléfono del Consumidor de Profeco da asesoría: 800 468
+        8722 sin costo, o 55 5568 8722 en la Ciudad de México y su zona metropolitana.
+      </p>
+    </section>
+
+    <section aria-labelledby="pasos">
+      <h2 id="pasos" class="titular guia__titulo">Cómo cancelar una suscripción, paso a paso</h2>
+      <p>
+        Primero averigua dónde la pagas: en la tienda de apps del teléfono o directo al servicio. Cancélala ahí mismo; si no
+        aparece en la tienda, la pagas directo.
+      </p>
+
+      <h3 class="titular guia__sub">Si la pagas en la tienda de apps</h3>
+      <p><strong>En Android, en Google Play:</strong></p>
+      <ol class="guia__pasos">
+        <li>Abre Google Play y toca tu foto de perfil, arriba a la derecha.</li>
+        <li>Entra a <strong>Pagos y suscripciones</strong> y luego a <strong>Suscripciones</strong>.</li>
+        <li>Elige la suscripción y toca <strong>Cancelar suscripción</strong>.</li>
+        <li>Sigue las instrucciones hasta que diga que está cancelada.</li>
+      </ol>
+      <p>
+        Borrar la app no basta. La <a class="enlace" href={PLAY_AYUDA} rel="noopener">ayuda de Google Play</a> lo dice así: «Si
+        desinstalas la app, no se cancelará la suscripción».
+      </p>
+      <p>
+        <strong>En el iPhone:</strong> abre Configuración, toca tu nombre, luego Suscripciones, elige la suscripción y toca
+        Cancelar suscripción (<a class="enlace" href={APPLE_AYUDA} rel="noopener">ayuda de Apple</a>).
+      </p>
+
+      <h3 class="titular guia__sub">Si la pagas directo al servicio</h3>
+      <ol class="guia__pasos">
+        <li>Entra a tu cuenta, de preferencia desde su página web: a veces la app no trae la opción de cancelar.</li>
+        <li>Busca una sección que se llame Cuenta, Suscripción, Membresía, Plan o Facturación.</li>
+        <li>Cancela y lee hasta qué fecha sigues teniendo el servicio.</li>
+        <li>Guarda la prueba: el correo de confirmación o una captura de pantalla con la fecha.</li>
+        <li>Si no encuentras cómo, escríbeles por el chat o por correo, para que quede por escrito que pediste cancelar.</li>
+      </ol>
+
+      <h3 class="titular guia__sub">Desde el banco, como último recurso</h3>
+      <p>
+        Si ya cancelaste y te siguen cobrando, o no reconoces un cargo, llama a tu banco o entra a su app y pide la aclaración
+        del cargo. Muchos bancos dejan apagar la tarjeta o cambiar la tarjeta digital, y eso puede frenar los cobros nuevos.
+      </p>
+      <p>
+        Ojo: bloquear o cambiar la tarjeta no cancela el contrato, y el servicio puede seguir contando lo que según él le
+        debes. Cancela primero con el proveedor y usa el banco para frenar cobros que ya no deberían llegar. Si el problema es
+        con el banco, la autoridad es la <a class="enlace" href={CONDUSEF} rel="noopener">Condusef</a>, no Profeco.
+      </p>
+    </section>
+
+    <section aria-labelledby="siguen-cobrando">
+      <h2 id="siguen-cobrando" class="titular guia__titulo">Qué hacer si te siguen cobrando</h2>
+      <ol class="guia__pasos">
+        <li>
+          Junta las pruebas: la confirmación de que cancelaste (o de que lo pediste), los estados de cuenta con los cobros y
+          las capturas de pantalla.
+        </li>
+        <li>
+          Reclama al proveedor por escrito y pide la devolución de lo que te cobró después de cancelar. Puedes citar el
+          artículo 76 Bis, fracciones VIII y IX, de la Ley Federal de Protección al Consumidor.
+        </li>
+        <li>
+          Si no te resuelve, presenta una queja en Profeco. Es en línea en
+          <a class="enlace" href={CONCILIANET} rel="noopener">Concilianet</a> si el proveedor está en su
+          <a class="enlace" href={CONCILIANET_PROVEEDORES} rel="noopener">lista de proveedores que concilian</a>; si no, en
+          persona en una <a class="enlace" href={ODECO} rel="noopener">Oficina de Defensa del Consumidor</a>.
+        </li>
+      </ol>
+      <p>
+        Profeco explica los requisitos en <a class="enlace" href={PROFECO_QUEJA} rel="noopener">Cómo presentar mi queja como
+        persona consumidora</a>: su formato de solicitud, algo que demuestre tu relación con el proveedor (el contrato, el
+        estado de cuenta, los correos) y, si vas en persona, una identificación oficial.
+      </p>
+    </section>
+
+    <section aria-labelledby="prueba-gratis">
+      <h2 id="prueba-gratis" class="titular guia__titulo">Cómo no olvidar una prueba gratis</h2>
+      <ul class="guia__lista">
+        <li>El mismo día que la activas, anota cuándo termina y cuánto te cobrarán después.</li>
+        <li>
+          Ponte un recordatorio dos días antes de que termine, no el mismo día: así te da tiempo de decidir y de cancelar con
+          calma.
+        </li>
+        <li>
+          Cancela antes de que acabe. En el iPhone, Apple pide hacerlo «al menos 24 horas antes de que finalice la suscripción
+          de prueba».
+        </li>
+        <li>
+          Revisa si al cancelar la prueba sigues usándola hasta el último día o la pierdes en ese momento: depende de cada
+          servicio.
+        </li>
+        <li>No cuentes con el aviso del proveedor: un recordatorio tuyo no depende de que te llegue su correo.</li>
+      </ul>
+    </section>
+
+    <section class="puente" aria-labelledby="canica-heading">
+      <h2 id="canica-heading" class="titular puente__titulo">Todos tus cobros en un solo lugar</h2>
+      <p class="puente__texto">
+        <strong>Canica</strong> es una app para Android para llevar tus suscripciones. Anotas cada una, de cualquier servicio,
+        con su monto y su fecha de cobro, y te dice cuánto pagas al mes y al año. Te avisa antes de cada cobro (el mismo día,
+        uno o tres días antes) y dos días antes de que termine una prueba gratis.
+      </p>
+      <p class="puente__texto">
+        Canica no cancela nada por ti ni ve tu banco: cancelar se hace en cada servicio, con los pasos de arriba. Cuando ya la
+        cancelaste, la marcas y lleva la cuenta de lo que llevas ahorrado. Sin cuenta, sin anuncios y sin permiso de internet;
+        Canica Pro es un solo pago.
+      </p>
+      {
+        CANICA_EN_PLAY ? (
+          <a
+            class="puente__boton"
+            href={canicaPlay("cancelar-suscripcion")}
+            rel="noopener"
+            data-umami-event="play-canica"
+            data-umami-event-pagina="cancelar-suscripcion"
+          >
+            Bájala en Google Play
+          </a>
+        ) : (
+          <p class="puente__estado">Muy pronto en Google Play.</p>
+        )
+      }
+      <a class="enlace puente__mas" href="/canica/">Qué hace Canica</a>
+    </section>
+  </div>
+</ToolLayout>
+
+<script>
+  import { alAnio, alMes, leerMonto, montoValido, totales, type Periodicidad, type Renglon } from "@/lib/suscripciones";
+
+  const money = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+  const fmt = (n: number) => money.format(n);
+  const suscripciones = (n: number) => `${n} ${n === 1 ? "suscripción" : "suscripciones"}`;
+
+  function iniciar() {
+    const raiz = document.querySelector<HTMLElement>("[data-suscripciones]");
+    const form = raiz?.querySelector<HTMLFormElement>("[data-sx-form]");
+    const lista = raiz?.querySelector<HTMLUListElement>("[data-filas]");
+    const plantilla = raiz?.querySelector<HTMLTemplateElement>("[data-plantilla]");
+    if (!raiz || !form || !lista || !plantilla) return;
+    const salida = (k: string) => raiz.querySelector<HTMLElement>(`[data-salida="${k}"]`)!;
+    const ahorro = raiz.querySelector<HTMLElement>("[data-ahorro]")!;
+    const sinMarcar = raiz.querySelector<HTMLElement>("[data-sin-marcar]")!;
+    let siguiente = lista.children.length + 1;
+    let contado = false;
+
+    const campo = <T extends HTMLElement>(fila: Element, name: string) => fila.querySelector<T>(`[name="${name}"]`)!;
+
+    const leer = (fila: Element): Renglon & { vacio: boolean } => {
+      const texto = campo<HTMLInputElement>(fila, "monto").value;
+      return {
+        nombre: campo<HTMLInputElement>(fila, "nombre").value.trim(),
+        monto: leerMonto(texto),
+        periodicidad: campo<HTMLSelectElement>(fila, "cada").value as Periodicidad,
+        cancelar: campo<HTMLInputElement>(fila, "cancelar").checked,
+        vacio: texto.trim() === "",
+      };
+    };
+
+    const calcular = () => {
+      const renglones: Renglon[] = [];
+      for (const fila of lista.querySelectorAll("[data-fila]")) {
+        const r = leer(fila);
+        renglones.push(r);
+        const valido = montoValido(r.monto);
+        const monto = campo<HTMLInputElement>(fila, "monto");
+        monto.toggleAttribute("aria-invalid", !r.vacio && !valido);
+        const cuenta = fila.querySelector<HTMLElement>("[data-cuenta]")!;
+        cuenta.textContent = valido
+          ? `${fmt(alAnio(r.monto!, r.periodicidad))} al año · ${fmt(alMes(r.monto!, r.periodicidad))} al mes`
+          : r.vacio
+            ? ""
+            : "Escribe el monto, por ejemplo 129 o 1,299.00.";
+        cuenta.classList.toggle("sx-fila__cuenta--error", !r.vacio && !valido);
+        fila.querySelector("[data-quitar]")!.setAttribute("aria-label", r.nombre ? `Quitar ${r.nombre}` : "Quitar suscripción");
+      }
+      const t = totales(renglones);
+      salida("mensual").textContent = fmt(t.mensual);
+      salida("anual").textContent = fmt(t.anual);
+      salida("contadas").textContent = suscripciones(t.contadas);
+      ahorro.hidden = t.marcadas === 0;
+      sinMarcar.hidden = t.marcadas > 0;
+      if (t.marcadas > 0) {
+        salida("marcadas").textContent = t.marcadas === 1 ? "Si cancelas la que marcaste" : `Si cancelas las ${t.marcadas} que marcaste`;
+        salida("ahorro-anual").textContent = fmt(t.ahorroAnual);
+        salida("ahorro-mensual").textContent = fmt(t.ahorroMensual);
+        salida("queda-mensual").textContent = fmt(t.quedaMensual);
+        salida("queda-anual").textContent = fmt(t.quedaAnual);
+      }
+    };
+
+    const agregar = () => {
+      const nueva = plantilla.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+      const n = siguiente++;
+      for (const el of nueva.querySelectorAll("[id], [for]")) {
+        if (el.id) el.id = el.id.replace(/-N$/, `-${n}`);
+        const f = el.getAttribute("for");
+        if (f) el.setAttribute("for", f.replace(/-N$/, `-${n}`));
+      }
+      lista.append(nueva);
+      return nueva;
+    };
+
+    const contar = () => {
+      // Una visita que usa la calculadora cuenta una vez; no viaja nada de lo que se escribe.
+      if (contado) return;
+      contado = true;
+      (window as { umami?: { track: (e: string) => void } }).umami?.track("suscripciones-calcula");
+    };
+
+    form.addEventListener("input", () => {
+      calcular();
+      contar();
+    });
+    form.addEventListener("change", calcular);
+    form.addEventListener("submit", (e) => e.preventDefault());
+    form.addEventListener("click", (e) => {
+      const boton = (e.target as Element).closest("button");
+      if (!boton) return;
+      if (boton.hasAttribute("data-agregar")) {
+        campo<HTMLInputElement>(agregar(), "nombre").focus();
+      } else if (boton.hasAttribute("data-limpiar")) {
+        lista.replaceChildren();
+        campo<HTMLInputElement>(agregar(), "nombre").focus();
+      } else if (boton.hasAttribute("data-quitar")) {
+        const fila = boton.closest("[data-fila]")!;
+        const vecina = fila.nextElementSibling ?? fila.previousElementSibling;
+        fila.remove();
+        if (vecina) campo<HTMLInputElement>(vecina, "nombre").focus();
+        else campo<HTMLInputElement>(agregar(), "nombre").focus();
+      } else return;
+      calcular();
+      contar();
+    });
+    // Si el navegador restauró algo (atrás/adelante), el resultado lo sigue.
+    calcular();
+  }
+
+  // Con ClientRouter los scripts del bundle corren una vez: astro:page-load corre en cada visita.
+  document.addEventListener("astro:page-load", iniciar);
+</script>
+
+<style>
+  .sx {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .sx__titulo {
+    margin: 0;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+  }
+
+  .sx__ayuda,
+  .sx__nota {
+    max-width: 62ch;
+    margin: -0.5rem 0 0;
+    line-height: 1.5;
+  }
+
+  .sx__nota {
+    margin: 0;
+    color: var(--gris);
+    font-size: var(--t-s);
+  }
+
+  .sx-form {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  /* Cada renglón: en el teléfono una tarjetita con sus etiquetas; en pantalla ancha, una fila de tabla. */
+  .sx-filas {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sx-fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+    grid-template-areas:
+      "nombre nombre quitar"
+      "monto cada cada"
+      "cancelar cuenta cuenta";
+    align-items: end;
+    gap: 0.5rem 0.625rem;
+    padding: 0.75rem;
+    background: var(--crema-honda);
+    border-radius: 1rem;
+  }
+
+  .sx-campo {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .sx-campo--nombre {
+    grid-area: nombre;
+  }
+  .sx-campo--monto {
+    grid-area: monto;
+  }
+  .sx-campo--cada {
+    grid-area: cada;
+  }
+
+  .sx-etiqueta {
+    color: var(--gris);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .sx-fila :is(input:not([type="checkbox"]), select) {
+    font-size: 1rem;
+  }
+
+  .sx-cancelar {
+    grid-area: cancelar;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .sx-cancelar input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    accent-color: var(--acento);
+    cursor: pointer;
+  }
+
+  .sx-quitar {
+    grid-area: quitar;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: transparent;
+    color: var(--tinta);
+    border: 0;
+    border-radius: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-soft);
+  }
+  .sx-quitar svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  @media (hover: hover) {
+    .sx-quitar:hover {
+      background: var(--panel);
+    }
+  }
+
+  .sx-fila__cuenta {
+    grid-area: cuenta;
+    align-self: center;
+    margin: 0;
+    color: var(--gris);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .sx-fila__cuenta--error {
+    color: var(--destructive);
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .sx-encabezado {
+    display: none;
+  }
+
+  @media (min-width: 720px) {
+    .sx-encabezado,
+    .sx-fila {
+      grid-template-columns: minmax(0, 1fr) 8.5rem 8.5rem 8.25rem 44px;
+      column-gap: 0.625rem;
+    }
+    .sx-encabezado {
+      display: grid;
+      padding: 0 0.75rem;
+      color: var(--gris);
+      font-size: 0.8125rem;
+      font-weight: 700;
+    }
+    .sx-fila {
+      grid-template-areas:
+        "nombre monto cada cancelar quitar"
+        "cuenta cuenta cuenta cuenta cuenta";
+      align-items: center;
+      row-gap: 0.25rem;
+      padding: 0.5rem 0.75rem;
+    }
+    .sx-etiqueta {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .sx-fila__cuenta {
+      text-align: left;
+    }
+    .sx-fila__cuenta:empty {
+      display: none;
+    }
+  }
+
+  .sx-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .sx-boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.125rem;
+    background: var(--tinta);
+    color: var(--crema);
+    font: inherit;
+    font-weight: 700;
+    border: 2px solid var(--tinta);
+    border-radius: 0.875rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease-soft),
+      color 0.2s var(--ease-soft),
+      scale 0.2s var(--ease-soft);
+  }
+  .sx-boton--suave {
+    background: transparent;
+    color: var(--tinta);
+  }
+  .sx-boton:active {
+    scale: 0.97;
+  }
+  @media (hover: hover) {
+    .sx-boton:hover {
+      background: var(--pieza);
+      color: var(--tinta-fija);
+      border-color: var(--pieza);
+    }
+  }
+
+  .sx-resultado {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .sx-total,
+  .sx-ahorro {
+    margin: 0;
+    padding: 1rem 1.25rem 1.125rem;
+    border-radius: 1rem;
+  }
+
+  .sx-total {
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+  }
+
+  .sx-resultado__etiqueta {
+    margin: 0;
+    font-size: var(--t-s);
+    font-weight: 700;
+  }
+
+  .sx-total__mes {
+    margin: 0.125rem 0 0;
+    font-size: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .sx-total__anio {
+    margin: 0.25rem 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sx-ahorro {
+    background: var(--pieza);
+    color: var(--tinta-fija);
+    line-height: 1.4;
+  }
+  .sx-ahorro[hidden] {
+    display: none;
+  }
+  .sx-ahorro p {
+    margin: 0;
+  }
+  .sx-ahorro__titulo {
+    font-size: var(--t-s);
+    font-weight: 700;
+  }
+  .sx-ahorro__cifra {
+    margin-top: 0.25rem !important;
+    font-size: 1.125rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .sx-ahorro__cifra strong {
+    font-size: 1.375rem;
+    font-weight: 800;
+  }
+  .sx-ahorro__queda {
+    margin-top: 0.25rem !important;
+    font-variant-numeric: tabular-nums;
+  }
+  .sx-ahorro--vacio {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+  }
+
+  /* ---------- La guía ---------- */
+
+  .guia {
+    display: grid;
+    gap: clamp(2.25rem, 5vw, 3.25rem);
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .guia p,
+  .guia li {
+    max-width: 66ch;
+    line-height: 1.55;
+  }
+
+  .guia > section > p {
+    margin: 0 0 0.75rem;
+  }
+
+  .guia__indice {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+  .guia__indice p {
+    margin: 0;
+  }
+  .guia__indice ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .guia__indice a {
+    display: inline-block;
+    padding-block: 0.6rem;
+    font-weight: 700;
+  }
+
+  .guia__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+    scroll-margin-top: 1rem;
+  }
+
+  .guia__sub {
+    margin: 1.75rem 0 0.6rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .guia__pasos,
+  .guia__lista {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0 0 0.75rem;
+    padding-left: 1.4rem;
+    list-style: decimal;
+  }
+  .guia__lista {
+    list-style: disc;
+  }
+
+  .cita {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0 0 0.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--crema-honda);
+    border-left: 4px solid var(--tinta);
+    border-radius: 0 1rem 1rem 0;
+  }
+  .cita p {
+    margin: 0;
+  }
+
+  .guia .cita__fuente {
+    margin-bottom: 1.25rem;
+    color: var(--gris);
+    font-size: var(--t-s);
+  }
+
+  .guia .guia__aviso {
+    margin: 1.25rem 0 0;
+    padding: 0.875rem 1.125rem;
+    border: 2px solid var(--tinta);
+    border-radius: 1rem;
+    font-size: var(--t-s);
+  }
+
+  /* El puente a la app: un bloque oscuro, como el de las apps del inicio. */
+  .puente {
+    display: grid;
+    gap: 0.875rem;
+    justify-items: start;
+    padding: clamp(1.125rem, 2.5vw, 1.75rem);
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+    border-radius: var(--radio-pieza);
+  }
+
+  .puente__titulo {
+    margin: 0;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+  }
+
+  .guia .puente__texto {
+    margin: 0;
+  }
+
+  .puente__estado {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .puente__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    background: var(--pieza);
+    color: var(--tinta-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+  }
+
+  .puente__mas {
+    font-weight: 700;
+  }
+  @media (hover: hover) {
+    .puente__mas:hover {
+      color: var(--tinta-fija);
+    }
+  }
+</style>

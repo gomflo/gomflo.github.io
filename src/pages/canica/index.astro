@@ -1,0 +1,329 @@
+---
+/**
+ * Canica, el control de suscripciones para Android (~/code/canica). Página corta con lo que dice su
+ * ficha de Google Play (docs/TIENDA.md de la app), sin prometer más. Canica no cancela nada, no ve el
+ * banco ni el correo y no hace cumplir la ley: las fechas salen de lo que anota la persona. Usa la
+ * identidad del sitio (Layout.astro). El botón de Play sale solo con CANICA_EN_PLAY (src/lib/canica.ts).
+ * El aviso de privacidad sigue en public/canica/privacidad/.
+ */
+import Layout from "../../layouts/Layout.astro";
+import { CANICA_EN_PLAY, CANICA_PLAY, canicaPlay } from "@/lib/canica";
+
+const title = "Canica: control de suscripciones para Android | gomflo.dev";
+const description =
+  "Canica es una app para Android para tus suscripciones: cuánto pagas al mes y al año, cuándo te cobran y un aviso antes de cada cobro. Sin cuenta ni anuncios.";
+
+const capturas = [
+  { n: 1, alt: "El frasco de Canica: una canica por suscripción, el total al mes y al año, y el próximo cobro abajo" },
+  { n: 2, alt: "El detalle de una suscripción en Canica: cuánto cuesta al mes, al año y en cinco años, y cuándo es el próximo cobro" },
+  { n: 3, alt: "El calendario de Canica con los cobros del mes, cada uno en su día" },
+];
+
+const sorpresa = [
+  "Aviso antes de cada cobro: el mismo día, uno o tres días antes, a la hora que escojas.",
+  "Pruebas gratis con cuenta regresiva y aviso dos días antes de que te cobren.",
+  "El próximo cobro siempre arriba, con «Hoy» y «Mañana» marcados.",
+];
+
+const deVerdad = [
+  "Total al mes y al año, sumando semanales, mensuales, bimestrales y anuales.",
+  "Cobros en pesos o en dólares, con tu tipo de cambio.",
+  "Cada suscripción: al mes, al año y a cinco años.",
+  "Calendario del mes con cada cobro en su día.",
+];
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const jsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "Canica",
+    description,
+    operatingSystem: "Android",
+    applicationCategory: "FinanceApplication",
+    inLanguage: "es-MX",
+    url: canonicalURL,
+    image: new URL("/img/android/canica/icono.png", site).href,
+    screenshot: capturas.map((c) => new URL(`/img/android/canica/captura-${c.n}.webp`, site).href),
+    offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+    ...(CANICA_EN_PLAY ? { installUrl: CANICA_PLAY } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+      { "@type": "ListItem", position: 2, name: "Canica", item: canonicalURL },
+    ],
+  },
+]).replace(/</g, "\\u003c");
+---
+
+<Layout title={title} description={description} image="/img/canica.jpeg" imageAlt="Canica: tus suscripciones en un frasco">
+  <main id="main-content" class="app contenedor" tabindex="-1">
+    <header class="pieza app__cabeza">
+      <img class="app__icono" src="/img/android/canica/icono-192.webp" width="96" height="96" alt="" />
+      <div>
+        <p class="etiqueta app__tipo">App para Android</p>
+        <h1 class="titular app__titulo">Canica: tus suscripciones</h1>
+        <p class="app__entrada">
+          Anotas tus suscripciones y te dice cuánto pagas al mes y al año, cuándo te cobra cada una y te avisa antes de
+          cada cobro y antes de que termine una prueba gratis. Sin cuenta y sin anuncios.
+        </p>
+        {
+          CANICA_EN_PLAY ? (
+            <a class="app__play" href={canicaPlay("canica")} rel="noopener" data-umami-event="play-canica" data-umami-event-pagina="canica">
+              Bájala en Google Play
+            </a>
+          ) : (
+            <p class="app__estado">Muy pronto en Google Play.</p>
+          )
+        }
+      </div>
+    </header>
+
+    <ul class="capturas" role="list">
+      {capturas.map((c) => (
+        <li>
+          <img
+            src={`/img/android/canica/captura-${c.n}.webp`}
+            srcset={`/img/android/canica/captura-${c.n}-270.webp 270w, /img/android/canica/captura-${c.n}.webp 540w`}
+            sizes="(max-width: 52rem) 31vw, 16rem"
+            width="540"
+            height="1212"
+            alt={c.alt}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))}
+    </ul>
+
+    <section class="bloque" aria-labelledby="frasco-heading">
+      <h2 id="frasco-heading" class="titular bloque__titulo">Tus suscripciones en un frasco</h2>
+      <p class="bloque__texto">
+        ¿Cuánto se te va al mes en series, música, el gimnasio, la nube y lo demás? Canica te lo enseña de un vistazo: cada
+        suscripción es una canica de vidrio del tamaño de lo que cuesta, dentro de un frasco que se mueve cuando inclinas el
+        teléfono.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="sorpresa-heading">
+      <h2 id="sorpresa-heading" class="titular bloque__titulo">Nada te cobra por sorpresa</h2>
+      <ul class="bloque__lista">
+        {sorpresa.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="verdad-heading">
+      <h2 id="verdad-heading" class="titular bloque__titulo">Cuánto es de verdad</h2>
+      <ul class="bloque__lista">
+        {deVerdad.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="soltar-heading">
+      <h2 id="soltar-heading" class="titular bloque__titulo">Te ayuda a soltar</h2>
+      <ul class="bloque__lista">
+        <li>Revisión: una por una, de la más cara a la más barata, «¿la sigues usando?». Al final, cuánto te ahorras al año.</li>
+        <li>
+          Cancelar se hace en cada servicio. Cuando ya cancelaste, «Ya la cancelé» lleva la cuenta de lo que llevas ahorrado
+          desde ese día.
+        </li>
+        <li>Catálogo de servicios comunes en México (nombre, color y categoría de un toque), o escribe la que quieras.</li>
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="precio-heading">
+      <h2 id="precio-heading" class="titular bloque__titulo">Gratis, y Pro con un solo pago</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3 class="titular parte__titulo">Gratis</h3>
+          <ul>
+            <li>Hasta 5 canicas</li>
+            <li>El frasco, los avisos, el calendario y la revisión</li>
+            <li>Pesos o dólares</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <h3 class="titular parte__titulo">Canica Pro</h3>
+          <ul>
+            <li>Canicas sin límite</li>
+            <li>Aumentos de precio: cuánto ha subido cada suscripción y cuánto más pagas al año por eso</li>
+            <li>Dónde se va: tu gasto por categoría en un anillo de colores</li>
+            <li>Canicas de perla, galaxia y cristal</li>
+            <li>Widget con el próximo cobro</li>
+            <li>Respaldo para cambiar de teléfono y exportar a hoja de cálculo</li>
+            <li>Un solo pago, sin suscripción, claro</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="titular bloque__titulo">Tu información es tuya</h2>
+      <p class="bloque__texto">
+        Sin cuenta, sin anuncios y sin conectar tu banco ni leer tu correo. Todo se guarda en tu teléfono y la app no pide
+        permiso de internet. <a class="enlace" href="/canica/privacidad/" data-astro-reload>Aviso de privacidad</a>.
+      </p>
+    </section>
+
+    <section class="pieza guia-enlace" aria-labelledby="guia-heading">
+      <h2 id="guia-heading" class="titular bloque__titulo">¿Quieres cancelar una?</h2>
+      <p class="bloque__texto">
+        Suma cuánto pagas al año en suscripciones y sigue los pasos para cancelar una suscripción o una prueba gratis antes
+        de que te cobren.
+      </p>
+      <a class="guia-enlace__boton" href="/canica/cancelar-suscripcion/">Cómo cancelar una suscripción</a>
+    </section>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .app {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    padding-top: var(--hueco);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .app__cabeza {
+    --pieza: var(--menta);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .app__icono {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 22%;
+  }
+
+  .app__tipo {
+    margin: 0 0 0.5rem;
+  }
+
+  .app__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+    line-height: 0.95;
+  }
+
+  .app__entrada {
+    max-width: 60ch;
+    margin: 1rem 0 0;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .app__estado {
+    margin: 1.25rem 0 0;
+    font-weight: 700;
+  }
+
+  .app__play,
+  .guia-enlace__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.25rem;
+    padding: 0 1.25rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+    transition: scale 0.2s var(--ease-soft);
+  }
+  .app__play:active,
+  .guia-enlace__boton:active {
+    scale: 0.97;
+  }
+
+  .capturas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hueco);
+    max-width: 52rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .capturas img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .bloque__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .bloque__lista {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 62ch;
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .bloque__texto {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .planes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--hueco);
+    margin-top: 1.25rem;
+  }
+
+  .plan {
+    padding: 1.125rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .parte__titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .plan ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .guia-enlace {
+    --pieza: var(--sol);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  }
+  .guia-enlace .guia-enlace__boton {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 560px) {
+    .app__cabeza {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

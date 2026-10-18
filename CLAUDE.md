@@ -142,6 +142,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/calculadora-iva` | IvaCalculator | mexico |
 | `/guardadito/calculadora-aguinaldo` | Astro + script (sin React) | mexico |
 | `/garabato/que-dibujar` | Astro + script (sin React) | generadores |
+| `/canica/cancelar-suscripcion` | Astro + script (sin React) | mexico |
 | `/dias-habiles` | BusinessDays | mexico |
 | `/numeros-romanos` | RomanNumerals | conversores |
 | `/codigo-morse` | MorseCode | conversores |
@@ -155,6 +156,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/guardadito` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 | `/garabato` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 | `/pastillero` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
+| `/canica` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
@@ -179,6 +181,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - Reglas de Garabato: no se nombran otros juegos de dibujo y en lo que habla de la app no se dice «IA», «modelo» ni «red neuronal» (los rivales son personajes; por eso tampoco va la captura de «Cómo adivinan» ni la línea del conjunto de datos de la ficha)
 - `GARABATO_EN_PLAY` (`src/lib/garabato.ts`) está en `false` mientras la app esté en revisión: las páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones de las dos páginas con `playLink` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=garabato|que-dibujar`) y `data-umami-event="play-garabato"` + `data-umami-event-pagina`, y el `installUrl` del JSON-LD. Considera también agregarla a `src/data/android-apps.ts`
 - Umami: `que-dibujar-idea` y `que-dibujar-fiesta`, una vez por visita cada uno, sin ninguna palabra
+
+### Canica y la guía para cancelar suscripciones (`/canica/`)
+- `/canica/` es la página corta del control de suscripciones para Android (`~/code/canica`): solo dice lo que dice su ficha (`docs/TIENDA.md` y `PRODUCT.md` de la app). Usa `Layout.astro`. Icono y capturas en `public/img/android/canica/` (las del cajón más `captura-N-270.webp` e `icono-192.webp`). La imagen para compartir `public/img/canica.jpeg` es el gráfico de funciones de la ficha (`docs/tienda/grafico-1024x500-es.png`) a 1200 px sobre su fondo `rgb(242,238,230)`; `npm run og` no la genera. El aviso de privacidad sigue en `public/canica/privacidad/`
+- `/canica/cancelar-suscripcion/` es una herramienta de la caja (categoría `mexico`, `href` fuera de la raíz en `tools.ts`) con `ToolLayout`, `avisos={false}` y `tituloLargo` (H1 más chico para que la calculadora quede a la vista). Sin React: el HTML sale calculado con el ejemplo y un `<script>` (en `astro:page-load`) agrega y quita renglones y recalcula al teclear. No guarda nada (ni servidor ni `localStorage`), y la página lo dice. Lógica en `src/lib/suscripciones.ts` con pruebas en `suscripciones.test.ts` (centavos enteros; semanal ×52, mensual ×12; al mes = lo del año entre 12, dividido una sola vez, como en la app)
+- La guía cita tal cual el decreto del DOF del 12-12-2025 (fracciones VIII y IX del art. 76 Bis de la LFPC, vigentes desde el 13-12-2025), el texto vigente de la LFPC en diputados.gob.mx y el comunicado de Profeco del mismo día. Si cambian, manda la fuente: vuelve a leerlas antes de tocar las citas. Queja: Concilianet, ODECO y «Cómo presentar mi queja» de Profeco en gob.mx. Dice una sola vez que no es asesoría legal. Sin marcas en los títulos
+- Reglas de Canica: no cancela nada, no ve los cobros del banco ni el correo y no hace cumplir la ley; no lo digas. Avisa antes de cada cobro (el mismo día, uno o tres días antes) y dos días antes de que termine una prueba gratis
+- `CANICA_EN_PLAY` (`src/lib/canica.ts`) está en `false` mientras la app esté en revisión: las dos páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones con `canicaPlay` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=canica|cancelar-suscripcion`) y `data-umami-event="play-canica"` + `data-umami-event-pagina`, el `installUrl` del JSON-LD de `/canica/` y el botón de `/android/`
+- Umami: `suscripciones-calcula`, una vez por visita, sin nada de lo que se escribe
 
 ### Pastillero en la web (`/pastillero/`)
 - Página corta del recordatorio de medicinas para Android (`~/code/pastillero`, en Google Play desde octubre de 2026): solo dice lo que dice su ficha (`docs/TIENDA.md` y `PRODUCT.md` de la app; palabras de búsqueda en `~/code/ventas-pro/aso/pastillero.md`). Usa `Layout.astro`. El aviso de privacidad sigue en `public/pastillero/privacidad/` (estático, enlazado con `data-astro-reload`)
