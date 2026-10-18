@@ -29,7 +29,10 @@ export default (load, _options, el) => {
   } catch {
     // Sin Paint Timing: el respaldo de abajo.
   }
-  // Por si el navegador no avisa del primer cuadro.
-  if (document.readyState === "complete") setTimeout(mirar, 500);
-  else addEventListener("load", () => setTimeout(mirar, 500), { once: true });
+  // Por si el navegador no avisa del primer cuadro: requestAnimationFrame corre hasta que hay cuadros que pintar
+  // (en una pestaña oculta, hasta que se ve). Un reloj fijo tras load podía ganarle a un primer cuadro tardío y
+  // pedir React antes de él.
+  const respaldo = () => requestAnimationFrame(() => setTimeout(mirar));
+  if (document.readyState === "complete") respaldo();
+  else addEventListener("load", respaldo, { once: true });
 };
