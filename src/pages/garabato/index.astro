@@ -1,0 +1,305 @@
+---
+/**
+ * Garabato, el juego de dibujar para Android (~/code/garabato). Página corta con lo que dice su ficha
+ * de Google Play (docs/TIENDA.md de la app), sin prometer más. Sin «IA», «modelo» ni «red neuronal»
+ * (los rivales son personajes) y sin nombrar otros juegos de dibujo. Usa la identidad del sitio
+ * (Layout.astro). El botón de Play sale solo con GARABATO_EN_PLAY (src/lib/garabato.ts).
+ */
+import Layout from "../../layouts/Layout.astro";
+import { GARABATO_EN_PLAY, GARABATO_PLAY, garabatoPlay } from "@/lib/garabato";
+
+const title = "Garabato: dibuja y cuatro rivales adivinan | gomflo.dev";
+const description =
+  "Garabato es un juego para Android: dibujas una palabra en una pizarra mágica y cuatro rivales adivinan en vivo. Sin internet, sin cuenta y sin anuncios.";
+
+const capturas = [
+  { n: 1, alt: "La pizarra de Garabato con un caracol dibujado y los cuatro rivales abajo: Chile atinó en 3 segundos" },
+  { n: 2, alt: "La tabla de Garabato: qué tanto atina cada rival tus dibujos, tu racha y tu récord" },
+  { n: 3, alt: "El resumen del reto del día: las cinco palabras, quién atinó cada una y en cuánto" },
+];
+
+const rivales = [
+  { t: "Chile, el impulsivo", d: "Grita desde el primer trazo." },
+  { t: "Nopal, el sabio", d: "Se toma su tiempo, pero es el que más atina." },
+  { t: "Sandía, la que ve borroso", d: "Buena con siluetas, mala con detalles." },
+  { t: "Elote, el despistado", d: "Sale con cada cosa." },
+];
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const jsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "Garabato",
+    description,
+    operatingSystem: "Android",
+    applicationCategory: "GameApplication",
+    inLanguage: "es-MX",
+    url: canonicalURL,
+    image: new URL("/img/android/garabato/icono.png", site).href,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+    ...(GARABATO_EN_PLAY ? { installUrl: GARABATO_PLAY } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+      { "@type": "ListItem", position: 2, name: "Garabato", item: canonicalURL },
+    ],
+  },
+]).replace(/</g, "\\u003c");
+---
+
+<Layout title={title} description={description}>
+  <main id="main-content" class="app contenedor" tabindex="-1">
+    <header class="pieza app__cabeza">
+      <img class="app__icono" src="/img/android/garabato/icono.png" width="96" height="96" alt="" />
+      <div>
+        <p class="etiqueta app__tipo">Juego para Android</p>
+        <h1 class="titular app__titulo">Garabato: dibuja y adivinan</h1>
+        <p class="app__entrada">
+          Te toca una palabra, la dibujas con el dedo y cuatro rivales gritan lo que creen que es mientras vas trazando. El
+          primero que atina, gana. ¿Nadie atina en un minuto? Se acabó.
+        </p>
+        {
+          GARABATO_EN_PLAY ? (
+            <a
+              class="app__play"
+              href={garabatoPlay("garabato")}
+              rel="noopener"
+              data-umami-event="play-garabato"
+              data-umami-event-pagina="garabato"
+            >
+              Bájala en Google Play
+            </a>
+          ) : (
+            <p class="app__estado">Muy pronto en Google Play.</p>
+          )
+        }
+      </div>
+    </header>
+
+    <ul class="capturas" role="list">
+      {capturas.map((c) => (
+        <li>
+          <img src={`/img/android/garabato/captura-${c.n}.webp`} width="540" height="1212" alt={c.alt} loading="lazy" decoding="async" />
+        </li>
+      ))}
+    </ul>
+
+    <section class="bloque" aria-labelledby="pizarra-heading">
+      <h2 id="pizarra-heading" class="titular bloque__titulo">Una pizarra mágica de verdad</h2>
+      <ul class="bloque__lista">
+        <li>Tu trazo sale en limaduras sobre una pantalla de panalitos, como el juguete.</li>
+        <li>Para borrar, jalas la barra de un lado al otro y el dibujo se va detrás de ella.</li>
+        <li>Elige el color del marco: rojo, azul, amarillo, verde o rosa.</li>
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="rivales-heading">
+      <h2 id="rivales-heading" class="titular bloque__titulo">Cuatro rivales con carácter</h2>
+      <div class="partes">
+        {rivales.map((r) => (
+          <div class="parte">
+            <h3 class="titular parte__titulo">{r.t}</h3>
+            <p>{r.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="precio-heading">
+      <h2 id="precio-heading" class="titular bloque__titulo">Gratis y completo, y Pro con un solo pago</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3 class="titular parte__titulo">Gratis</h3>
+          <ul>
+            <li>Más de 300 palabras, de fáciles a difíciles</li>
+            <li>Reto del día: cinco palabras, las mismas para todos. Comparte tus tiempos sin enseñar los dibujos</li>
+            <li>La tabla: quién lee mejor tus garabatos, tu racha y tu récord</li>
+            <li>Comparte la imagen de tu pizarra al grupo</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <h3 class="titular parte__titulo">Garabato Pro</h3>
+          <ul>
+            <li>Modo fiesta: de 2 a 8 personas se pasan el teléfono en la sobremesa, con marcador y podio</li>
+            <li>Retos pasados: el reto de cualquiera de los últimos 30 días</li>
+            <li>Todos tus garabatos guardados, con quién los atinó y en cuánto</li>
+            <li>Sin suscripción</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="titular bloque__titulo">Tus dibujos no salen de tu teléfono</h2>
+      <p class="bloque__texto">
+        Los rivales viven dentro de la app. Sin cuenta, sin anuncios y sin permiso de internet: funciona en modo avión.
+        <a class="enlace" href="/garabato/privacidad/" data-astro-reload>Aviso de privacidad</a>.
+      </p>
+    </section>
+
+    <section class="pieza dibujar" aria-labelledby="dibujar-heading">
+      <h2 id="dibujar-heading" class="titular bloque__titulo">¿No sabes qué dibujar?</h2>
+      <p class="bloque__texto">Ideas al azar por categoría y dificultad, y una lista para jugar a dibujar y adivinar en la reunión.</p>
+      <a class="dibujar__boton" href="/garabato/que-dibujar/">Qué dibujar: ideas al azar</a>
+    </section>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .app {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    padding-top: var(--hueco);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .app__cabeza {
+    --pieza: var(--coral);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .app__icono {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 22%;
+  }
+
+  .app__tipo {
+    margin: 0 0 0.5rem;
+  }
+
+  .app__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+    line-height: 0.95;
+  }
+
+  .app__entrada {
+    max-width: 60ch;
+    margin: 1rem 0 0;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .app__estado {
+    margin: 1.25rem 0 0;
+    font-weight: 700;
+  }
+
+  .app__play,
+  .dibujar__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.25rem;
+    padding: 0 1.25rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+    transition: scale 0.2s var(--ease-soft);
+  }
+  .app__play:active,
+  .dibujar__boton:active {
+    scale: 0.97;
+  }
+
+  .capturas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hueco);
+    max-width: 52rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .capturas img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .bloque__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .bloque__lista {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 62ch;
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .bloque__texto {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .partes,
+  .planes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--hueco);
+    margin-top: 1.25rem;
+  }
+
+  .parte,
+  .plan {
+    padding: 1.125rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .parte__titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .parte p,
+  .plan ul {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .plan ul {
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+
+  .dibujar {
+    --pieza: var(--lila);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  }
+  .dibujar .dibujar__boton {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 560px) {
+    .app__cabeza {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
