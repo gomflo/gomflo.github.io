@@ -1,6 +1,7 @@
 #!/bin/sh
 # Copias recortadas de las fuentes para /tinmarin/: latín con acentos (Latin-1 y Extended-A) y puntuación, y solo
-# los pesos que usa la página. Necesita fonttools y brotli (pip install fonttools brotli).
+# los pesos que usa la página. En Bricolage se fija el tamaño óptico en 32 (de botones de 17 px a títulos de 52 no se
+# nota) y se deja el ancho, que la rueda usa condensado: pasa de 108 a 59 KB. Necesita fonttools y brotli (pip install fonttools brotli).
 set -e
 cd "$(dirname "$0")/.."
 U="U+0020-007E,U+00A0-00FF,U+0100-017F,U+0218-021B,U+02C6,U+02DA,U+02DC,U+2010-2027,U+2030-203A,U+20AC,U+2190-2193,U+2212,U+2264-2265,U+2713"
@@ -9,7 +10,7 @@ python3 - <<'PY'
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 for src, dst, lim in [
-    ("bricolage-grotesque-200_800-normal", "bricolage-grotesque-700_800", {"wght": (700, 800)}),
+    ("bricolage-grotesque-200_800-normal", "bricolage-grotesque-700_800", {"wght": (700, 800), "opsz": 32}),
     ("dm-sans-100_1000-normal", "dm-sans-400_700", {"wght": (400, 700)}),
 ]:
     font = instancer.instantiateVariableFont(TTFont(f"public/fonts/{src}.woff2"), lim)
