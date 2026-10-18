@@ -8,6 +8,8 @@ import { getCategory, getTool, toolsIn, variantsOf, type ToolSlug, type VariantS
 export interface Faq {
   q: string;
   a: string;
+  /** Fuentes de la respuesta (leyes, datos oficiales): salen como enlaces debajo. */
+  fuentes?: { texto: string; href: string }[];
 }
 
 interface Props {
@@ -24,9 +26,11 @@ interface Props {
   sectionLabel: string;
   /** Preguntas frecuentes: se muestran y se publican como FAQPage. */
   faq?: Faq[];
+  /** Avisos (Sonner) para copiar y errores. Una herramienta sin React los apaga y no carga React. */
+  avisos?: boolean;
 }
 
-const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [] } = Astro.props;
+const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [], avisos = true } = Astro.props;
 const tool = getTool(slug);
 const category = getCategory(tool.category);
 const pageSlug = variant ?? slug;
@@ -116,11 +120,14 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
           <slot />
         </section>
 
+        <!-- Lo que acompaña a la herramienta fuera del panel (la calculadora de aguinaldo pone aquí el reparto). -->
+        <slot name="despues" />
+
         {faq.length > 0 && (
           <section class="faq" aria-labelledby="faq-heading">
             <h2 id="faq-heading" class="seccion-titulo titular">Preguntas frecuentes</h2>
             <div class="faq-list">
-              {faq.map(({ q, a }) => (
+              {faq.map(({ q, a, fuentes }) => (
                 <details class="faq-item">
                   <summary>
                     <span>{q}</span>
@@ -129,6 +136,17 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
                     </svg>
                   </summary>
                   <p>{a}</p>
+                  {fuentes && fuentes.length > 0 && (
+                    <p class="faq-fuente">
+                      {fuentes.length === 1 ? "Fuente: " : "Fuentes: "}
+                      {fuentes.map((f, i) => (
+                        <>
+                          {i > 0 && " y "}
+                          <a class="enlace" href={f.href} rel="noopener">{f.texto}</a>
+                        </>
+                      ))}
+                    </p>
+                  )}
                 </details>
               ))}
             </div>
@@ -154,7 +172,7 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 
     <script type="application/ld+json" set:html={jsonLd} />
   </main>
-  <ThemeAwareToaster slot="after" client:idle />
+  {avisos && <ThemeAwareToaster slot="after" client:idle />}
 </Layout>
 
 <style>
@@ -432,5 +450,28 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     padding: 0 3.5rem 1.25rem 1.25rem;
     max-width: 68ch;
     line-height: 1.55;
+  }
+
+  .faq-item p:has(+ .faq-fuente) {
+    padding-bottom: 0.5rem;
+  }
+
+  .faq-item .faq-fuente {
+    font-size: var(--t-s);
+  }
+
+  /* Sobre la pieza abierta la raya del enlace va en la tinta fija, como el texto. */
+  .faq-fuente .enlace {
+    font-weight: 700;
+    background-image: linear-gradient(var(--tinta-fija) 0 0);
+  }
+  @media (hover: hover) {
+    .faq-fuente .enlace:hover {
+      color: var(--pieza);
+    }
+  }
+  .faq-fuente .enlace:focus-visible {
+    color: var(--pieza);
+    outline-color: var(--tinta-fija);
   }
 </style>
