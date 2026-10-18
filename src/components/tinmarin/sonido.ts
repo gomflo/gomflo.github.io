@@ -11,10 +11,22 @@ const FILES = {
   gano: "/tinmarin/sonidos/gano.m4a",
 };
 
+/** Crea el contexto y carga los sonidos sin reanudarlo. Crear un AudioContext tarda ~75 ms; hecho en el toque de
+ *  «Girar» era el tirón del primer cuadro. Queda suspendido hasta que prepareSounds() lo reanude con el toque. */
+export function warmSounds() {
+  if (typeof AudioContext === "undefined") return;
+  context ??= new AudioContext();
+  load();
+}
+
 export function prepareSounds() {
   if (typeof AudioContext === "undefined") return;
   context ??= new AudioContext();
   if (context.state === "suspended") void context.resume();
+  load();
+}
+
+function load() {
   loading ??= Promise.all(
     Object.entries(FILES).map(async ([name, url]) => {
       const data = await (await fetch(url)).arrayBuffer();
