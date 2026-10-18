@@ -1,6 +1,7 @@
 ---
 // Una guía de Frijolito (/frijolito/<slug>/): el cantador arriba, listo para usarse, y abajo cómo hacerlo para
-// ese caso, la app, preguntas frecuentes y las otras páginas. El contenido de la guía va en el slot.
+// ese caso, la app, preguntas frecuentes y las otras páginas. El contenido de la guía va en el slot; lo que va
+// entre la guía y la app (la baraja de posada), en el slot "despues".
 import FrijolitoLayout from "./FrijolitoLayout.astro";
 import Cantador from "../components/frijolito/Cantador";
 import App from "../components/frijolito/App.astro";
@@ -94,6 +95,8 @@ const jsonLd = {
       <slot />
     </div>
   </section>
+
+  <slot name="despues" />
 
   <App campaign={campaign} {...app} />
 
