@@ -40,7 +40,16 @@ const capturas = [
     <div class="tm-telefono__capturas">
       {
         capturas.map((alt, i) => (
-          <img src={`/img/android/tinmarin/captura-${i + 1}.webp`} alt={alt} width="540" height="1195" loading="lazy" decoding="async" />
+          <img
+            src={`/img/android/tinmarin/captura-${i + 1}.webp`}
+            srcset={`/img/android/tinmarin/captura-${i + 1}-300.webp 300w, /img/android/tinmarin/captura-${i + 1}.webp 540w`}
+            sizes="min(31vw, 200px)"
+            alt={alt}
+            width="540"
+            height="1195"
+            loading="lazy"
+            decoding="async"
+          />
         ))
       }
     </div>
