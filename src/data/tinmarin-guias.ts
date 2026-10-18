@@ -33,6 +33,6 @@ export const guias: Guia[] = [
   {
     slug: "intercambio-navideno",
     nombre: "Intercambio navideño y posada",
-    resumen: "El orden de los regalos, los regalos robados y la rifa de la posada con varios premios, sin repetir.",
+    resumen: "El amigo secreto en el teléfono, el orden de los regalos robados y la rifa de la posada sin repetir.",
   },
 ];
