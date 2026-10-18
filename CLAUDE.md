@@ -10,6 +10,7 @@ Spanish-language personal portfolio site (gomflo.dev) with developer utility too
 npm run dev       # Dev server at localhost:4321
 npm run build     # Production build to ./dist/
 npm run preview   # Preview production build locally
+npm test          # Pruebas de la lógica pura (node --test + jiti): src/lib/*.test.ts
 ```
 
 ## Tech Stack
@@ -55,8 +56,9 @@ public/                  # Static assets (favicon, fonts/ propias en woff2, robo
 
 ### Astro Pages
 - Cada página de herramienta usa `ToolLayout.astro` con `slug`, `metaTitle` (≤ 60 caracteres), `description` (140–160), `heading`, `lead`, `sectionLabel` y `faq` (3 preguntas) y envuelve un componente React con `client:load`
+- `faq` acepta `fuentes` (enlaces debajo de la respuesta); el slot `despues` pone contenido entre el panel y las preguntas; `avisos={false}` quita el Toaster de Sonner para que una herramienta sin React no cargue React
 - `ToolLayout` genera JSON-LD (WebApplication, BreadcrumbList, FAQPage) y agrega `og:image` solo si existe `public/img/<slug>.jpeg`
-- Imágenes para compartir (1200×630): `npm run build && npm run og` las genera desde `dist/` con Chrome sin interfaz (`scripts/og-images.mjs`). Córrelo al agregar páginas y cada enero (días feriados lleva el año)
+- Imágenes para compartir (1200×630): `npm run build && npm run og` las genera desde `dist/` con Chrome sin interfaz (`scripts/og-images.mjs`), también para herramientas un nivel abajo (`/guardadito/calculadora-aguinaldo/` → `public/img/calculadora-aguinaldo.jpeg`). Córrelo al agregar páginas y cada enero (días feriados lleva el año)
 - `trailingSlash: 'always'`: GitHub Pages redirige `/ruta` a `/ruta/` con 301, así que todos los enlaces internos llevan barra final
 - Páginas satélite (`variants` en `tools.ts`): reutilizan una herramienta para otra búsqueda (`/contador-de-palabras/`, `/dias-feriados/`). Usan `ToolLayout` con `variant`, no cuentan para el panel del inicio y se enlazan desde la herramienta madre
 - El inicio (`index.astro`) arma la portada (título y mesa de pruebas), la caja de piezas con buscador a partir de `src/lib/tools.ts` y las apps; publica WebSite + ItemList
@@ -109,7 +111,7 @@ public/                  # Static assets (favicon, fonts/ propias en woff2, robo
 
 GitHub Actions deploys on push to `main`:
 1. Node 22 + `npm ci`
-2. `npm run build`
+2. `npm test` y `npm run build`
 3. Deploy `./dist/` to GitHub Pages
 
 ## Available Tools (Pages)
@@ -138,6 +140,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/user-agent` | UserAgent | generadores |
 | `/validar-clabe` | ClabeValidator | mexico |
 | `/calculadora-iva` | IvaCalculator | mexico |
+| `/guardadito/calculadora-aguinaldo` | Astro + script (sin React) | mexico |
 | `/dias-habiles` | BusinessDays | mexico |
 | `/numeros-romanos` | RomanNumerals | conversores |
 | `/codigo-morse` | MorseCode | conversores |
@@ -148,6 +151,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/tinmarin` | TinMarin | fuera del catálogo, identidad de la app |
 | `/frijolito` | Cantador | fuera del catálogo, identidad de la app |
 | `/android` | El cajón (Astro) | fuera del catálogo, identidad propia |
+| `/guardadito` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
@@ -155,6 +159,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - Imágenes en `public/img/android/<slug>/` (`icono.png` cuadrado sin máscara, `captura-1..3.webp` de 540 px). Imagen para compartir: `public/img/android.jpeg` (captura del primer pliegue a 1200×630)
 - Tin Marín y Frijolito están en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
 - El inicio la enlaza con el bloque oscuro de `#apps`
+
+### Guardadito y la calculadora de aguinaldo (`/guardadito/`)
+- `/guardadito/` es la página corta de la app de presupuesto por sobres (`~/code/guardadito`): solo dice lo que dice su ficha (`docs/TIENDA.md` de la app). Usa `Layout.astro`. El aviso de privacidad sigue en `public/guardadito/privacidad/`
+- `/guardadito/calculadora-aguinaldo/` es una herramienta de la caja (categoría `mexico`, `href` fuera de la raíz en `tools.ts`) con `ToolLayout`, pero sin React: el HTML sale calculado con el ejemplo y un `<script>` (en `astro:page-load`, por el ClientRouter) recalcula al teclear. Lógica en `src/lib/aguinaldo.ts` con pruebas en `aguinaldo.test.ts`
+- **Cada enero**: actualiza `UMA` (`anio` y `diario`) en `src/lib/aguinaldo.ts` con el valor del INEGI (https://www.inegi.org.mx/temas/uma/), corre `npm test` y `npm run og` (el título y la imagen llevan el año)
+- No calcula el ISR de la parte gravada (depende de cada nómina): solo bruto, exento (30 UMA, art. 93 fr. XIV LISR) y gravado. Cada dato lleva su fuente (LFT, LISR e INEGI en diputados.gob.mx e inegi.org.mx)
+- `GUARDADITO_EN_PLAY` (`src/lib/guardadito.ts`) está en `false` mientras la app esté en revisión: ningún botón ni enlace va a Play. Al pasarla a `true` salen los botones de las dos páginas (con `utm_source=web&utm_campaign=aguinaldo|guardadito` y `data-umami-event="play-guardadito"`), el `installUrl` del JSON-LD y el botón de `/android/`
+- Umami: la calculadora manda `aguinaldo-calcula` una vez por visita al primer cambio, sin ningún dato de lo que se escribe
 
 ### Tin Marín en la web (`/tinmarin/`)
 - La ruleta de la app para Android (`~/code/tinmarin`) en el navegador, con su identidad (tema Feria; sistema en `~/code/tinmarin/DESIGN.md`): no usa `Layout.astro` ni `global.css`, sino `styles/tinmarin.css` con clases `tm-*`

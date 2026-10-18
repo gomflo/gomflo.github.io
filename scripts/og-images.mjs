@@ -93,21 +93,31 @@ const page = ({ title, lead, art, url, size, color }) => `<!doctype html>
 /** Tamaño del título según su largo, para que quepa en tres líneas. */
 const titleSize = (title) => (title.length <= 16 ? 128 : title.length <= 26 ? 108 : 88);
 
-const pages = [];
+// Herramientas en la raíz (/calculadora-iva/) y un nivel abajo (/guardadito/calculadora-aguinaldo/).
+// La imagen se llama como la última parte de la ruta, que es el slug que busca ToolLayout.
+const rutas = [];
 for (const entry of await readdir(DIST, { withFileTypes: true })) {
   if (!entry.isDirectory()) continue;
-  const file = join(DIST, entry.name, "index.html");
+  rutas.push(entry.name);
+  for (const sub of await readdir(join(DIST, entry.name), { withFileTypes: true })) {
+    if (sub.isDirectory()) rutas.push(`${entry.name}/${sub.name}`);
+  }
+}
+
+const pages = [];
+for (const ruta of rutas) {
+  const file = join(DIST, ruta, "index.html");
   if (!existsSync(file)) continue;
   const html = await readFile(file, "utf8");
   const svg = motifSvg(html);
   if (!svg) continue; // redirecciones y páginas sin herramienta
   pages.push({
-    slug: entry.name,
+    slug: ruta.split("/").pop(),
     title: escape(text(match(html, /<h1[^>]*>([\s\S]*?)<\/h1>/))),
     lead: text(match(html, /<p class="cabeza__entrada[^"]*"[^>]*>([\s\S]*?)<\/p>/)),
     art: `<div class="ficha">${svg}</div>`,
     color: COLORES[match(html, /<main[^>]*data-cat="([^"]+)"/)] ?? COLORES.mexico,
-    url: `gomflo.dev/${entry.name}`,
+    url: `gomflo.dev/${ruta}`,
   });
 }
 
