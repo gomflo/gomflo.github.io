@@ -1,0 +1,749 @@
+---
+/**
+ * Qué dibujar: ideas al azar para dibujar y adivinar. Herramienta de la caja (categoría
+ * "generadores") que vive junto a Garabato. Sin React: el HTML sale con una idea ya pintada y un
+ * script chico da la siguiente, filtra, guarda el historial y arma la lista del modo fiesta.
+ * Las ideas y la lógica están en src/lib/que-dibujar.ts, con pruebas (npm test).
+ */
+import ToolLayout, { type Faq } from "../../layouts/ToolLayout.astro";
+import { CATEGORIAS, DIFICULTADES, IDEAS, mayuscula, nombreCategoria, nombreDificultad } from "@/lib/que-dibujar";
+import { GARABATO_EN_PLAY, garabatoPlay } from "@/lib/garabato";
+
+const total = IDEAS.length;
+const deGarabato = IDEAS.filter((i) => i.garabato).length;
+
+// La idea con la que sale la página: una fácil, distinta en cada despliegue. No se cambia al cargar,
+// para que lo que se pinta primero sea lo que se queda.
+const faciles = IDEAS.filter((i) => i.dificultad === "facil");
+const dia = Math.floor(Date.now() / 86_400_000);
+const inicial = faciles[dia % faciles.length];
+
+const FIESTA_INICIAL = 20;
+
+const faq: Faq[] = [
+  {
+    q: "¿De dónde salen las ideas?",
+    a: `Son ${total} ideas en ${CATEGORIAS.length} categorías. ${deGarabato} son las palabras de Garabato, un juego de dibujar para Android; las demás se agregaron para tener acciones, personajes, cosas de México y de Navidad. Todas son para jugar en familia.`,
+  },
+  {
+    q: "¿Sirve para jugar con niños?",
+    a: "Sí, todas las ideas son aptas para niños. Con niños chicos elige «Fácil»: cosas que se dibujan con pocas rayas, como un gato, el sol, una casa o un helado. «Difícil» trae acciones y escenas como «pedir posada» o «tener hipo», mejores para adolescentes y adultos.",
+  },
+  {
+    q: "¿Cómo uso el modo fiesta en una posada?",
+    a: "Elige «Navidad y posadas» (o deja todas las categorías), escribe cuántas palabras quieres y toca «Armar lista». «Imprimir» saca una hoja con las palabras en recuadros para recortar: dóblalos, échalos en un sombrero y cada quien saca uno en su turno. «Copiar» pega la lista en el chat de quien dirige el juego.",
+  },
+];
+---
+
+<ToolLayout
+  slug="que-dibujar"
+  metaTitle="Qué dibujar: ideas al azar para dibujar | gomflo.dev"
+  description="Ideas al azar de qué dibujar: animales, comida, acciones, personajes, cosas de México y de la posada. Elige la dificultad o arma una lista para jugar en grupo."
+  heading="Qué dibujar: ideas al azar"
+  lead="Toca el botón y sale algo para dibujar. Elige categoría y dificultad, o arma una lista para jugar por turnos en la reunión."
+  sectionLabel="Generador de ideas para dibujar"
+  faq={faq}
+  avisos={false}
+>
+  <div class="tool-view qd" role="region" aria-label="Ideas para dibujar" data-que-dibujar data-inicial={inicial.texto}>
+    <!-- La idea va pintada desde el HTML (sin data-reveal): es lo primero que se ve y no se mueve al cargar. -->
+    <section class="qd-idea" aria-labelledby="qd-idea-titulo">
+      <h3 id="qd-idea-titulo" class="etiqueta qd-idea__etiqueta">Dibuja</h3>
+      <div class="qd-idea__caja" aria-live="polite" aria-atomic="true">
+        <p class="qd-idea__texto titular" data-idea>{mayuscula(inicial.texto)}</p>
+        <p class="qd-idea__meta">
+          <span data-idea-cat>{nombreCategoria(inicial.categoria)}</span>
+          <span aria-hidden="true">·</span>
+          <span data-idea-dif>{nombreDificultad(inicial.dificultad)}</span>
+        </p>
+      </div>
+      <button type="button" class="qd-boton btn-pieza" data-otra>Otra idea</button>
+    </section>
+
+    <form class="qd-filtros" data-filtros aria-label="Filtros" novalidate>
+      <fieldset class="qd-grupo">
+        <legend class="qd-grupo__titulo">Categoría</legend>
+        <div class="qd-chips">
+          <label class="qd-chip">
+            <input type="checkbox" name="cat-todas" checked data-todas="cat" />
+            <span>Todas</span>
+          </label>
+          {CATEGORIAS.map((c) => (
+            <label class="qd-chip">
+              <input type="checkbox" name="cat" value={c.id} />
+              <span>{c.nombre}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="qd-grupo">
+        <legend class="qd-grupo__titulo">Dificultad</legend>
+        <div class="qd-chips">
+          <label class="qd-chip">
+            <input type="checkbox" name="dif-todas" checked data-todas="dif" />
+            <span>Todas</span>
+          </label>
+          {DIFICULTADES.map((d) => (
+            <label class="qd-chip">
+              <input type="checkbox" name="dif" value={d.id} />
+              <span>{d.nombre}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <p class="qd-cuenta" aria-live="polite" data-cuenta>{total} ideas con estos filtros.</p>
+    </form>
+
+    <section class="qd-historial" aria-labelledby="qd-historial-titulo">
+      <h3 id="qd-historial-titulo" class="qd-grupo__titulo">Últimas ideas</h3>
+      <p class="qd-historial__vacio" data-historial-vacio>Aquí salen las anteriores cuando pidas otra.</p>
+      <ol class="qd-historial__lista" role="list" data-historial hidden></ol>
+    </section>
+
+    <section class="qd-fiesta" aria-labelledby="qd-fiesta-titulo">
+      <h3 id="qd-fiesta-titulo" class="titular qd-fiesta__titulo">Modo fiesta</h3>
+      <p class="qd-fiesta__texto">
+        Una lista de palabras distintas, con los filtros de arriba, para jugar por turnos. Imprímela para recortar papelitos o
+        cópiala al chat.
+      </p>
+      <form class="qd-fiesta__form" data-fiesta-form novalidate>
+        <label for="qd-cuantas" class="qd-grupo__titulo">¿Cuántas palabras?</label>
+        <div class="qd-fiesta__fila">
+          <input
+            id="qd-cuantas"
+            name="cuantas"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            max="60"
+            value={FIESTA_INICIAL}
+            class="qd-numero"
+          />
+          <button type="submit" class="qd-armar btn-pieza">Armar lista</button>
+        </div>
+      </form>
+      <div class="qd-hoja" data-hoja hidden>
+        <p class="qd-hoja__titulo">Qué dibujar · gomflo.dev/garabato/que-dibujar</p>
+        <ol class="qd-lista" data-fiesta-lista></ol>
+        <div class="qd-fiesta__acciones">
+          <button type="button" class="qd-accion" data-copiar>Copiar</button>
+          <button type="button" class="qd-accion" data-imprimir>Imprimir</button>
+          <p class="qd-fiesta__estado" role="status" data-estado></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div slot="despues" class="qd-guia">
+    <section aria-labelledby="como-jugar">
+      <h2 id="como-jugar" class="titular qd-guia__titulo">Cómo jugar a dibujar y adivinar con papel y lápiz</h2>
+      <p>Solo hacen falta hojas, plumas o lápices y el reloj del teléfono.</p>
+      <ol class="qd-pasos">
+        <li>Hagan dos equipos de dos o más personas.</li>
+        <li>Alguien del primer equipo saca una palabra sin que su equipo la vea: de un papelito del modo fiesta o del botón de arriba.</li>
+        <li>Tiene un minuto para dibujarla mientras su equipo grita lo que cree que es. No se vale hablar, hacer señas ni escribir letras o números.</li>
+        <li>Si atinan antes de que se acabe el tiempo, ganan un punto. Si no, el otro equipo tiene un intento para robárselo.</li>
+        <li>Luego le toca al otro equipo, y en cada turno dibuja alguien distinto. Gana el primer equipo que llegue a 10 puntos.</li>
+      </ol>
+      <h3 class="titular qd-guia__sub">Tiempos y variantes</h3>
+      <ul class="qd-lista-guia">
+        <li><strong>Un minuto</strong> para las fáciles y las medias; minuto y medio para las difíciles o si juegan niños chicos.</li>
+        <li><strong>Todos contra todos</strong>, si son pocos o muy chicos: quien atina se lleva el punto y dibuja la siguiente.</li>
+        <li><strong>En la posada</strong>, una lista de 20 o 30 palabras de «Navidad y posadas» alcanza para una ronda larga entre la cena y la piñata.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="consejos">
+      <h2 id="consejos" class="titular qd-guia__titulo">Consejos para dibujar rápido</h2>
+      <ul class="qd-lista-guia">
+        <li>Empieza por la forma grande. Los detalles van después, si sobra tiempo.</li>
+        <li>Dibuja lo que distingue a la cosa: la trompa del elefante, las orejas del conejo, el palito de la paleta.</li>
+        <li>Para una acción, un monito de palitos haciéndola, con rayitas de movimiento.</li>
+        <li>Para un personaje, su accesorio: el parche del pirata, el gorro del chef, la capa del superhéroe.</li>
+        <li>Usa flechas para señalar la parte que importa.</li>
+        <li>Si en 20 segundos nadie se acerca, cambia de dibujo: algo relacionado o la palabra por partes.</li>
+        <li>No borres: tacha y sigue.</li>
+      </ul>
+    </section>
+
+    <section class="puente" aria-labelledby="garabato-heading">
+      <h2 id="garabato-heading" class="titular puente__titulo">Para jugar también estando solo</h2>
+      <p class="puente__texto">
+        <strong>Garabato</strong> es un juego para Android: te toca una palabra, la dibujas con el dedo en una pizarra mágica y
+        cuatro rivales, Chile, Nopal, Sandía y Elote, gritan lo que creen que es mientras vas trazando. El primero que atina,
+        gana. Así se juega también sin nadie más. {deGarabato} de las ideas de esta página son sus palabras: las que los rivales
+        saben adivinar.
+      </p>
+      <p class="puente__texto">
+        Sin internet, sin cuenta y sin anuncios. El modo fiesta, para pasarse el teléfono entre 2 y 8 personas, es parte de
+        Garabato Pro, un solo pago.
+      </p>
+      {
+        GARABATO_EN_PLAY ? (
+          <a
+            class="puente__boton"
+            href={garabatoPlay("que-dibujar")}
+            rel="noopener"
+            data-umami-event="play-garabato"
+            data-umami-event-pagina="que-dibujar"
+          >
+            Bájala en Google Play
+          </a>
+        ) : (
+          <p class="puente__estado">Muy pronto en Google Play.</p>
+        )
+      }
+      <a class="enlace puente__mas" href="/garabato/">Qué es Garabato</a>
+    </section>
+  </div>
+</ToolLayout>
+
+<script>
+  import { IDEAS, elegir, fiesta, filtrar, listaComoTexto, mayuscula, nombreCategoria, nombreDificultad, recordar, type CategoriaId, type Dificultad, type Idea } from "@/lib/que-dibujar";
+
+  type Umami = { umami?: { track: (e: string) => void } };
+  const MAX_RECIENTES = 6; // la de pantalla y las cinco del historial
+
+  function iniciar() {
+    const raiz = document.querySelector<HTMLElement>("[data-que-dibujar]");
+    if (!raiz) return;
+    const $ = <T extends Element = HTMLElement>(sel: string) => raiz.querySelector<T>(sel)!;
+    const filtros = $<HTMLFormElement>("[data-filtros]");
+    const fiestaForm = $<HTMLFormElement>("[data-fiesta-form]");
+    const historial = $<HTMLOListElement>("[data-historial]");
+    const lista = $<HTMLOListElement>("[data-fiesta-lista]");
+    const hoja = $("[data-hoja]");
+    const estado = $("[data-estado]");
+
+    let recientes: string[] = [raiz.dataset.inicial ?? ""];
+    let actual: Idea | undefined = IDEAS.find((i) => i.texto === recientes[0]);
+    let armada: Idea[] = [];
+    const contados = new Set<string>();
+    // Una visita cuenta una vez cada cosa; no viaja ninguna palabra.
+    const contar = (e: string) => {
+      if (contados.has(e)) return;
+      contados.add(e);
+      (window as Umami).umami?.track(e);
+    };
+
+    const marcados = <T extends string>(name: string) =>
+      [...filtros.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`)].map((i) => i.value as T);
+    const pool = () => filtrar(IDEAS, { categorias: marcados<CategoriaId>("cat"), dificultades: marcados<Dificultad>("dif") });
+
+    const pintar = (idea: Idea) => {
+      $("[data-idea]").textContent = mayuscula(idea.texto);
+      $("[data-idea-cat]").textContent = nombreCategoria(idea.categoria);
+      $("[data-idea-dif]").textContent = nombreDificultad(idea.dificultad);
+    };
+
+    const pintarHistorial = () => {
+      const anteriores = recientes.slice(1);
+      historial.replaceChildren(
+        ...anteriores.map((t) => {
+          const li = document.createElement("li");
+          li.textContent = mayuscula(t);
+          return li;
+        }),
+      );
+      historial.hidden = anteriores.length === 0;
+      $("[data-historial-vacio]").hidden = anteriores.length > 0;
+    };
+
+    const otra = () => {
+      const idea = elegir(pool(), recientes);
+      if (!idea) return;
+      actual = idea;
+      recientes = recordar(recientes, idea.texto, MAX_RECIENTES);
+      pintar(idea);
+      pintarHistorial();
+      contar("que-dibujar-idea");
+    };
+
+    const alFiltrar = (e: Event) => {
+      const input = e.target as HTMLInputElement;
+      const grupo = input.dataset.todas ?? (input.name === "cat" ? "cat" : "dif");
+      const todas = filtros.querySelector<HTMLInputElement>(`[data-todas="${grupo}"]`)!;
+      const opciones = filtros.querySelectorAll<HTMLInputElement>(`input[name="${grupo}"]`);
+      if (input === todas) {
+        // «Todas» quita las demás; no se puede apagar a sí misma.
+        for (const o of opciones) o.checked = false;
+        todas.checked = true;
+      } else {
+        todas.checked = ![...opciones].some((o) => o.checked);
+      }
+      const ideas = pool();
+      const n = ideas.length;
+      $("[data-cuenta]").textContent = `${n} ${n === 1 ? "idea" : "ideas"} con estos filtros.`;
+      // Si la de pantalla ya no entra en el filtro, sale otra que sí.
+      if (!actual || !ideas.some((i) => i.texto === actual!.texto)) otra();
+    };
+
+    const armar = (e: Event) => {
+      e.preventDefault();
+      const campo = fiestaForm.elements.namedItem("cuantas") as HTMLInputElement;
+      const pedidas = Math.min(60, Math.max(1, Math.floor(Number(campo.value) || 20)));
+      campo.value = String(pedidas);
+      const ideas = pool();
+      armada = fiesta(ideas, pedidas);
+      lista.replaceChildren(
+        ...armada.map((i) => {
+          const li = document.createElement("li");
+          li.textContent = mayuscula(i.texto);
+          return li;
+        }),
+      );
+      hoja.hidden = false;
+      estado.textContent =
+        armada.length < pedidas ? `Con estos filtros solo hay ${armada.length}: van todas.` : `Lista de ${armada.length} palabras.`;
+      contar("que-dibujar-fiesta");
+    };
+
+    const copiar = async () => {
+      try {
+        await navigator.clipboard.writeText(listaComoTexto(armada));
+        estado.textContent = "Lista copiada.";
+      } catch {
+        estado.textContent = "No se pudo copiar: selecciona la lista y cópiala a mano.";
+      }
+    };
+
+    const imprimir = () => {
+      document.documentElement.classList.add("qd-imprime");
+      window.addEventListener("afterprint", () => document.documentElement.classList.remove("qd-imprime"), { once: true });
+      window.print();
+    };
+
+    $("[data-otra]").addEventListener("click", otra);
+    filtros.addEventListener("change", alFiltrar);
+    filtros.addEventListener("submit", (e) => e.preventDefault());
+    fiestaForm.addEventListener("submit", armar);
+    $("[data-copiar]").addEventListener("click", copiar);
+    $("[data-imprimir]").addEventListener("click", imprimir);
+  }
+
+  // Con ClientRouter los scripts del bundle corren una vez: astro:page-load corre en cada visita.
+  document.addEventListener("astro:page-load", iniciar);
+</script>
+
+<style>
+  .qd {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  /* ---------- La idea ---------- */
+  .qd-idea {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem) clamp(1rem, 0.8rem + 2vw, 2rem);
+    background: var(--crema-honda);
+    border-radius: var(--radio-pieza);
+    text-align: center;
+  }
+
+  .qd-idea__etiqueta {
+    margin: 0;
+    color: var(--gris);
+    font-size: var(--t-s);
+    font-weight: 400;
+  }
+
+  .qd-idea__caja {
+    display: grid;
+    align-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    /* Dos renglones de la idea más la línea de abajo: una idea larga no empuja nada. */
+    min-height: calc(2 * 1.05 * clamp(2.25rem, 1.4rem + 3.6vw, 4.25rem) + 2rem);
+  }
+
+  .qd-idea__texto {
+    margin: 0;
+    font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4.25rem);
+    line-height: 1.05;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .qd-idea__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--gris);
+    font-size: var(--t-s);
+    font-weight: 600;
+  }
+
+  .qd-boton {
+    width: min(100%, 22rem);
+    min-height: 3.5rem;
+    padding: 0 1.5rem;
+    background: var(--tinta);
+    color: var(--crema);
+    border: 0;
+    border-radius: 1rem;
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease-soft),
+      color 0.2s var(--ease-soft),
+      scale 0.15s var(--ease-soft);
+  }
+  .qd-boton:active {
+    scale: 0.97;
+  }
+
+  /* ---------- Filtros ---------- */
+  .qd-filtros {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .qd-grupo {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .qd-grupo__titulo {
+    display: block;
+    margin: 0 0 0.6rem;
+    padding: 0;
+    color: var(--gris);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .qd-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .qd-chip {
+    position: relative;
+    cursor: pointer;
+  }
+  .qd-chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .qd-chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.95rem;
+    border: 2px solid var(--linea-fuerte);
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition:
+      background-color 0.15s var(--ease-soft),
+      border-color 0.15s var(--ease-soft),
+      color 0.15s var(--ease-soft);
+  }
+  .qd-chip input:checked + span {
+    background: var(--tinta);
+    border-color: var(--tinta);
+    color: var(--crema);
+  }
+  .qd-chip input:focus-visible + span {
+    outline: 3px solid var(--acento);
+    outline-offset: 2px;
+  }
+  @media (hover: hover) {
+    .qd-chip:hover input:not(:checked) + span {
+      border-color: var(--tinta);
+    }
+  }
+
+  .qd-cuenta {
+    margin: 0;
+    color: var(--gris);
+    font-size: 0.875rem;
+  }
+
+  /* ---------- Historial ---------- */
+  .qd-historial__vacio {
+    margin: 0;
+    min-height: 44px;
+    color: var(--gris);
+    font-size: 0.9375rem;
+    line-height: 44px;
+  }
+
+  .qd-historial__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .qd-historial__lista :global(li) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.95rem;
+    background: var(--crema-honda);
+    border-radius: 0.75rem;
+    font-weight: 600;
+  }
+  .qd-historial__lista :global(li:first-child) {
+    background: color-mix(in oklab, var(--pieza) 45%, transparent);
+  }
+
+  /* ---------- Modo fiesta ---------- */
+  .qd-fiesta {
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.125rem, 2.5vw, 1.75rem);
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .qd-fiesta__titulo {
+    margin: 0;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .qd-fiesta__texto {
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .qd-fiesta__form .qd-grupo__titulo {
+    margin-top: 0.25rem;
+  }
+
+  .qd-fiesta__fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .qd-numero {
+    width: 6.5rem;
+    min-height: 48px;
+    padding: 0 0.75rem;
+    background: var(--panel);
+    color: var(--tinta);
+    border: 2px solid var(--linea-fuerte);
+    border-radius: 0.875rem;
+    font: inherit;
+    font-size: 1.125rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .qd-numero:focus-visible {
+    outline: 3px solid var(--acento);
+    outline-offset: 2px;
+  }
+
+  .qd-armar,
+  .qd-accion {
+    min-height: 48px;
+    padding: 0 1.25rem;
+    background: var(--tinta);
+    color: var(--crema);
+    border: 0;
+    border-radius: 0.875rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .qd-accion {
+    background: transparent;
+    color: var(--tinta);
+    border: 2px solid var(--tinta);
+  }
+  @media (hover: hover) {
+    .qd-accion:hover {
+      background: var(--pieza);
+      border-color: var(--pieza);
+      color: var(--tinta-fija);
+    }
+  }
+
+  .qd-hoja {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .qd-hoja[hidden] {
+    display: none;
+  }
+
+  .qd-hoja__titulo {
+    display: none;
+  }
+
+  .qd-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+    gap: 0.4rem 1rem;
+    margin: 0;
+    padding-left: 1.75rem;
+    list-style: decimal;
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+  .qd-lista :global(li::marker) {
+    color: var(--gris);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .qd-fiesta__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .qd-fiesta__estado {
+    margin: 0 0 0 0.25rem;
+    color: var(--gris);
+    font-size: 0.875rem;
+  }
+
+  /* ---------- La guía de abajo ---------- */
+  .qd-guia {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .qd-guia p,
+  .qd-guia li {
+    max-width: 64ch;
+    line-height: 1.55;
+  }
+
+  .qd-guia > section > p {
+    margin: 0 0 0.75rem;
+  }
+
+  .qd-guia__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+  }
+
+  .qd-guia__sub {
+    margin: 1.5rem 0 0.6rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .qd-pasos,
+  .qd-lista-guia {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding-left: 1.4rem;
+    list-style: decimal;
+  }
+  .qd-lista-guia {
+    list-style: disc;
+  }
+
+  /* El puente a la app: un bloque oscuro, como el de las apps del inicio. */
+  .puente {
+    display: grid;
+    gap: 0.875rem;
+    justify-items: start;
+    padding: clamp(1.125rem, 2.5vw, 1.75rem);
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+    border-radius: var(--radio-pieza);
+  }
+
+  .puente__titulo {
+    margin: 0;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+  }
+
+  .qd-guia .puente__texto {
+    margin: 0;
+  }
+
+  .puente__estado {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .puente__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    background: var(--pieza);
+    color: var(--tinta-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+  }
+
+  .puente__mas {
+    font-weight: 700;
+  }
+  @media (hover: hover) {
+    .puente__mas:hover {
+      color: var(--tinta-fija);
+    }
+  }
+
+  /* ---------- Imprimir la lista: solo la hoja, en recuadros para recortar ---------- */
+  @media print {
+    :global(html.qd-imprime body *) {
+      visibility: hidden;
+    }
+    :global(html.qd-imprime) .qd-hoja,
+    :global(html.qd-imprime) .qd-hoja :global(*) {
+      visibility: visible;
+    }
+    :global(html.qd-imprime) .qd-hoja {
+      position: absolute;
+      inset: 0 0 auto 0;
+      margin: 0;
+      color: #000;
+    }
+    .qd-hoja__titulo {
+      display: block;
+      margin: 0 0 0.5rem;
+      font-size: 10pt;
+    }
+    :global(html.qd-imprime) .qd-lista {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      padding: 0;
+      list-style: none;
+    }
+    :global(html.qd-imprime) .qd-lista :global(li) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.6cm;
+      padding: 0.3cm;
+      border: 1px dashed #000;
+      font-size: 16pt;
+      text-align: center;
+      break-inside: avoid;
+    }
+    :global(html.qd-imprime) .qd-fiesta__acciones {
+      display: none;
+    }
+  }
+</style>

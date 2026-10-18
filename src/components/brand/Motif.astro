@@ -132,6 +132,17 @@ const { slug, class: className } = Astro.props;
     </>
   )}
 
+  {slug === "que-dibujar" && (
+    <>
+      <rect x="8" y="12" width="38" height="44" rx="5" />
+      <path class="m-line m-qd-trazo m-accent" pathLength="1" d="M15 43c2-9 6-11 8-5s5 7 8-1 6-6 7 0" />
+      <g class="m-qd-lapiz">
+        <path d="M51 8l7 7-19 19-9 2 2-9z" />
+        <path d="M46 13l7 7" />
+      </g>
+    </>
+  )}
+
   {slug === "user-agent" && (
     <>
       <rect x="7" y="11" width="50" height="42" rx="6" />

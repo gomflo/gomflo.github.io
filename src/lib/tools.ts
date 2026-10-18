@@ -17,6 +17,7 @@ export type ToolSlug =
   | "conversor-colores"
   | "conversor-cron"
   | "user-agent"
+  | "que-dibujar"
   | "validar-clabe"
   | "calculadora-iva"
   | "calculadora-aguinaldo"
@@ -35,7 +36,7 @@ export interface Category {
 
 export interface Tool {
   slug: ToolSlug;
-  /** Casi siempre `/<slug>/`; la de aguinaldo vive en `/guardadito/`, junto a la app. */
+  /** Casi siempre `/<slug>/`; la de aguinaldo vive en `/guardadito/` y la de qué dibujar en `/garabato/`, junto a su app. */
   href: `/${string}/`;
   title: string;
   desc: string;
@@ -45,7 +46,7 @@ export interface Tool {
 export const categories: Category[] = [
   { id: "texto", title: "Texto", desc: "Cuenta, limpia, ordena y transforma lo que escribes." },
   { id: "codigo", title: "Código y datos", desc: "Formatos que aparecen todos los días en una API." },
-  { id: "generadores", title: "Generadores y utilidades", desc: "Contraseñas, identificadores, hashes y colores." },
+  { id: "generadores", title: "Generadores y utilidades", desc: "Contraseñas, identificadores, hashes, colores e ideas para dibujar." },
   { id: "mexico", title: "Dinero y plazos en México", desc: "CLABE, IVA, aguinaldo y días hábiles con las reglas de aquí." },
   { id: "conversores", title: "Conversores", desc: "Romanos, morse y binario, de ida y de vuelta." },
 ];
@@ -74,6 +75,7 @@ export const tools: Tool[] = [
   { slug: "conversor-colores", href: "/conversor-colores/", title: "Conversor de colores", desc: "HEX, RGB, HSL y OKLCH, con contraste WCAG.", category: "generadores" },
   { slug: "conversor-cron", href: "/conversor-cron/", title: "Conversor de Cron", desc: "Arma y explica expresiones cron en español.", category: "generadores" },
   { slug: "user-agent", href: "/user-agent/", title: "Mi User Agent", desc: "Consulta qué dice tu navegador de sí mismo.", category: "generadores" },
+  { slug: "que-dibujar", href: "/garabato/que-dibujar/", title: "Qué dibujar", desc: "Ideas al azar para dibujar y adivinar, con lista para jugar en grupo.", category: "generadores" },
 
   // Dinero y plazos en México
   { slug: "validar-clabe", href: "/validar-clabe/", title: "Validar CLABE", desc: "Revisa el dígito de control y de qué banco es una CLABE.", category: "mexico" },
