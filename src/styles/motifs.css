@@ -279,6 +279,11 @@
   transition-delay: calc(0.12s + var(--i) * 60ms);
 }
 
+/* ---------- Qué dibujar: el lápiz garabatea y el trazo se dibuja otra vez ---------- */
+.motif[data-motif="que-dibujar"] .m-qd-trazo {
+  stroke-dashoffset: 0;
+}
+
 /* ================= Estado en juego ================= */
 
 :is(.motif-trigger:hover, .motif-trigger:focus-visible, [data-play]) .motif {
@@ -333,6 +338,10 @@
   /* generador-contrasenas */
   & .m-shackle { transform: translateY(0); }
   & .m-pin { opacity: 1; transform: scale(1); }
+
+  /* que-dibujar */
+  & .m-qd-trazo { animation: motif-draw 0.7s var(--ease-out) both; }
+  & .m-qd-lapiz { animation: motif-qd-garabato 0.7s var(--ease-in-out) both; }
 
   /* generador-uuid */
   & .m-dice { animation: motif-roll 0.7s var(--ease-out) both; }
@@ -439,6 +448,14 @@
 @keyframes motif-shuffle-x {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(5px); }
+}
+
+@keyframes motif-qd-garabato {
+  0% { transform: translate(-14px, 4px); }
+  25% { transform: translate(-9px, -3px); }
+  50% { transform: translate(-5px, 3px); }
+  75% { transform: translate(-2px, -2px); }
+  100% { transform: translate(0, 0); }
 }
 
 @keyframes motif-draw {

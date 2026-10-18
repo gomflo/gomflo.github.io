@@ -8,6 +8,7 @@ import { aRomano } from "../lib/romanos";
 
 const EJEMPLO = "¡Hola, México!";
 const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!$%&*?";
+const IDEAS_MUESTRA = ["un gato", "una piñata", "un cohete", "un ajolote", "un muñeco de nieve", "un faro", "un taco", "un pulpo"];
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 
 const bytes = (t: string) => new TextEncoder().encode(t);
@@ -59,6 +60,8 @@ const SALIDAS: Record<string, Salida> = {
   "conversor-colores": color,
   "conversor-cron": () => "*/5 * * * * → cada 5 minutos",
   "user-agent": navegador,
+  // Unas cuantas del generador, sin cargar sus 500 ideas en el inicio.
+  "que-dibujar": (t) => `dibuja: ${IDEAS_MUESTRA[largo(t) % IDEAS_MUESTRA.length]}`,
   "validar-clabe": () => "banco · plaza · cuenta · control",
   "calculadora-iva": (t) => `$${largo(t)}.00 + IVA = $${(largo(t) * 1.16).toFixed(2)}`,
   "calculadora-aguinaldo": (t) => `$${largo(t) * 25}/día × 15 días = $${(largo(t) * 375).toLocaleString("es-MX")}`,
