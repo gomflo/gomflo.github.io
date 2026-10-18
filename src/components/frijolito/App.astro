@@ -46,7 +46,7 @@ const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, ca
       <ul>
         {puntos.map((p) => <li>{p}</li>)}
       </ul>
-      <a class="fj-boton" href={play} rel="noopener">{boton}</a>
+      <a class="fj-boton" href={play} rel="noopener" data-umami-event="play-frijolito" data-umami-event-pagina={campaign}>{boton}</a>
       <p class="fj-app__letra">{letra}</p>
     </div>
     <div class="fj-app__capturas">

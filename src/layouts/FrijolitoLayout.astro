@@ -82,6 +82,17 @@ const barra: { href: string; texto: string; lang?: string; hreflang?: string }[]
     {imageURL && <meta name="twitter:image" content={imageURL} />}
     {imageURL && <meta name="twitter:image:alt" content={imageAlt} />}
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Visitas en el mismo Umami propio del resto del sitio (Layout.astro), sin cookies. La regla de
+         "sin analítica" es de la app, no de estas páginas. Sin query ni hash, como allá. -->
+    <script
+      is:inline
+      defer
+      src="https://stats.gomflo.dev/script.js"
+      data-website-id="e7a2bcf5-7b1d-4aef-91a7-94458ce8530c"
+      data-domains="gomflo.dev"
+      data-exclude-search="true"
+      data-exclude-hash="true"
+      data-performance="true"></script>
   </head>
   <body>
     <a href={salto.href} class="fj-salto">{salto.texto}</a>
@@ -103,7 +114,7 @@ const barra: { href: string; texto: string; lang?: string; hreflang?: string }[]
             ))
           }
         </ul>
-        <a class="fj-play" href={play} rel="noopener" aria-label={en ? "Get it on Google Play" : "Bájala en Google Play"}>
+        <a class="fj-play" href={play} rel="noopener" data-umami-event="play-frijolito" data-umami-event-pagina={campaign} aria-label={en ? "Get it on Google Play" : "Bájala en Google Play"}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
           <span><span class="fj-play__largo">{en ? "Get it on " : "Bájala en "}</span>Google Play</span>
         </a>
