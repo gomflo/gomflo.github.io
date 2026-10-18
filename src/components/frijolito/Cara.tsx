@@ -9,15 +9,21 @@ type Props = {
   /** Sin texto alternativo: la carta ya se nombra al lado. */
   decorativa?: boolean;
   lazy?: boolean;
+  /** Ancho en pantalla (atributo sizes): con él trae también la copia de 208 px (cartas/chica/), como Cara.astro. */
+  sizes?: string;
 };
 
-export default function Cara({ n, placa = true, grande = false, decorativa = false, lazy = false }: Props) {
+export default function Cara({ n, placa = true, grande = false, decorativa = false, lazy = false, sizes }: Props) {
   const carta = cartas[n - 1];
+  const src = imagen(carta, grande);
+  const chica = !grande && sizes ? src.replace("/cartas/", "/cartas/chica/") : undefined;
   return (
     <div className="fj-cara">
       <div className="fj-cara__dibujo">
         <img
-          src={imagen(carta, grande)}
+          src={src}
+          srcSet={chica && `${chica} 208w, ${src} 300w`}
+          sizes={chica && sizes}
           alt={decorativa ? "" : textoAlt(carta)}
           width={grande ? 480 : 300}
           height={grande ? 720 : 450}
