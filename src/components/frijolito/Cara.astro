@@ -14,15 +14,20 @@ interface Props {
   src?: string;
   /** Baraja de fondo oscuro: el número va sobre papel, como en la app (CardStyle.dark). */
   oscura?: boolean;
+  /** Ancho en pantalla (atributo sizes): con él, la de feria trae también su copia de 208 px (cartas/chica/). */
+  sizes?: string;
 }
 
-const { carta, placa = true, lazy = true, alt, src, oscura = false } = Astro.props;
+const { carta, placa = true, lazy = true, alt, src, oscura = false, sizes } = Astro.props;
+const chica = !src && sizes ? imagen(carta).replace("/cartas/", "/cartas/chica/") : undefined;
 ---
 
 <div class:list={["fj-cara", { "fj-cara--oscura": oscura }]}>
   <div class="fj-cara__dibujo">
     <img
       src={src ?? imagen(carta)}
+      srcset={chica && `${chica} 208w, ${imagen(carta)} 300w`}
+      sizes={chica && sizes}
       alt={alt ?? textoAlt(carta)}
       width="300"
       height="450"
