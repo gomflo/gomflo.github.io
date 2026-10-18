@@ -141,6 +141,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/validar-clabe` | ClabeValidator | mexico |
 | `/calculadora-iva` | IvaCalculator | mexico |
 | `/guardadito/calculadora-aguinaldo` | Astro + script (sin React) | mexico |
+| `/garabato/que-dibujar` | Astro + script (sin React) | generadores |
 | `/dias-habiles` | BusinessDays | mexico |
 | `/numeros-romanos` | RomanNumerals | conversores |
 | `/codigo-morse` | MorseCode | conversores |
@@ -152,6 +153,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/frijolito` | Cantador | fuera del catálogo, identidad de la app |
 | `/android` | El cajón (Astro) | fuera del catálogo, identidad propia |
 | `/guardadito` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
+| `/garabato` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
@@ -167,6 +169,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - No calcula el ISR de la parte gravada (depende de cada nómina): solo bruto, exento (30 UMA, art. 93 fr. XIV LISR) y gravado. Cada dato lleva su fuente (LFT, LISR e INEGI en diputados.gob.mx e inegi.org.mx)
 - `GUARDADITO_EN_PLAY` (`src/lib/guardadito.ts`) está en `false` mientras la app esté en revisión: ningún botón ni enlace va a Play. Al pasarla a `true` salen los botones de las dos páginas (con `utm_source=web&utm_campaign=aguinaldo|guardadito` y `data-umami-event="play-guardadito"`), el `installUrl` del JSON-LD y el botón de `/android/`
 - Umami: la calculadora manda `aguinaldo-calcula` una vez por visita al primer cambio, sin ningún dato de lo que se escribe
+
+### Garabato y el generador de qué dibujar (`/garabato/`)
+- `/garabato/` es la página corta del juego de dibujar para Android (`~/code/garabato`): solo dice lo que dice su ficha (`docs/TIENDA.md` de la app). Usa `Layout.astro`. Icono y capturas en `public/img/android/garabato/` (como las del cajón, aunque Garabato aún no está en `android-apps.ts`). El aviso de privacidad sigue en `public/garabato/privacidad/`
+- `/garabato/que-dibujar/` es una herramienta de la caja (categoría `generadores`, `href` fuera de la raíz en `tools.ts`) con `ToolLayout` y `avisos={false}`, sin React: el HTML sale con una idea fácil ya pintada (cambia con cada despliegue, no al cargar) y un `<script>` (en `astro:page-load`) da otra, filtra por categoría y dificultad, guarda las últimas cinco y arma la lista del modo fiesta (copiar e imprimir en recuadros para recortar, `html.qd-imprime` + `@media print`)
+- Ideas y lógica en `src/lib/que-dibujar.ts` con pruebas en `que-dibujar.test.ts`: `DE_GARABATO` son las palabras que la app pide (`words.tsv` con `prompt` 1 y exactitud ≥ 0.45, sin «botella de vino», «copa» ni «calzones»); `EXTRA`, lo que la app no tiene. Cada palabra va una sola vez y todas son de familia. Si la app cambia sus palabras, actualiza `DE_GARABATO` y el conteo de la prueba
+- Reglas de Garabato: no se nombran otros juegos de dibujo y en lo que habla de la app no se dice «IA», «modelo» ni «red neuronal» (los rivales son personajes; por eso tampoco va la captura de «Cómo adivinan» ni la línea del conjunto de datos de la ficha)
+- `GARABATO_EN_PLAY` (`src/lib/garabato.ts`) está en `false` mientras la app esté en revisión: las páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones de las dos páginas con `playLink` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=garabato|que-dibujar`) y `data-umami-event="play-garabato"` + `data-umami-event-pagina`, y el `installUrl` del JSON-LD. Considera también agregarla a `src/data/android-apps.ts`
+- Umami: `que-dibujar-idea` y `que-dibujar-fiesta`, una vez por visita cada uno, sin ninguna palabra
 
 ### Tin Marín en la web (`/tinmarin/`)
 - La ruleta de la app para Android (`~/code/tinmarin`) en el navegador, con su identidad (tema Feria; sistema en `~/code/tinmarin/DESIGN.md`): no usa `Layout.astro` ni `global.css`, sino `styles/tinmarin.css` con clases `tm-*`
