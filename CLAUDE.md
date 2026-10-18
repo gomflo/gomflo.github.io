@@ -154,12 +154,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/android` | El cajón (Astro) | fuera del catálogo, identidad propia |
 | `/guardadito` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 | `/garabato` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
+| `/pastillero` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
 - Catálogo en `src/data/android-apps.ts`; el copy de la página en `src/components/android/contenido.ts`; estilos en `styles/android.css`; movimiento en `motion/android.ts` (usa `src/engine` sin ClientRouter)
 - Imágenes en `public/img/android/<slug>/` (`icono.png` cuadrado sin máscara, `captura-1..3.webp` de 540 px). Imagen para compartir: `public/img/android.jpeg` (captura del primer pliegue a 1200×630)
-- Tin Marín y Frijolito están en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
+- Tin Marín, Frijolito y Pastillero están en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
+- `pagina` (opcional) es la página de la app en gomflo.dev cuando no tiene versión web (`web`); el cajón la enlaza con «Conoce la app»
 - El inicio la enlaza con el bloque oscuro de `#apps`
 
 ### Guardadito y la calculadora de aguinaldo (`/guardadito/`)
@@ -177,6 +179,12 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - Reglas de Garabato: no se nombran otros juegos de dibujo y en lo que habla de la app no se dice «IA», «modelo» ni «red neuronal» (los rivales son personajes; por eso tampoco va la captura de «Cómo adivinan» ni la línea del conjunto de datos de la ficha)
 - `GARABATO_EN_PLAY` (`src/lib/garabato.ts`) está en `false` mientras la app esté en revisión: las páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones de las dos páginas con `playLink` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=garabato|que-dibujar`) y `data-umami-event="play-garabato"` + `data-umami-event-pagina`, y el `installUrl` del JSON-LD. Considera también agregarla a `src/data/android-apps.ts`
 - Umami: `que-dibujar-idea` y `que-dibujar-fiesta`, una vez por visita cada uno, sin ninguna palabra
+
+### Pastillero en la web (`/pastillero/`)
+- Página corta del recordatorio de medicinas para Android (`~/code/pastillero`, en Google Play desde octubre de 2026): solo dice lo que dice su ficha (`docs/TIENDA.md` y `PRODUCT.md` de la app; palabras de búsqueda en `~/code/ventas-pro/aso/pastillero.md`). Usa `Layout.astro`. El aviso de privacidad sigue en `public/pastillero/privacidad/` (estático, enlazado con `data-astro-reload`)
+- Reglas: recuerda y registra, no da indicaciones médicas. Nada de efectos en la salud («cuida tu salud»), marcas de medicinas ni «siempre suena» (sin el permiso de alarmas exactas puede llegar hasta 10 min tarde). La sección para cuidadores no aconseja: remite a «consulta a su médico». La app no comparte el registro entre teléfonos; no lo prometas
+- Enlaces a Play con `pastilleroPlay(campaign)` de `src/lib/pastillero.ts` (`utm_campaign=pastillero`), con `data-umami-event="play-pastillero"` y `data-umami-event-pagina`. `installUrl` del JSON-LD sin referrer
+- Imágenes: las del cajón (`public/img/android/pastillero/`, de `docs/capturas/` de la app) más `captura-N-270.webp` (srcset) e `icono-192.webp`. La imagen para compartir `public/img/pastillero.jpeg` es el gráfico de funciones de la ficha (`docs/tienda/grafico-1024x500-es.png`) a 1200 px de ancho sobre su fondo `#EEF2F6`; `npm run og` no la genera
 
 ### Tin Marín en la web (`/tinmarin/`)
 - La ruleta de la app para Android (`~/code/tinmarin`) en el navegador, con su identidad (tema Feria; sistema en `~/code/tinmarin/DESIGN.md`): no usa `Layout.astro` ni `global.css`, sino `styles/tinmarin.css` con clases `tm-*`
