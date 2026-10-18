@@ -1,0 +1,301 @@
+---
+/**
+ * Guardadito, la app de presupuesto por sobres para Android (~/code/guardadito). Página corta
+ * con lo que dice su ficha de Google Play (docs/TIENDA.md), sin prometer más. Usa la
+ * identidad del sitio (Layout.astro). El botón de Play sale solo con GUARDADITO_EN_PLAY.
+ */
+import Layout from "../../layouts/Layout.astro";
+import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY, guardaditoPlay } from "@/lib/guardadito";
+
+const title = "Guardadito: presupuesto por sobres para Android | gomflo.dev";
+const description =
+  "Guardadito es una app para Android que reparte tu quincena en sobres, como en efectivo: cada gasto sale de uno y ves cuánto queda. Sin cuenta y sin anuncios.";
+
+const capturas = [
+  { n: 1, alt: "Los sobres de Guardadito dibujados como vasos de agua fresca, cada uno con lo que le queda" },
+  { n: 2, alt: "Anotar un gasto en Guardadito: el monto y el sobre de donde sale" },
+  { n: 3, alt: "Metas de Guardadito: cuánto apartar por quincena para llegar a la tele" },
+];
+
+const partes = [
+  {
+    t: "Repartir, sin perder un peso",
+    d: "Anotas lo que te llegó y lo repartes en sobres. Lo que falta por repartir siempre está a la vista y, si repartes de más, te lo dice. Puedes mover dinero de un sobre a otro.",
+  },
+  {
+    t: "Anotar un gasto en dos toques",
+    d: "Un teclado propio, grande: escribes el monto y tocas el sobre. Con nota opcional y «Deshacer» por si fue el sobre equivocado.",
+  },
+  {
+    t: "Al cierre, tú decides",
+    d: "Lo que sobró de cada sobre se va al guardadito, se queda en el mismo sobre o regresa a repartir. Ves lo que llegó, lo que gastaste y lo que ahorraste.",
+  },
+  {
+    t: "A tu ritmo",
+    d: "Quincenal (el 15 y el último día), mensual, catorcenal o semanal.",
+  },
+];
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const jsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "Guardadito",
+    description,
+    operatingSystem: "Android",
+    applicationCategory: "FinanceApplication",
+    inLanguage: "es-MX",
+    url: canonicalURL,
+    image: new URL("/img/android/guardadito/icono.png", site).href,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+    ...(GUARDADITO_EN_PLAY ? { installUrl: GUARDADITO_PLAY } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+      { "@type": "ListItem", position: 2, name: "Guardadito", item: canonicalURL },
+    ],
+  },
+]).replace(/</g, "\\u003c");
+---
+
+<Layout title={title} description={description}>
+  <main id="main-content" class="app contenedor" tabindex="-1">
+    <header class="pieza app__cabeza">
+      <img class="app__icono" src="/img/android/guardadito/icono.png" width="96" height="96" alt="" />
+      <div>
+        <p class="etiqueta app__tipo">App para Android</p>
+        <h1 class="titular app__titulo">Guardadito: presupuesto por sobres</h1>
+        <p class="app__entrada">
+          Cuando llega la quincena, repartes el dinero en sobres: comida, renta, transporte, salidas y el guardadito. Cada gasto
+          sale de un sobre y siempre sabes cuánto puedes gastar todavía en cada cosa. Es el método de los sobres de toda la vida,
+          como con efectivo, pero en tu teléfono.
+        </p>
+        {
+          GUARDADITO_EN_PLAY ? (
+            <a
+              class="app__play"
+              href={guardaditoPlay("guardadito")}
+              rel="noopener"
+              data-umami-event="play-guardadito"
+              data-umami-event-pagina="guardadito"
+            >
+              Bájala en Google Play
+            </a>
+          ) : (
+            <p class="app__estado">Muy pronto en Google Play.</p>
+          )
+        }
+      </div>
+    </header>
+
+    <ul class="capturas" role="list">
+      {capturas.map((c) => (
+        <li>
+          <img src={`/img/android/guardadito/captura-${c.n}.webp`} width="540" height="1212" alt={c.alt} loading="lazy" decoding="async" />
+        </li>
+      ))}
+    </ul>
+
+    <section class="bloque" aria-labelledby="como-heading">
+      <h2 id="como-heading" class="titular bloque__titulo">Cómo funciona</h2>
+      <p class="bloque__texto">
+        Cada sobre es un vaso de agua fresca (jamaica, horchata, tamarindo…) y el agua llega hasta lo que te queda. Si un sobre se
+        queda en negativo, se ve claro: el vaso vacío, en rojo y con lo que te pasaste.
+      </p>
+      <div class="partes">
+        {partes.map((p) => (
+          <div class="parte">
+            <h3 class="titular parte__titulo">{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="precio-heading">
+      <h2 id="precio-heading" class="titular bloque__titulo">Gratis, y Pro con un solo pago</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3 class="titular parte__titulo">Gratis</h3>
+          <ul>
+            <li>5 sobres, contando el guardadito</li>
+            <li>Repartir, gasto rápido, mover y cierre</li>
+            <li>El periodo actual y el anterior</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <h3 class="titular parte__titulo">Guardadito Pro</h3>
+          <ul>
+            <li>Sobres sin límite</li>
+            <li>Metas de ahorro: cuánto apartar cada quincena y cuándo llegas</li>
+            <li>Historial de todos tus periodos con gráficas</li>
+            <li>Gastos fijos que se descuentan solos</li>
+            <li>Widget, respaldo a archivo y tus movimientos en CSV</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="titular bloque__titulo">Tu información es tuya</h2>
+      <p class="bloque__texto">
+        Sin cuenta, sin anuncios y sin conectar tu banco. Todo se guarda en tu teléfono y la app no pide permiso de internet.
+        <a class="enlace" href="/guardadito/privacidad/" data-astro-reload>Aviso de privacidad</a>.
+      </p>
+    </section>
+
+    <section class="pieza aguinaldo" aria-labelledby="aguinaldo-heading">
+      <h2 id="aguinaldo-heading" class="titular bloque__titulo">¿Ya viene el aguinaldo?</h2>
+      <p class="bloque__texto">Calcula cuánto te toca, cuánto queda exento de ISR y un ejemplo para repartirlo en sobres.</p>
+      <a class="aguinaldo__boton" href="/guardadito/calculadora-aguinaldo/">Calculadora de aguinaldo</a>
+    </section>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .app {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    padding-top: var(--hueco);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .app__cabeza {
+    --pieza: var(--cielo);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .app__icono {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 22%;
+  }
+
+  .app__tipo {
+    margin: 0 0 0.5rem;
+  }
+
+  .app__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+    line-height: 0.95;
+  }
+
+  .app__entrada {
+    max-width: 60ch;
+    margin: 1rem 0 0;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .app__estado {
+    margin: 1.25rem 0 0;
+    font-weight: 700;
+  }
+
+  .app__play,
+  .aguinaldo__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.25rem;
+    padding: 0 1.25rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+    transition: scale 0.2s var(--ease-soft);
+  }
+  .app__play:active,
+  .aguinaldo__boton:active {
+    scale: 0.97;
+  }
+
+  .capturas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hueco);
+    max-width: 52rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .capturas img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .bloque__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .bloque__texto {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .partes,
+  .planes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--hueco);
+    margin-top: 1.25rem;
+  }
+
+  .parte,
+  .plan {
+    padding: 1.125rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .parte__titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .parte p,
+  .plan ul {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .plan ul {
+    padding-left: 1.1rem;
+  }
+
+  .aguinaldo {
+    --pieza: var(--sol);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  }
+  .aguinaldo .aguinaldo__boton {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 560px) {
+    .app__cabeza {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -3,6 +3,8 @@
 // y captura-1..3.webp (540 px de ancho, pantalla completa del teléfono).
 // Sin `play` la app sale como "muy pronto"; con la URL de su ficha, el botón se vuelve enlace.
 
+import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY } from "../lib/guardadito";
+
 export type AndroidApp = {
   slug: string;
   name: string;
@@ -44,6 +46,8 @@ export const androidApps: AndroidApp[] = [
     color: "#1B2440",
     group: "dinero",
     privacy: "/guardadito/privacidad/",
+    // En revisión en Play: se prende con GUARDADITO_EN_PLAY (src/lib/guardadito.ts).
+    ...(GUARDADITO_EN_PLAY ? { play: GUARDADITO_PLAY } : {}),
   },
   {
     slug: "canica",
