@@ -242,6 +242,17 @@
   transition: transform 0.4s var(--ease-spring);
 }
 
+/* ---------- Suscripciones: la vuelta del cobro se detiene y la tacha una raya ---------- */
+.motif[data-motif="cancelar-suscripcion"] .m-sus-vuelta {
+  transform-origin: 32px 32px;
+  transition: transform 0.5s var(--ease-spring);
+}
+.motif[data-motif="cancelar-suscripcion"] .m-sus-tache {
+  stroke-dasharray: 49;
+  stroke-dashoffset: 49;
+  transition: stroke-dashoffset 0.35s var(--ease-out);
+}
+
 /* ---------- Días hábiles: se encienden los cinco días de la semana ---------- */
 .motif[data-motif="dias-habiles"] .m-wk-on {
   fill: transparent;
@@ -394,6 +405,11 @@
   /* calculadora-aguinaldo */
   & .m-agui-moneda { stroke: var(--acento-dibujo, var(--acento)); animation: motif-hop 0.45s var(--ease-out) both; }
   & .m-agui-solapa { transform: scaleY(0.55); }
+
+  /* cancelar-suscripcion */
+  & .m-sus-vuelta { transform: rotate(-30deg); }
+  & .m-sus-moneda { stroke: var(--acento-dibujo, var(--acento)); }
+  & .m-sus-tache { stroke-dashoffset: 0; stroke: var(--acento-dibujo, var(--acento)); }
 
   /* dias-habiles */
   & .m-wk-on { fill: var(--acento-dibujo, var(--acento)); animation: motif-hop 0.35s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }

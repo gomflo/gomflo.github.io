@@ -28,9 +28,11 @@ interface Props {
   faq?: Faq[];
   /** Avisos (Sonner) para copiar y errores. Una herramienta sin React los apaga y no carga React. */
   avisos?: boolean;
+  /** Título largo (una pregunta o un «cómo»): va más chico para que la herramienta quede a la vista. */
+  tituloLargo?: boolean;
 }
 
-const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [], avisos = true } = Astro.props;
+const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [], avisos = true, tituloLargo = false } = Astro.props;
 const tool = getTool(slug);
 const category = getCategory(tool.category);
 const pageSlug = variant ?? slug;
@@ -104,7 +106,7 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
       </div>
       <div class="cabeza__in">
         <div class="cabeza__texto">
-          <h1 class="cabeza__titulo titular">{heading}</h1>
+          <h1 class:list={["cabeza__titulo titular", { "cabeza__titulo--largo": tituloLargo }]}>{heading}</h1>
           <p class="cabeza__entrada">{lead}</p>
         </div>
         <div class="cabeza__dibujo" data-motif-stage>
@@ -241,6 +243,11 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
   .cabeza__titulo {
     margin: 0;
     font-size: var(--t-xl);
+  }
+  .cabeza__titulo--largo {
+    max-width: 22ch;
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3.25rem);
+    line-height: 1.02;
   }
 
   .cabeza__entrada {

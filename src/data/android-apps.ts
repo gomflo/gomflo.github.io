@@ -3,6 +3,7 @@
 // y captura-1..3.webp (540 px de ancho, pantalla completa del teléfono).
 // Sin `play` la app sale como "muy pronto"; con la URL de su ficha, el botón se vuelve enlace.
 
+import { CANICA_EN_PLAY, CANICA_PLAY } from "../lib/canica";
 import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY } from "../lib/guardadito";
 import { PASTILLERO_PLAY } from "../lib/pastillero";
 
@@ -61,7 +62,10 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Canicas de vidrio que ruedan en un frasco al inclinar el teléfono",
     color: "#13B5A6",
     group: "dinero",
+    pagina: "/canica/",
     privacy: "/canica/privacidad/",
+    // En revisión en Play: se prende con CANICA_EN_PLAY (src/lib/canica.ts).
+    ...(CANICA_EN_PLAY ? { play: CANICA_PLAY } : {}),
   },
   {
     slug: "tiliches",
