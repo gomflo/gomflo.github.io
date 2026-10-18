@@ -11,6 +11,15 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     react(),
+    // client:afterpaint: islas que esperan al primer cuadro y a estar a la vista (src/directives/afterpaint.js).
+    {
+      name: 'afterpaint',
+      hooks: {
+        'astro:config:setup': ({ addClientDirective }) => {
+          addClientDirective({ name: 'afterpaint', entrypoint: './src/directives/afterpaint.js' });
+        },
+      },
+    },
     // /susurro/, /destello/ y /brinco/ se publican desde otros repos; sin esto no aparecen en el sitemap.
     sitemap({
       customPages: ['https://gomflo.dev/susurro/', 'https://gomflo.dev/destello/', 'https://gomflo.dev/brinco/'],
