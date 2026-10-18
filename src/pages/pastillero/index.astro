@@ -1,0 +1,400 @@
+---
+/**
+ * Pastillero, el recordatorio de medicinas para Android (~/code/pastillero). Página corta con lo que dice
+ * su ficha de Google Play (docs/TIENDA.md de la app), sin prometer más: recuerda y registra, no da
+ * indicaciones médicas. Nada de efectos en la salud, marcas de medicinas ni «siempre suena». Usa la
+ * identidad del sitio (Layout.astro). El aviso de privacidad sigue en public/pastillero/privacidad/.
+ */
+import Layout from "../../layouts/Layout.astro";
+import { PASTILLERO_PLAY, pastilleroPlay } from "@/lib/pastillero";
+
+const title = "Pastillero: recordatorio de medicamentos | gomflo.dev";
+const description =
+  "Pastillero es un recordatorio de medicamentos para Android: te avisa a la hora de cada toma, para ti o para quien cuidas, y lleva el registro. Sin anuncios.";
+
+const play = pastilleroPlay("pastillero");
+
+const capturas = [
+  { n: 1, alt: "El pastillero del día: un compartimento por hora y el de las 8:00 abierto porque ya es la hora" },
+  { n: 2, alt: "La notificación de Pastillero con los botones Tomada y Posponer 10 min" },
+  { n: 3, alt: "El calendario de apego de 13 semanas y el reporte en PDF para el médico" },
+];
+
+const horarios = [
+  "A horas fijas: una, dos, tres o más veces al día.",
+  "Cada 8 horas (o 4, 6, 12, 24…) desde la hora que digas, aunque cruce la medianoche.",
+  "Solo algunos días de la semana.",
+  "Con fecha de inicio y duración: «7 días» termina solo.",
+  "Solo si hace falta, sin alarma: lo anotas cuando lo tomas.",
+];
+
+const cuidar = [
+  {
+    t: "Los horarios, como dice la receta",
+    d: "Anota cada medicina con su dosis y su horario tal como se los indicó su médico. Si algo de la receta no está claro, pregúntale al médico o al farmacéutico antes de ponerlo.",
+  },
+  {
+    t: "Quién da cada toma",
+    d: "Las alarmas suenan en el teléfono donde está Pastillero y el registro vive ahí: no se comparte con otros teléfonos. Si se turnan entre hermanos, acuerden quién lleva ese teléfono o quién marca «Tomada».",
+  },
+  {
+    t: "El registro para la consulta",
+    d: "Cada toma queda con su hora real: tomada, a destiempo, omitida o no tomada. Con Pro sacas un reporte en PDF de 30 o 90 días para enseñárselo a su médico, que es quien decide si algo cambia.",
+  },
+  {
+    t: "Cuántas le quedan",
+    d: "Pastillero lleva la cuenta de tabletas, cápsulas o mililitros y cada toma resta. Con Pro te avisa cuántos días le quedan, para resurtir a tiempo.",
+  },
+];
+
+const faq = [
+  {
+    q: "¿Pastillero es gratis?",
+    a: "Sí. Las alarmas, las medicinas y el registro de una persona son gratis y sin límite, y no tiene anuncios. Pastillero Pro es un solo pago, sin suscripción: varias personas, reporte en PDF para el médico, estadísticas de apego, aviso de resurtir y respaldo.",
+  },
+  {
+    q: "¿Puedo llevar las medicinas de mi mamá y las mías en el mismo teléfono?",
+    a: "Sí, con Pastillero Pro: cada persona va con su color y puedes ver el día de todos o de una sola. La versión gratis es para una persona.",
+  },
+  {
+    q: "¿Pastillero me dice qué dosis tomar?",
+    a: "No. Pastillero es un recordatorio y un registro: anota lo que tú escribes. No da indicaciones médicas, no revisa dosis ni interacciones y no sustituye las indicaciones de tu médico ni de tu farmacéutico.",
+  },
+];
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const jsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "Pastillero",
+    description,
+    operatingSystem: "Android",
+    applicationCategory: "HealthApplication",
+    inLanguage: "es-MX",
+    url: canonicalURL,
+    image: new URL("/img/android/pastillero/icono.png", site).href,
+    screenshot: capturas.map((c) => new URL(`/img/android/pastillero/captura-${c.n}.webp`, site).href),
+    installUrl: PASTILLERO_PLAY,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+      { "@type": "ListItem", position: 2, name: "Pastillero", item: canonicalURL },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+]).replace(/</g, "\\u003c");
+---
+
+<Layout
+  title={title}
+  description={description}
+  image="/img/pastillero.jpeg"
+  imageAlt="Pastillero: las medicinas de toda la familia, a su hora. Y el registro para el médico."
+>
+  <main id="main-content" class="app contenedor" tabindex="-1">
+    <header class="pieza app__cabeza">
+      <img class="app__icono" src="/img/android/pastillero/icono-192.webp" width="96" height="96" alt="" />
+      <div>
+        <p class="etiqueta app__tipo">App para Android</p>
+        <h1 class="titular app__titulo">Pastillero: recordatorio de medicamentos</h1>
+        <p class="app__entrada">
+          Te avisa a la hora de cada toma, para ti o para quien cuidas, y lleva el registro de lo que se tomó. Sin
+          anuncios y sin cuenta.
+        </p>
+        <a class="app__play" href={play} rel="noopener" data-umami-event="play-pastillero" data-umami-event-pagina="pastillero">
+          Bájala en Google Play
+        </a>
+      </div>
+    </header>
+
+    <ul class="capturas" role="list">
+      {capturas.map((c) => (
+        <li>
+          <img
+            src={`/img/android/pastillero/captura-${c.n}.webp`}
+            srcset={`/img/android/pastillero/captura-${c.n}-270.webp 270w, /img/android/pastillero/captura-${c.n}.webp 540w`}
+            sizes="(max-width: 52rem) 31vw, 16rem"
+            width="540"
+            height="1212"
+            alt={c.alt}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))}
+    </ul>
+
+    <section class="bloque" aria-labelledby="pastillero-heading">
+      <h2 id="pastillero-heading" class="titular bloque__titulo">Un pastillero digital en tu teléfono</h2>
+      <p class="bloque__texto">
+        Cada hora del día es un compartimento de plástico de color, con sus pastillas dibujadas por su forma: la tableta
+        con su ranura, la cápsula de dos colores, la gota, el jarabe. Cuando es la hora, el compartimento se abre y brilla.
+        Al marcar «Tomada», la tapa se cierra y el compartimento se apaga. Abajo, la línea del día dice con palabras qué
+        está pendiente, qué se tomó y qué se pasó.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="horarios-heading">
+      <h2 id="horarios-heading" class="titular bloque__titulo">Horarios como los receta el médico</h2>
+      <ul class="bloque__lista">
+        {horarios.map((h) => <li>{h}</li>)}
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="alarma-heading">
+      <h2 id="alarma-heading" class="titular bloque__titulo">Alarma de medicamentos con «Tomada» ahí mismo</h2>
+      <ul class="bloque__lista">
+        <li>Notificación de prioridad alta con «Tomada» y «Posponer 10 min».</li>
+        <li>Si nadie contesta, a las tres horas se anota como no tomada.</li>
+        <li>Las alarmas se reprograman solas al reiniciar el teléfono, al cambiar la hora o al actualizar la app.</li>
+        <li>
+          Para que suene al minuto, Android pide el permiso de alarmas exactas. Sin él puede llegar hasta 10 minutos
+          tarde, y la app te lo dice.
+        </li>
+        <li>Letra grande, alto contraste y botones amplios: hecha para leerse sin lentes.</li>
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="cuidar-heading">
+      <h2 id="cuidar-heading" class="titular bloque__titulo">Si llevas las medicinas de tu papá o tu mamá</h2>
+      <p class="bloque__texto">
+        Pastillero no decide nada por ustedes: recuerda y anota. Así ayuda a organizarse.
+      </p>
+      <div class="partes">
+        {cuidar.map((c) => (
+          <div class="parte">
+            <h3 class="titular parte__titulo">{c.t}</h3>
+            <p>{c.d}</p>
+          </div>
+        ))}
+      </div>
+      <p class="bloque__texto nota">
+        Antes de cambiar una hora, saltarse una toma o dejar una medicina, consulta a su médico.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="precio-heading">
+      <h2 id="precio-heading" class="titular bloque__titulo">Gratis, y Pro con un solo pago</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3 class="titular parte__titulo">Gratis</h3>
+          <ul>
+            <li>Una persona, con medicinas sin límite</li>
+            <li>Todos los horarios y las alarmas</li>
+            <li>El día de un vistazo y el registro completo</li>
+            <li>Cuántas quedan: cada toma resta</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <h3 class="titular parte__titulo">Pastillero Pro</h3>
+          <ul>
+            <li>Varias personas, cada una con su color</li>
+            <li>Reporte en PDF para el médico de 30 o 90 días</li>
+            <li>Estadísticas de apego: calendario de 13 semanas y racha</li>
+            <li>Aviso de resurtir y respaldo en un archivo</li>
+            <li>Sin suscripción</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="titular bloque__titulo">Tu información es tuya</h2>
+      <p class="bloque__texto">
+        Sin cuenta, sin anuncios, sin analítica y sin permiso de internet: todo se queda en tu teléfono. En la pantalla
+        bloqueada la notificación solo dice «Hora de una medicina».
+        <a class="enlace" href="/pastillero/privacidad/" data-astro-reload>Aviso de privacidad</a>.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="titular bloque__titulo">Preguntas frecuentes</h2>
+      <div class="preguntas">
+        {faq.map((f) => (
+          <div>
+            <h3 class="titular parte__titulo">{f.q}</h3>
+            <p class="bloque__texto">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="pieza remate" aria-labelledby="remate-heading">
+      <h2 id="remate-heading" class="titular bloque__titulo">Las medicinas de toda la familia, a su hora</h2>
+      <p class="bloque__texto">
+        Pastillero es un recordatorio y un registro. No sustituye las indicaciones de tu médico ni de tu farmacéutico.
+      </p>
+      <a class="app__play" href={play} rel="noopener" data-umami-event="play-pastillero" data-umami-event-pagina="pastillero">
+        Bájala en Google Play
+      </a>
+    </section>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .app {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    padding-top: var(--hueco);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .app__cabeza {
+    --pieza: var(--cielo);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .app__icono {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 22%;
+  }
+
+  .app__tipo {
+    margin: 0 0 0.5rem;
+  }
+
+  .app__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+
+  .app__entrada {
+    max-width: 60ch;
+    margin: 1rem 0 0;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .app__play {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.25rem;
+    padding: 0 1.25rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+    transition: scale 0.2s var(--ease-soft);
+  }
+  .app__play:active {
+    scale: 0.97;
+  }
+
+  .capturas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hueco);
+    max-width: 52rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .capturas img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .bloque__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .bloque__lista {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 62ch;
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .bloque__texto {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .nota {
+    margin-top: 1.25rem;
+    font-weight: 700;
+  }
+
+  .partes,
+  .planes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--hueco);
+    margin-top: 1.25rem;
+  }
+
+  .parte,
+  .plan {
+    padding: 1.125rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .parte__titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .parte p,
+  .plan ul {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .plan ul {
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+
+  .preguntas {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .remate {
+    --pieza: var(--cielo);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  }
+  .remate .app__play {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 560px) {
+    .app__cabeza {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
