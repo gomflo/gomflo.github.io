@@ -24,6 +24,10 @@ const faq = [
     a: "Toca «Imprimir» y en la ventana de tu navegador elige tamaño carta, escala al 100 % y, si aparece, activa «Gráficos de fondo» para que salgan los colores de cada carta. Cada tabla queda en su hoja, con su número y el pie de la página.",
   },
   {
+    q: "¿Puedo imprimir varias tablas en una hoja?",
+    a: "Aquí sale una tabla por hoja carta, para que se vea grande. Con la app para Android armas un PDF con una, dos o cuatro tablas por hoja y líneas punteadas para cortarlas: cuatro por hoja gastan la cuarta parte del papel, para la posada o el salón. Gratis, el PDF lleva hasta 4 tablas; con Pro, un pago único y opcional, hasta 40 por PDF y sin la marca de la app.",
+  },
+  {
     q: "¿Necesito las cartas para cantar?",
     a: "No. Puedes cantar con el cantador de Frijolito en el navegador o en el teléfono, que dice el nombre y el verso de cada carta. Si prefieres cantar con cartas en la mano, imprime las 54 para recortar: salen 12 por hoja, en cinco hojas.",
   },
@@ -79,7 +83,8 @@ const jsonLd = {
     <h1>Tablas de lotería para imprimir, todas distintas.</h1>
     <p>
       Elige cuántas necesitas, de 1 a 12, y mándalas a la impresora: sale una tabla de 4 × 4 por hoja carta, con la ilustración, el número y el nombre
-      de cada carta. Si te faltan las cartas para cantar, imprímelas también.
+      de cada carta. Si te faltan las cartas para cantar, imprímelas también. Para gastar menos papel, la app para Android acomoda dos o cuatro tablas por
+      hoja, con líneas punteadas para cortar.
     </p>
   </div>
 
@@ -112,8 +117,9 @@ const jsonLd = {
       titulo="Tablas en el teléfono, que avisan cuando ganas."
       puntos={[
         "Una tabla nueva en cada teléfono, distinta a las demás, hasta 60",
-        "Se marcan con frijolitos y avisan cuando hay línea, esquinas, pozo o tabla llena",
-        "Tablas en PDF tamaño carta para mandar al grupo",
+        "Se marcan con frijolitos y avisan cuando hay línea, esquinas, pozo, esquinas y pozo, marco o tabla llena",
+        "Tablas en PDF tamaño carta, una, dos o cuatro por hoja, con líneas punteadas para cortar",
+        "Gratis, PDF de hasta 4 tablas; con Pro, hasta 40 y sin la marca de la app",
         "El cantador canta las 54 con voz y verso, sin internet",
       ]}
     />
