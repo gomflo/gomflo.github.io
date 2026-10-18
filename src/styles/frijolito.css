@@ -555,6 +555,51 @@ a {
   overflow: hidden;
 }
 
+/* Barajas de fondo oscuro (posada): el número va sobre un pedazo de papel, como en la app. */
+.fj-cara--oscura .fj-cara__numero {
+  padding: 0.22em 0.38em;
+  border-radius: 0.35em;
+  background: var(--carta-papel);
+}
+
+/* Muestras de otra baraja: solo la carta, en rejilla apretada. */
+.fj-muestras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+  list-style: none;
+}
+
+.fj-muestras .fj-cara {
+  --numero: 0.85rem;
+  --placa: 0.66rem;
+}
+
+@media (min-width: 36rem) {
+  .fj-muestras {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .fj-muestras {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .fj-muestras .fj-cara {
+    --numero: 0.72rem;
+    --placa: 0.56rem;
+  }
+}
+
+.fj-pequena {
+  margin-top: 1rem;
+  max-width: 44rem;
+  font-size: 0.92rem;
+  color: var(--papel-suave);
+}
+
 /* El reverso: papel con retícula de rombos del color de la mesa y un frijol al centro. */
 .fj-reverso {
   position: relative;

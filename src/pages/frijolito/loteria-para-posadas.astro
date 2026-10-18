@@ -1,7 +1,39 @@
 ---
 import FrijolitoGuia from "../../layouts/FrijolitoGuia.astro";
+import Cara from "../../components/frijolito/Cara.astro";
+import { androidApps } from "../../data/android-apps";
+import { cartas } from "../../data/frijolito-cartas";
+import { playLink } from "../../lib/play";
+
+const play = playLink(androidApps.find((a) => a.slug === "frijolito")!.play!, "posadas-baraja");
+const cantala =
+  "https://cantala.net/loteria-navidena-para-imprimir?utm_source=gomflo.dev&utm_medium=web&utm_campaign=frijolito-loteria-para-posadas";
+
+// Muestras de la baraja de posada de la app (Pro). Ilustraciones de 300 px en public/img/frijolito/posada/,
+// sacadas de app/src/main/assets/cards/posada/ en ~/code/frijolito.
+const posada = [
+  { n: 27, alt: "un corazón rojo hecho piñata, colgado de un mecate con moño, entre papel picado y un farolito encendido" },
+  { n: 35, alt: "una piñata de estrella de siete picos rojos y blancos, con flecos verdes en cada punta, sobre la noche azul" },
+  { n: 1, alt: "un gallo de plumas rojas y verdes parado en un ladrillo, con papel picado y un farolito encendido detrás" },
+  { n: 49, alt: "un pino chico en maceta de barro, adornado con esferas rojas y un listón crema" },
+  { n: 52, alt: "una maceta de barro con nochebuenas rojas en flor, amarrada con un moño crema" },
+  { n: 8, alt: "una botella de vidrio con fruta de ponche, naranja y canela, junto a media naranja y una vela encendida" },
+  { n: 43, alt: "una campana de bronce con listón rojo, tirada en el suelo, y al fondo los peregrinos de la posada" },
+  { n: 24, alt: "un perico verde sobre un muro de adobe, junto a una tira de papel rojo y un jarrito de ponche con canela" },
+].map((m) => {
+  const carta = cartas.find((c) => c.n === m.n)!;
+  return {
+    carta,
+    src: `/img/frijolito/posada/${String(carta.n).padStart(2, "0")}-${carta.slug}.webp`,
+    alt: `Carta ${carta.n}, ${carta.nombre}, de la baraja de posada: ${m.alt}.`,
+  };
+});
 
 const faq = [
+  {
+    q: "¿Hay una lotería con dibujos de posada?",
+    a: "Sí, en la app Frijolito para Android: la baraja de posada trae las 54 cartas de siempre, con sus nombres y números, dibujadas en una noche de posada, con velas, piñatas, ponche, colación y nochebuenas. Viene con Frijolito Pro, un pago único y opcional. El cantador de esta página, la baraja de feria y las tablas para imprimir son gratis.",
+  },
   {
     q: "¿Cuántas tablas necesito para la posada?",
     a: "Una por persona, más unas cuantas de repuesto para quien llega tarde. En la página de tablas imprimes hasta 12 distintas de una vez; si son más, imprime otro juego y revisa que no haya dos iguales. Con la app para Android, el PDF acomoda dos o cuatro tablas por hoja, con líneas punteadas para cortar: menos papel para toda la posada. Las de cartón que ya tengas también sirven.",
@@ -19,8 +51,8 @@ const faq = [
 
 <FrijolitoGuia
   slug="loteria-para-posadas"
-  title="Lotería para posadas: cantador y tablas | gomflo.dev"
-  description="Arma la lotería de la posada: el cantador dice las 54 cartas con su verso, imprime tablas distintas para todos y juega por línea, esquinas o tabla llena."
+  title="Lotería para posadas: cantador, tablas y baraja | gomflo.dev"
+  description="Arma la lotería de posada: el cantador dice las 54 cartas con su verso, imprime tablas distintas para todos y mira la baraja de posada de la app Frijolito."
   heading="Lotería para la posada, sin que nadie se quede a cantar toda la noche."
   lead="El cantador de abajo baraja las 54 cartas y las dice en voz alta con su verso. Tú repartes las tablas, sirves el ponche y también juegas."
   guiaTitulo="Cómo armar la lotería de la posada"
@@ -30,7 +62,7 @@ const faq = [
     puntos: [
       "Canta sin internet: en el patio, el salón de fiestas o el rancho",
       "Dos voces de cantador, Ramón y Jess, que se oyen igual en cualquier teléfono",
-      "La baraja de papel picado, para que la lotería combine con la fiesta",
+      "La baraja de posada, con piñatas, velas y nochebuenas, para que la lotería combine con la fiesta",
       "Que cante solo con la pausa que elijas, de 1 a 15 segundos entre carta y carta",
       "Tablas en el teléfono para quien llegó sin tabla, y PDF con hasta cuatro tablas por hoja para gastar menos papel",
       "Sin anuncios que interrumpan la partida",
@@ -72,4 +104,33 @@ const faq = [
   <p>
     ¿Quieres ver las cartas antes, o repasar los versos para cantarlos tú? Están las 54 en <a href="/frijolito/cartas-de-la-loteria/">cartas de la lotería</a>.
   </p>
+
+  <section slot="despues" class="fj-seccion fj-marco" aria-labelledby="posada-titulo">
+    <h2 id="posada-titulo" class="fj-seccion__titulo">La baraja de posada</h2>
+    <p class="fj-seccion__lead">
+      Una lotería de posada de verdad: las mismas 54 cartas, con sus nombres y números de siempre, ilustradas como gouache en una noche azul de diciembre,
+      con velas, piñatas, ponche, colación y nochebuenas. El Corazón y La Estrella son piñatas. Es una de las barajas de Frijolito, la app para
+      Android.
+    </p>
+    <ul class="fj-muestras">
+      {
+        posada.map((m) => (
+          <li>
+            <Cara carta={m.carta} src={m.src} alt={m.alt} oscura />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="fj-nota">
+      <strong>La baraja de posada viene con Frijolito Pro</strong>, un pago único y opcional, sin suscripción. Su cantador es Ramón (voz sintética), y
+      las tablas en PDF se imprimen con la baraja de grabado para no gastar tanta tinta. La app es gratis y sin anuncios: canta las 54 cartas con la
+      voz del teléfono, trae la baraja de feria, tablas en el teléfono y PDF de hasta 4 tablas.
+    </p>
+    <p class="fj-ir">
+      <a class="fj-boton" href={play} rel="noopener">Ver Frijolito en Google Play</a>
+    </p>
+    <p class="fj-pequena">
+      ¿Prefieres una baraja navideña en papel? Cantala, también nuestra, tiene una <a class="fj-enlace" href={cantala} rel="noopener">lotería navideña para imprimir</a>.
+    </p>
+  </section>
 </FrijolitoGuia>

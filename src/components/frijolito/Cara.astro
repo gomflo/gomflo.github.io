@@ -1,5 +1,5 @@
 ---
-// Una carta de la baraja de feria, como la dibuja la app: papel, ilustración, el número en la esquina y,
+// Una carta (de feria, salvo que se pase `src`), como la dibuja la app: papel, ilustración, el número en la esquina y,
 // en rejillas y tablas, la placa con el nombre al pie. Su gemela en React está en Cara.tsx.
 import { imagen, textoAlt, type Carta } from "../../data/frijolito-cartas";
 
@@ -10,15 +10,19 @@ interface Props {
   lazy?: boolean;
   /** Texto alternativo en otro idioma (la portada en inglés); sin él, el de la baraja en español. */
   alt?: string;
+  /** La ilustración de otra baraja (las muestras de la de posada); sin ella, la de feria. */
+  src?: string;
+  /** Baraja de fondo oscuro: el número va sobre papel, como en la app (CardStyle.dark). */
+  oscura?: boolean;
 }
 
-const { carta, placa = true, lazy = true, alt } = Astro.props;
+const { carta, placa = true, lazy = true, alt, src, oscura = false } = Astro.props;
 ---
 
-<div class="fj-cara">
+<div class:list={["fj-cara", { "fj-cara--oscura": oscura }]}>
   <div class="fj-cara__dibujo">
     <img
-      src={imagen(carta)}
+      src={src ?? imagen(carta)}
       alt={alt ?? textoAlt(carta)}
       width="300"
       height="450"
