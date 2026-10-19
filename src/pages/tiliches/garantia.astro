@@ -49,6 +49,10 @@ const CONCILIANET = "https://concilianet.profeco.gob.mx/Concilianet/";
 const CONCILIANET_PROVEEDORES = "https://concilianet.profeco.gob.mx/Concilianet/proveedores_que_concilian.jsp";
 const ODECO = "https://www.gob.mx/profeco/acciones-y-programas/oficinas-de-defensa-del-consumidor-en-el-pais";
 
+// Sin DM Mono en esta página (los campos y el sello van en Bricolage): son 30 KB menos antes del primer
+// pintado y unos 150 ms menos de LCP en Lighthouse móvil.
+const campoClass = inputClass.replace("font-code ", "");
+
 // El ejemplo sale con la fecha del despliegue; en el navegador se recalcula con la de hoy.
 const hoy = hoyEn();
 const ej = ejemplo(hoy);
@@ -132,7 +136,7 @@ const faq: Faq[] = [
           max="2200-12-31"
           required
           aria-describedby="gt-compra-ayuda gt-compra-error"
-          class={cn(inputClass, "gt-fecha")}
+          class={cn(campoClass, "gt-fecha")}
         />
         <p id="gt-compra-ayuda" class="gt-ayuda">Si te lo mandaron, usa el día que llegó: la ley cuenta la garantía desde la entrega.</p>
         <p id="gt-compra-error" class="gt-error" role="alert" hidden data-error="compra">Escribe una fecha completa, por ejemplo 13/11/2026.</p>
@@ -162,7 +166,7 @@ const faq: Faq[] = [
             maxlength="3"
             value="18"
             aria-describedby="gt-meses-error"
-            class={cn(inputClass, "gt-numero tabular-nums")}
+            class={cn(campoClass, "gt-numero tabular-nums")}
           />
           <p id="gt-meses-error" class="gt-error" role="alert" hidden data-error="meses">Escribe de 0 a {MAX_MESES} meses (0 si no tiene).</p>
         </div>
@@ -178,7 +182,7 @@ const faq: Faq[] = [
           maxlength="3"
           value={String(ej.dias)}
           aria-describedby="gt-dias-ayuda gt-dias-error"
-          class={cn(inputClass, "gt-numero tabular-nums")}
+          class={cn(campoClass, "gt-numero tabular-nums")}
         />
         <p id="gt-dias-ayuda" class="gt-ayuda">Lo decide cada tienda: revisa el ticket o su política. Escribe 0 si no acepta devoluciones.</p>
         <p id="gt-dias-error" class="gt-error" role="alert" hidden data-error="dias">Escribe de 0 a {MAX_DIAS} días.</p>
@@ -196,7 +200,7 @@ const faq: Faq[] = [
 
   <div slot="despues" class="guia">
     <nav class="guia__indice" aria-label="En esta guía">
-      <p class="etiqueta">En esta guía</p>
+      <p class="guia__indice-titulo">En esta guía</p>
       <ol role="list">
         <li><a class="enlace" href="#ley">La garantía mínima</a></li>
         <li><a class="enlace" href="#guardar">Qué guardar</a></li>
@@ -753,10 +757,9 @@ const faq: Faq[] = [
     padding: 0.125rem 0.5rem;
     border: 2px solid currentColor;
     border-radius: 0.375rem;
-    font-family: "DM Mono", ui-monospace, monospace;
     font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
   .gt-plazo[data-sello="vencido"] .gt-sello,
@@ -836,6 +839,10 @@ const faq: Faq[] = [
   }
   .guia__indice p {
     margin: 0;
+  }
+  .guia__indice-titulo {
+    font-size: var(--t-s);
+    font-weight: 700;
   }
   .guia__indice ol {
     display: flex;
