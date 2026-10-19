@@ -22,6 +22,7 @@ export type ToolSlug =
   | "calculadora-iva"
   | "calculadora-aguinaldo"
   | "cancelar-suscripcion"
+  | "garantia"
   | "dias-habiles"
   | "numeros-romanos"
   | "codigo-morse"
@@ -37,7 +38,7 @@ export interface Category {
 
 export interface Tool {
   slug: ToolSlug;
-  /** Casi siempre `/<slug>/`; la de aguinaldo vive en `/guardadito/`, la de qué dibujar en `/garabato/` y la de suscripciones en `/canica/`, junto a su app. */
+  /** Casi siempre `/<slug>/`; la de aguinaldo vive en `/guardadito/`, la de qué dibujar en `/garabato/` y la de suscripciones en `/canica/` y la de garantía en `/tiliches/`, junto a su app. */
   href: `/${string}/`;
   title: string;
   desc: string;
@@ -48,7 +49,7 @@ export const categories: Category[] = [
   { id: "texto", title: "Texto", desc: "Cuenta, limpia, ordena y transforma lo que escribes." },
   { id: "codigo", title: "Código y datos", desc: "Formatos que aparecen todos los días en una API." },
   { id: "generadores", title: "Generadores y utilidades", desc: "Contraseñas, identificadores, hashes, colores e ideas para dibujar." },
-  { id: "mexico", title: "Dinero y plazos en México", desc: "CLABE, IVA, aguinaldo, suscripciones y días hábiles con las reglas de aquí." },
+  { id: "mexico", title: "Dinero y plazos en México", desc: "CLABE, IVA, aguinaldo, suscripciones, garantías y días hábiles con las reglas de aquí." },
   { id: "conversores", title: "Conversores", desc: "Romanos, morse y binario, de ida y de vuelta." },
 ];
 
@@ -83,6 +84,7 @@ export const tools: Tool[] = [
   { slug: "calculadora-iva", href: "/calculadora-iva/", title: "Calculadora de IVA", desc: "Agrega o quita el IVA, con retenciones de ISR e IVA.", category: "mexico" },
   { slug: "calculadora-aguinaldo", href: "/guardadito/calculadora-aguinaldo/", title: "Calculadora de aguinaldo", desc: "Aguinaldo completo o proporcional y la parte exenta de ISR.", category: "mexico" },
   { slug: "cancelar-suscripcion", href: "/canica/cancelar-suscripcion/", title: "Suscripciones al año", desc: "Cuánto pagas en suscripciones al mes y al año, y cuánto ahorras al cancelar.", category: "mexico" },
+  { slug: "garantia", href: "/tiliches/garantia/", title: "Calculadora de garantía", desc: "Hasta cuándo tienes garantía y hasta cuándo puedes devolver lo que compraste.", category: "mexico" },
   { slug: "dias-habiles", href: "/dias-habiles/", title: "Días hábiles", desc: "Cuenta días hábiles entre fechas, con los feriados de México.", category: "mexico" },
 
   // Conversores

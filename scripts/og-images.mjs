@@ -7,6 +7,7 @@
  * herramienta), arma una tarjeta con la identidad "Bloques" y la captura con
  * Chrome sin interfaz. Escribe public/img/<slug>.jpeg (el inicio es inicio.jpeg).
  * Vuelve a correrlo al agregar herramientas o al cambiar de año (días feriados).
+ * Con slugs, solo esas: `npm run og -- garantia` (el inicio solo si se pide `inicio`).
  *
  * Chrome: usa CHROME_PATH o la ruta estándar de macOS.
  */
@@ -133,6 +134,10 @@ pages.push({
   url: "gomflo.dev",
 });
 
+const solo = process.argv.slice(2);
+const pedidas = solo.length ? pages.filter((p) => solo.includes(p.slug)) : pages;
+if (solo.length && pedidas.length !== solo.length) throw new Error(`No encontré: ${solo.filter((s) => !pages.some((p) => p.slug === s)).join(", ")}`);
+
 const work = await mkdtemp(join(tmpdir(), "og-"));
 const render = async ({ slug, title, ...rest }) => {
   const htmlPath = join(work, `${slug}.html`);
@@ -147,6 +152,6 @@ const render = async ({ slug, title, ...rest }) => {
 };
 
 // De cuatro en cuatro para no saturar la máquina.
-for (let i = 0; i < pages.length; i += 4) await Promise.all(pages.slice(i, i + 4).map(render));
+for (let i = 0; i < pedidas.length; i += 4) await Promise.all(pedidas.slice(i, i + 4).map(render));
 await rm(work, { recursive: true, force: true });
-console.log(`${pages.length} imágenes en public/img`);
+console.log(`${pedidas.length} imágenes en public/img`);
