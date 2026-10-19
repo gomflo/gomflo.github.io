@@ -6,6 +6,7 @@
 import { CANICA_EN_PLAY, CANICA_PLAY } from "../lib/canica";
 import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY } from "../lib/guardadito";
 import { PASTILLERO_PLAY } from "../lib/pastillero";
+import { TILICHES_EN_PLAY, TILICHES_PLAY } from "../lib/tiliches";
 
 export type AndroidApp = {
   slug: string;
@@ -76,7 +77,10 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Etiquetas de cartón colgadas de un riel que se mecen",
     color: "#2B4A42",
     group: "casa",
+    pagina: "/tiliches/",
     privacy: "/tiliches/privacidad/",
+    // En revisión en Play: se prende con TILICHES_EN_PLAY (src/lib/tiliches.ts).
+    ...(TILICHES_EN_PLAY ? { play: TILICHES_PLAY } : {}),
   },
   {
     slug: "pastillero",

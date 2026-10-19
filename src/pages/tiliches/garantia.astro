@@ -1,0 +1,952 @@
+---
+/**
+ * ¿Hasta cuándo tengo garantía?: la herramienta de la caja (categoría "mexico") que vive junto a
+ * Tiliches. Arriba, la calculadora de cuándo vence la garantía y el plazo para devolver; abajo, la guía
+ * (la garantía mínima de la LFPC, qué guardar, por qué devolver depende de la tienda, el Buen Fin y
+ * cómo reclamar) y el puente a la app. Sin React: el HTML sale calculado con un ejemplo (una compra de
+ * hace 12 días, con la fecha del despliegue en la Ciudad de México) y un script chico recalcula al
+ * teclear con la fecha del navegador. Nada se guarda: ni en un servidor ni en el navegador.
+ *
+ * Las citas van tal cual sus fuentes: el texto vigente de la LFPC en diputados.gob.mx (última reforma
+ * DOF 12-12-2025), la Revista del Consumidor de noviembre de 2025 (p. 19) y los comunicados de Profeco
+ * en gob.mx. Si cambian, manda la fuente: vuelve a leerlas antes de tocar las citas.
+ * Tiliches no habla con la tienda ni promete que acepte un reclamo, y los 30 días no son ley: no lo digas.
+ * La lógica y sus pruebas están en src/lib/garantia.ts (npm test).
+ */
+import ToolLayout, { type Faq } from "../../layouts/ToolLayout.astro";
+import {
+  DIAS_DEVOLUCION,
+  MAX_DIAS,
+  MAX_MESES,
+  MESES_RAPIDOS,
+  SELLOS,
+  calcular,
+  cuantoQueda,
+  ejemplo,
+  fechaLarga,
+  hoyEn,
+  leerFecha,
+  sello,
+  type Resultado,
+} from "@/lib/garantia";
+import { TILICHES_EN_PLAY, tilichesPlay } from "@/lib/tiliches";
+import { inputClass } from "@/components/tool-kit";
+import { cn } from "@/lib/utils";
+
+const LFPC = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPC.pdf";
+const REVISTA = "https://bibliotecadelconsumidor.profeco.gob.mx/media/revistas/revista_2025_11_completo.pdf";
+const PROFECO_TICKETS =
+  "https://www.gob.mx/profeco/prensa/profeco-recuerda-a-las-y-los-consumidores-la-importancia-de-pedir-y-guardar-tickets-de-compra";
+const PROFECO_BUEN_FIN =
+  "https://www.gob.mx/profeco/prensa/la-profeco-lista-para-defender-los-derechos-de-las-personas-consumidoras-durante-el-buen-fin";
+const PROFECO_OFERTA =
+  "https://www.gob.mx/profeco/prensa/oferta-y-promocion-revista-del-consumidor-explica-sus-diferencias-previo-al-buen-fin";
+const PROFECO_QUEJA = "https://www.gob.mx/profeco/documentos/tuviste-algun-problema-de-consumo";
+const BUEN_FIN = "https://www.elbuenfin.org/";
+const QQP_BUEN_FIN = "https://elbuenfin.profeco.gob.mx/";
+const TIENDAS_VIRTUALES = "https://burocomercial.profeco.gob.mx/tiendasvirtuales/";
+const CONCILIANET = "https://concilianet.profeco.gob.mx/Concilianet/";
+const CONCILIANET_PROVEEDORES = "https://concilianet.profeco.gob.mx/Concilianet/proveedores_que_concilian.jsp";
+const ODECO = "https://www.gob.mx/profeco/acciones-y-programas/oficinas-de-defensa-del-consumidor-en-el-pais";
+
+// El ejemplo sale con la fecha del despliegue; en el navegador se recalcula con la de hoy.
+const hoy = hoyEn();
+const ej = ejemplo(hoy);
+const r = calcular(ej) as Resultado;
+const garantia = r.garantia!;
+const devolucion = r.devolucion!;
+const selloGarantia = sello(garantia, 30);
+const selloDevolucion = sello(devolucion, 7);
+
+// El Buen Fin 2026: del viernes 13 al martes 17 de noviembre (elbuenfin.org).
+const buenFin = leerFecha("2026-11-13")!;
+const buenFinDevolver = fechaLarga(buenFin + DIAS_DEVOLUCION);
+
+const faq: Faq[] = [
+  {
+    q: "¿La garantía cuenta desde la compra o desde la entrega?",
+    a: "Desde la entrega. El artículo 77 de la Ley Federal de Protección al Consumidor dice que la garantía «no podrá ser inferior a noventa días contados a partir de la entrega del bien o la prestación del servicio». Si pagaste en la tienda y te lo llevaron días después, cuenta desde el día que lo recibiste.",
+    fuentes: [{ texto: "Ley Federal de Protección al Consumidor (Cámara de Diputados)", href: LFPC }],
+  },
+  {
+    q: "¿Las tiendas están obligadas a aceptar devoluciones?",
+    a: "No en general. Devolver algo porque no te quedó o cambiaste de opinión depende de la política de cada tienda. La ley sí da derecho a la reposición o a la devolución del dinero en casos concretos, como cuando el producto no corresponde a lo que se ofreció o si lo repararon en garantía y no quedó bien (artículo 92).",
+    fuentes: [{ texto: "Ley Federal de Protección al Consumidor (Cámara de Diputados)", href: LFPC }],
+  },
+  {
+    q: "¿El tiempo que tarda la reparación cuenta dentro de la garantía?",
+    a: "No. El artículo 83 de la ley dice: «El tiempo que duren las reparaciones efectuadas al amparo de la garantía no es computable dentro del plazo de la misma». Si te cambian el producto por otro, el plazo de la garantía vuelve a empezar.",
+    fuentes: [{ texto: "Ley Federal de Protección al Consumidor (Cámara de Diputados)", href: LFPC }],
+  },
+];
+---
+
+<ToolLayout
+  slug="garantia"
+  metaTitle="Calculadora de garantía y devolución en México | gomflo.dev"
+  description="Calcula hasta cuándo tienes garantía y hasta cuándo puedes devolver lo que compraste. Qué dice la ley en México, qué guardar y cómo reclamar ante Profeco."
+  heading="¿Hasta cuándo tengo garantía? Calculadora de garantía y devolución"
+  lead="Escribe cuándo lo compraste o te lo entregaron, los meses de garantía y los días para devolver. Abajo, qué dice la ley en México y cómo reclamar."
+  sectionLabel="Calculadora de garantía y devolución"
+  faq={faq}
+  avisos={false}
+  tituloLargo
+>
+  <div class="tool-view gt" data-garantia data-hoy={hoy}>
+    <section class="gt-resultado" aria-labelledby="gt-resultado-titulo" aria-live="polite" data-resultado>
+      <h3 id="gt-resultado-titulo" class="sr-only">Cuándo vence cada plazo</h3>
+
+      <article class="gt-plazo" data-plazo="devolucion" data-sello={selloDevolucion}>
+        <div class="gt-plazo__cabeza">
+          <h4 class="gt-plazo__titulo" data-salida="devolucion-titulo">Para devolver</h4>
+          <span class="gt-sello" data-salida="devolucion-sello">{SELLOS[selloDevolucion]}</span>
+        </div>
+        <p class="gt-plazo__fecha" data-salida="devolucion-fecha">Hasta el {fechaLarga(devolucion.fin)}</p>
+        <p class="gt-plazo__queda" data-salida="devolucion-queda">{cuantoQueda(devolucion)}</p>
+        <p class="gt-plazo__nota" data-salida="devolucion-nota">{DIAS_DEVOLUCION} días, según la política de la tienda.</p>
+      </article>
+
+      <article class="gt-plazo" data-plazo="garantia" data-sello={selloGarantia}>
+        <div class="gt-plazo__cabeza">
+          <h4 class="gt-plazo__titulo" data-salida="garantia-titulo">Garantía de {r.meses} meses</h4>
+          <span class="gt-sello" data-salida="garantia-sello">{SELLOS[selloGarantia]}</span>
+        </div>
+        <p class="gt-plazo__fecha" data-salida="garantia-fecha">Hasta el {fechaLarga(garantia.fin)}</p>
+        <p class="gt-plazo__queda" data-salida="garantia-queda">{cuantoQueda(garantia, r.mesesQuedan)}</p>
+        <p class="gt-plazo__nota" data-salida="garantia-nota">Ese día incluido.</p>
+      </article>
+
+      <p class="gt-aviso" hidden data-salida="minimo"></p>
+      <p class="gt-aviso gt-aviso--error" hidden data-salida="sin-fecha">Escribe la fecha de compra o de entrega para ver los plazos.</p>
+    </section>
+
+    <form class="gt-form" data-gt-form autocomplete="off" novalidate>
+      <div class="gt-campo">
+        <label class="gt-etiqueta" for="gt-compra">Fecha de compra o de entrega</label>
+        <input
+          id="gt-compra"
+          name="compra"
+          type="date"
+          value={ej.compra}
+          min="1900-01-01"
+          max="2200-12-31"
+          required
+          aria-describedby="gt-compra-ayuda gt-compra-error"
+          class={cn(inputClass, "gt-fecha")}
+        />
+        <p id="gt-compra-ayuda" class="gt-ayuda">Si te lo mandaron, usa el día que llegó: la ley cuenta la garantía desde la entrega.</p>
+        <p id="gt-compra-error" class="gt-error" role="alert" hidden data-error="compra">Escribe una fecha completa, por ejemplo 13/11/2026.</p>
+      </div>
+
+      <fieldset class="gt-campo">
+        <legend class="gt-etiqueta">Meses de garantía</legend>
+        <div class="gt-chips">
+          {MESES_RAPIDOS.map((m) => (
+            <label class="gt-chip">
+              <input type="radio" name="meses" value={String(m)} checked={m === ej.meses} />
+              <span>{m}</span>
+            </label>
+          ))}
+          <label class="gt-chip">
+            <input type="radio" name="meses" value="otro" />
+            <span>Otro</span>
+          </label>
+        </div>
+        <div class="gt-otro" hidden data-otro>
+          <label class="gt-etiqueta gt-etiqueta--chica" for="gt-meses-otro">¿Cuántos meses?</label>
+          <input
+            id="gt-meses-otro"
+            name="meses-otro"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="3"
+            value="18"
+            aria-describedby="gt-meses-error"
+            class={cn(inputClass, "gt-numero tabular-nums")}
+          />
+          <p id="gt-meses-error" class="gt-error" role="alert" hidden data-error="meses">Escribe de 0 a {MAX_MESES} meses (0 si no tiene).</p>
+        </div>
+      </fieldset>
+
+      <div class="gt-campo">
+        <label class="gt-etiqueta" for="gt-dias">Días para devolver</label>
+        <input
+          id="gt-dias"
+          name="dias"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="3"
+          value={String(ej.dias)}
+          aria-describedby="gt-dias-ayuda gt-dias-error"
+          class={cn(inputClass, "gt-numero tabular-nums")}
+        />
+        <p id="gt-dias-ayuda" class="gt-ayuda">Lo decide cada tienda: revisa el ticket o su política. Escribe 0 si no acepta devoluciones.</p>
+        <p id="gt-dias-error" class="gt-error" role="alert" hidden data-error="dias">Escribe de 0 a {MAX_DIAS} días.</p>
+      </div>
+    </form>
+
+
+    <p class="gt-nota">
+      Todo se calcula en tu navegador: lo que escribes no se envía a ningún servidor ni se guarda en el teléfono. Los días
+      que quedan se cuentan desde hoy, <span data-salida="hoy">{fechaLarga(leerFecha(hoy)!)}</span>, según el reloj de tu
+      dispositivo. La garantía se cuenta en meses de calendario: si el mes final no tiene ese día, vence el último día del
+      mes (31 de enero más un mes es el 28 de febrero).
+    </p>
+  </div>
+
+  <div slot="despues" class="guia">
+    <nav class="guia__indice" aria-label="En esta guía">
+      <p class="etiqueta">En esta guía</p>
+      <ol role="list">
+        <li><a class="enlace" href="#ley">La garantía mínima</a></li>
+        <li><a class="enlace" href="#guardar">Qué guardar</a></li>
+        <li><a class="enlace" href="#devolucion">Devoluciones</a></li>
+        <li><a class="enlace" href="#buen-fin">Buen Fin</a></li>
+        <li><a class="enlace" href="#reclamar">Cómo reclamar</a></li>
+      </ol>
+    </nav>
+
+    <section aria-labelledby="ley">
+      <h2 id="ley" class="titular guia__titulo">La garantía mínima legal en México</h2>
+      <p>
+        La garantía es el compromiso de reparar, cambiar o reembolsar un producto que falla dentro de un plazo. En México la
+        regula la Ley Federal de Protección al Consumidor, en su capítulo IX, «De las garantías». El artículo 77 dice, tal cual:
+      </p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          ARTÍCULO 77.- Todo bien o servicio que se ofrezca con garantía deberá sujetarse a lo dispuesto por esta ley y a lo
+          pactado entre proveedor y consumidor.
+        </p>
+        <p>
+          Para los efectos del párrafo anterior la garantía no podrá ser inferior a noventa días contados a partir de la entrega
+          del bien o la prestación del servicio.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={LFPC} rel="noopener">Ley Federal de Protección al Consumidor</a>, texto vigente en la
+        Cámara de Diputados (última reforma publicada en el DOF el 12 de diciembre de 2025).
+      </p>
+      <p>En palabras sencillas:</p>
+      <ul class="guia__lista">
+        <li>Si te ofrecen garantía, no puede durar menos de 90 días.</li>
+        <li>
+          Los 90 días se cuentan desde que te entregan el producto, no desde que lo pagaste. Si te lo mandaron, guarda la
+          prueba de cuándo llegó.
+        </li>
+        <li>
+          La ley no dice que todo lo que compras traiga garantía: dice que la que te ofrezcan no puede ser menor. La de cada
+          producto es la que diga su póliza: muchos traen 12 meses o más.
+        </li>
+      </ul>
+      <p>La póliza tiene que ser por escrito y te la deben dar cuando recibes el producto (artículo 78):</p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          ARTÍCULO 78.- La póliza de garantía deberá expedirse por el proveedor por escrito, de manera clara y precisa
+          expresando, por lo menos, su alcance, duración, condiciones, mecanismos para hacerlas efectivas, domicilio para
+          reclamaciones y establecimientos o talleres de servicio. La póliza debe ser entregada al consumidor al momento de
+          recibir éste el bien o servicio de que se trate.
+        </p>
+      </blockquote>
+      <p>Y la garantía se puede exigir a más de uno, en la tienda o donde diga la póliza (artículo 79, segundo párrafo):</p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          El cumplimiento de las garantías es exigible, indistintamente, al productor y al importador del bien o servicio, así
+          como al distribuidor, salvo en los casos en que alguno de ellos o algún tercero asuma por escrito la obligación. El
+          cumplimiento de las garantías deberá realizarse en el domicilio en que haya sido adquirido o contratado el bien o
+          servicio, o en el lugar o lugares que exprese la propia póliza. El proveedor deberá cubrir al consumidor los gastos
+          necesarios erogados para lograr el cumplimiento de la garantía en domicilio diverso al antes señalado.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">Fuente: artículos 78 y 79 de la <a class="enlace" href={LFPC} rel="noopener">LFPC</a>.</p>
+
+      <h3 class="titular guia__sub">Lo que dice Profeco</h3>
+      <p>
+        En la Revista del Consumidor de noviembre de 2025, en su guía para El Buen Fin, Profeco lo explica así:
+      </p>
+      <blockquote class="cita" cite={REVISTA}>
+        <p>
+          Si el producto que adquiriste tiene algún defecto y el proveedor te ofreció garantía, tienes derecho a que sea
+          respetada y no podrá ser inferior a 90 días contados a partir de la entrega. Ninguna promoción o rebaja elimina tu
+          derecho a la protección.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={REVISTA} rel="noopener">Revista del Consumidor, noviembre de 2025</a>, sección «Qué hacer
+        si…», «El Buen Fin: ¿oferta vs. promoción?», página 19.
+      </p>
+      <p class="guia__aviso">
+        Esto es información general, no asesoría legal. Para tu caso, el Teléfono del Consumidor de Profeco da asesoría: 55
+        5568 8722 o 800 468 8722, o escribe a asesoria@profeco.gob.mx.
+      </p>
+    </section>
+
+    <section aria-labelledby="guardar">
+      <h2 id="guardar" class="titular guia__titulo">Qué documentos guardar</h2>
+      <p>
+        Sin un comprobante es difícil reclamar. Profeco lo recuerda así: «el comprobante es un respaldo para hacer válida la
+        garantía, solicitar reembolsos o devoluciones en los productos que se hayan comprado, así como para presentar
+        reclamaciones sobre el servicio contratado» (<a class="enlace" href={PROFECO_TICKETS} rel="noopener">comunicado del 27
+        de septiembre de 2025</a>). Guarda:
+      </p>
+      <ul class="guia__lista">
+        <li><strong>El ticket</strong> o la nota de compra. El de papel térmico se borra con el tiempo: tómale una foto el mismo día.</li>
+        <li><strong>La póliza de garantía</strong>, con el sello de la tienda y la fecha. Si no te la dieron, pídela al recibir el producto.</li>
+        <li><strong>La factura</strong>, si la pediste: el PDF y el XML.</li>
+        <li><strong>La prueba de entrega</strong>, si te lo mandaron: la guía del envío o la nota firmada con la fecha. La garantía cuenta desde ahí.</li>
+        <li><strong>El número de serie o el modelo</strong>: viene en una etiqueta del producto o en la caja.</li>
+        <li><strong>El estado de cuenta</strong> o el comprobante de transferencia con el cargo.</li>
+        <li><strong>La publicidad de la oferta</strong> (una captura de pantalla) y los correos con la tienda.</li>
+      </ul>
+      <p>
+        Si perdiste el ticket, no todo está perdido: para presentar una queja, Profeco acepta cualquiera de estos documentos,
+        según el mismo comunicado: el contrato o un formato del proveedor, los comprobantes bancarios (estados de cuenta,
+        transferencias), tickets, facturas o recibos, la publicidad del proveedor y los correos intercambiados con él.
+      </p>
+    </section>
+
+    <section aria-labelledby="devolucion">
+      <h2 id="devolucion" class="titular guia__titulo">Devolver algo no es un derecho general</h2>
+      <p>
+        Devolver algo porque no te gustó, no te quedó o cambiaste de opinión depende de la <strong>política de cada tienda</strong>.
+        Hay tiendas que dan 30 días, otras más, otras menos y otras ninguno, y casi todas piden el ticket y el producto
+        completo. Por eso la calculadora trae 30 días de entrada, que es lo común, pero no es un plazo de ley: cámbialo por el
+        que diga tu ticket o la política de la tienda, y léela antes de pagar.
+      </p>
+      <p>La ley sí da derecho a la reposición o a la devolución del dinero en casos concretos. El artículo 92 dice:</p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          ARTÍCULO 92.- Los consumidores tendrán derecho, a su elección, a la reposición del producto o a la devolución de la
+          cantidad pagada, contra la entrega del producto adquirido, y en todo caso, a una bonificación, en los siguientes
+          casos:
+        </p>
+      </blockquote>
+      <p>Entre esos casos están, tal cual:</p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          II. Si el bien no corresponde a la calidad, marca, o especificaciones y demás elementos sustanciales bajo los cuales
+          se haya ofrecido o no cumple con las normas oficiales mexicanas;
+        </p>
+        <p>III. Si el bien reparado no queda en estado adecuado para su uso o destino, dentro del plazo de garantía, y</p>
+      </blockquote>
+      <p>Y si te devuelven el dinero, el mismo artículo dice cómo:</p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          Cuando aplique la devolución de la cantidad pagada, ésta se efectuará utilizando la misma forma de pago con la que se
+          realizó la compra, pudiendo hacerse por una forma de pago distinta si el consumidor lo acepta al momento en que se
+          efectúe la devolución.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">Fuente: artículo 92 de la <a class="enlace" href={LFPC} rel="noopener">LFPC</a>.</p>
+      <p>
+        Hay otro caso: las ventas «fuera del establecimiento mercantil», que el artículo 51 define como «la que se proponga o
+        lleve a cabo fuera del local o establecimiento del proveedor». Para esas, el artículo 56 da cinco días hábiles para
+        arrepentirte:
+      </p>
+      <blockquote class="cita" cite={LFPC}>
+        <p>
+          ARTÍCULO 56.- El contrato se perfeccionará a los cinco días hábiles contados a partir de la entrega del bien o de la
+          firma del contrato, lo último que suceda. Durante ese lapso, el consumidor tendrá el derecho de revocar su
+          consentimiento sin responsabilidad alguna.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">
+        Fuente: artículos 51 y 56 de la <a class="enlace" href={LFPC} rel="noopener">LFPC</a>. El mismo artículo dice que, en
+        ese caso, el flete y el seguro de la devolución corren por tu cuenta. Si no sabes si tu compra entra aquí, pregúntale a
+        Profeco.
+      </p>
+    </section>
+
+    <section aria-labelledby="buen-fin">
+      <h2 id="buen-fin" class="titular guia__titulo">Qué hacer en El Buen Fin 2026</h2>
+      <p>
+        El Buen Fin 2026 es del viernes 13 al martes 17 de noviembre, según su <a class="enlace" href={BUEN_FIN} rel="noopener">sitio
+        oficial</a>. Profeco participa en la campaña y para la edición de 2025 recomendó, en su
+        <a class="enlace" href={PROFECO_BUEN_FIN} rel="noopener">comunicado del 9 de noviembre</a>:
+      </p>
+      <ul class="guia__lista">
+        <li>
+          Comparar precios. Profeco publica los de miles de productos en el
+          <a class="enlace" href={QQP_BUEN_FIN} rel="noopener">Quién es Quién en los Precios del Buen Fin</a>.
+        </li>
+        <li>
+          Si compras en línea, revisar si la tienda cumple la ley en el
+          <a class="enlace" href={TIENDAS_VIRTUALES} rel="noopener">Monitoreo de Tiendas Virtuales</a>.
+        </li>
+        <li>Revisar los meses sin intereses y los descuentos que dependen de la tarjeta o de la forma de pago.</li>
+        <li>
+          Revisar las garantías y las políticas de cambio: Profeco pide que «consulten los términos y condiciones de las
+          garantías» y «revisar las políticas de cambio o devolución».
+        </li>
+        <li>Guardar los comprobantes de pago: los vas a necesitar para cualquier aclaración, cambio o devolución.</li>
+      </ul>
+      <p>
+        Y en su <a class="enlace" href={PROFECO_OFERTA} rel="noopener">comunicado del 8 de noviembre de 2025</a>: «como persona
+        consumidora es importante solicitar el desglose de las ofertas o promociones en el ticket, factura o comprobante de
+        pago».
+      </p>
+      <p>
+        Haz la cuenta antes de que se te pase: si compras el viernes 13 de noviembre y la tienda da 30 días para devolver, el
+        último día es el {buenFinDevolver}. Si te lo entregan después, pregunta desde cuándo cuenta la tienda su plazo; la
+        garantía, por ley, cuenta desde la entrega.
+      </p>
+    </section>
+
+    <section aria-labelledby="reclamar">
+      <h2 id="reclamar" class="titular guia__titulo">Cómo reclamar una garantía</h2>
+      <ol class="guia__pasos">
+        <li>
+          <strong>Lee la póliza.</strong> Dice qué cubre, hasta cuándo y dónde se hace válida: en la tienda donde compraste o en
+          los centros de servicio que señale.
+        </li>
+        <li>
+          <strong>Ve a la tienda o al centro de servicio</strong> con el producto, el ticket o la factura, la póliza y el número
+          de serie. Explica la falla y pide un comprobante de que lo recibieron, con la fecha (una orden de servicio).
+        </li>
+        <li>
+          <strong>Reclama dentro del plazo.</strong> Si después vas a Profeco, el artículo 84 te pide demostrarlo: «Cuando el
+          consumidor acuda a la Procuraduría para hacer valer sus derechos fuera del plazo establecido por la garantía, deberá
+          acreditar que compareció ante el proveedor dentro del dicho plazo».
+        </li>
+        <li>
+          <strong>Mientras lo reparan, el plazo se detiene</strong> (artículo 83). Si al repararlo no queda bien dentro de la
+          garantía, puedes pedir la reposición o la devolución del dinero (artículo 92, fracción III), y si escoges la
+          reposición, el producto debe ser nuevo.
+        </li>
+        <li>
+          <strong>Si no te resuelven, presenta una queja en Profeco.</strong> Es en línea en
+          <a class="enlace" href={CONCILIANET} rel="noopener">Concilianet</a> si el proveedor está en su
+          <a class="enlace" href={CONCILIANET_PROVEEDORES} rel="noopener">lista de proveedores que concilian</a>; si no, en
+          persona en una <a class="enlace" href={ODECO} rel="noopener">Oficina de Defensa del Consumidor</a>.
+        </li>
+      </ol>
+      <p>
+        Profeco explica los requisitos en <a class="enlace" href={PROFECO_QUEJA} rel="noopener">Cómo presentar mi queja como
+        persona consumidora</a>: su formato de solicitud, un documento que acredite tu relación con el proveedor (el ticket,
+        la factura, el estado de cuenta) y, si vas en persona, una identificación oficial. Si la queja procede, un conciliador
+        busca un acuerdo con el proveedor, que puede ser la devolución del dinero o una bonificación. La misma página aclara
+        que en la conciliación «Profeco no tiene poder legal para obligar al proveedor a cumplir con todo lo reclamado»; para
+        eso ofrece otras vías, como el arbitraje.
+      </p>
+      <p>
+        No lo dejes para después. El artículo 14 de la ley dice: «El plazo de prescripción de los derechos y obligaciones
+        establecidos en la presente ley será de un año, salvo otros términos previstos por esta ley».
+      </p>
+    </section>
+
+    <section class="puente" aria-labelledby="tiliches-heading">
+      <h2 id="tiliches-heading" class="titular puente__titulo">El ticket y la garantía de cada compra, en un solo lugar</h2>
+      <p class="puente__texto">
+        <strong>Tiliches</strong> es una app para Android que guarda lo que compras con la foto del ticket, la garantía y el
+        número de serie. Te avisa 30 y 7 días antes de que venza una garantía, y 3 días antes del último día para devolver
+        algo. Cuando algo falla, arma la nota para reclamar con la fecha de compra, la tienda, el precio, la serie y hasta
+        cuándo cubre la garantía, más la lista de qué llevar.
+      </p>
+      <p class="puente__texto">
+        Tiliches no habla con la tienda ni puede saber si te aceptarán el reclamo: eso depende de cada tienda y fabricante.
+        Los plazos los anotas tú, como en esta calculadora. Sin cuenta, sin anuncios y sin analítica: todo se queda en tu
+        teléfono. Tiliches Pro es un solo pago.
+      </p>
+      {
+        TILICHES_EN_PLAY ? (
+          <a
+            class="puente__boton"
+            href={tilichesPlay("garantia")}
+            rel="noopener"
+            data-umami-event="play-tiliches"
+            data-umami-event-pagina="garantia"
+          >
+            Bájala en Google Play
+          </a>
+        ) : (
+          <p class="puente__estado">Muy pronto en Google Play.</p>
+        )
+      }
+      <a class="enlace puente__mas" href="/tiliches/">Qué hace Tiliches</a>
+    </section>
+  </div>
+</ToolLayout>
+
+<script>
+  import { SELLOS, calcular, cuantoQueda, fechaLarga, leerEntero, leerFecha, sello, type Plazo } from "@/lib/garantia";
+
+  const nMeses = (n: number) => `${n} ${n === 1 ? "mes" : "meses"}`;
+  const nDias = (n: number) => `${n} ${n === 1 ? "día" : "días"}`;
+
+  /** Hoy según el reloj del dispositivo, en su huso. */
+  const hoyLocal = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+
+  function iniciar() {
+    const raiz = document.querySelector<HTMLElement>("[data-garantia]");
+    const form = raiz?.querySelector<HTMLFormElement>("[data-gt-form]");
+    if (!raiz || !form) return;
+    const salida = (k: string) => raiz.querySelector<HTMLElement>(`[data-salida="${k}"]`)!;
+    const campo = (name: string) => form.querySelector<HTMLInputElement>(`[name="${name}"]`)!;
+    const error = (k: string) => raiz.querySelector<HTMLElement>(`[data-error="${k}"]`)!;
+    const otro = raiz.querySelector<HTMLElement>("[data-otro]")!;
+    let contado = false;
+
+    const pintar = (clave: "garantia" | "devolucion", p: Plazo | null, aviso: number, titulo: string, nota: string, meses = 0) => {
+      const tarjeta = raiz.querySelector<HTMLElement>(`[data-plazo="${clave}"]`)!;
+      salida(`${clave}-titulo`).textContent = titulo;
+      salida(`${clave}-nota`).textContent = nota;
+      tarjeta.hidden = false;
+      if (!p) {
+        tarjeta.dataset.sello = "sin";
+        salida(`${clave}-sello`).textContent = "No aplica";
+        salida(`${clave}-fecha`).textContent = clave === "garantia" ? "Sin garantía escrita" : "Sin plazo para devolver";
+        salida(`${clave}-queda`).textContent = "";
+        return;
+      }
+      const s = sello(p, aviso);
+      tarjeta.dataset.sello = s;
+      salida(`${clave}-sello`).textContent = SELLOS[s];
+      salida(`${clave}-fecha`).textContent = `${p.vencido ? "Último día:" : "Hasta el"} ${fechaLarga(p.fin)}`;
+      salida(`${clave}-queda`).textContent = cuantoQueda(p, meses);
+    };
+
+    const recalcular = () => {
+      const eleccion = form.querySelector<HTMLInputElement>('[name="meses"]:checked')?.value ?? "12";
+      otro.hidden = eleccion !== "otro";
+      const meses = eleccion === "otro" ? leerEntero(campo("meses-otro").value) : Number(eleccion);
+      const hoy = hoyLocal();
+      const entrada = { compra: campo("compra").value, meses, dias: leerEntero(campo("dias").value), hoy };
+      const r = calcular(entrada);
+      salida("hoy").textContent = fechaLarga(leerFecha(hoy)!);
+
+      // Cada campo marca su propio error, aunque haya otro antes.
+      const malos = {
+        compra: leerFecha(entrada.compra) === null,
+        meses: calcular({ ...entrada, compra: "2000-01-01" }) === "meses",
+        dias: calcular({ ...entrada, compra: "2000-01-01", meses: 0 }) === "dias",
+      };
+      for (const [k, malo] of Object.entries(malos)) {
+        error(k).hidden = !malo;
+        const input = k === "meses" ? campo("meses-otro") : campo(k);
+        input.toggleAttribute("aria-invalid", malo);
+      }
+
+      const sinFecha = salida("sin-fecha");
+      const minimo = salida("minimo");
+      if (typeof r === "string") {
+        // Con un campo mal escrito no se muestra un resultado a medias.
+        for (const t of raiz.querySelectorAll<HTMLElement>("[data-plazo]")) t.hidden = true;
+        minimo.hidden = true;
+        sinFecha.hidden = false;
+        sinFecha.textContent =
+          r === "compra" ? "Escribe la fecha de compra o de entrega para ver los plazos." : "Revisa el campo marcado para ver los plazos.";
+        return;
+      }
+      sinFecha.hidden = true;
+      pintar(
+        "devolucion",
+        r.devolucion,
+        7,
+        "Para devolver",
+        r.dias > 0 ? `${nDias(r.dias)}, según la política de la tienda.` : "La tienda no acepta devoluciones, o no lo anotaste.",
+      );
+      pintar(
+        "garantia",
+        r.garantia,
+        30,
+        r.meses > 0 ? `Garantía de ${nMeses(r.meses)}` : "Garantía",
+        r.meses > 0 ? "Ese día incluido." : "Revisa si el producto trae póliza: ahí dice cuánto dura.",
+        r.mesesQuedan,
+      );
+      const fin90 = fechaLarga(r.minimoLegal.fin);
+      if (r.menorAlMinimo || !r.garantia) {
+        minimo.hidden = false;
+        minimo.textContent = r.garantia
+          ? `Ojo: si te la ofrecieron como garantía, la ley pide que dure al menos 90 días desde la entrega, es decir, hasta el ${fin90}.`
+          : `Si te ofrecieron garantía, la ley pide que dure al menos 90 días desde la entrega: hasta el ${fin90}.`;
+      } else minimo.hidden = true;
+    };
+
+    const contar = () => {
+      // Una visita que usa la calculadora cuenta una vez; no viaja nada de lo que se escribe.
+      if (contado) return;
+      contado = true;
+      (window as { umami?: { track: (e: string) => void } }).umami?.track("garantia-calcula");
+    };
+
+    form.addEventListener("input", () => {
+      recalcular();
+      contar();
+    });
+    form.addEventListener("change", recalcular);
+    form.addEventListener("submit", (e) => e.preventDefault());
+    // La página sale con la fecha del despliegue: aquí se pone la de hoy (y lo que el navegador haya restaurado).
+    recalcular();
+  }
+
+  // Con ClientRouter los scripts del bundle corren una vez: astro:page-load corre en cada visita.
+  document.addEventListener("astro:page-load", iniciar);
+</script>
+
+<style>
+  .gt {
+    display: grid;
+    grid-template-areas: "resultado" "form" "nota";
+    gap: 1.25rem;
+  }
+  .gt-resultado {
+    grid-area: resultado;
+  }
+  .gt-form {
+    grid-area: form;
+  }
+  .gt-nota {
+    grid-area: nota;
+  }
+  /* En pantalla ancha, el formulario a la izquierda y los plazos a la derecha. */
+  @media (min-width: 800px) {
+    .gt {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      grid-template-areas: "form resultado" "nota nota";
+      column-gap: 1.75rem;
+    }
+    .gt-resultado {
+      align-self: start;
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+  }
+
+  .gt-form {
+    display: grid;
+    gap: 1.125rem;
+  }
+
+  .gt-campo {
+    display: grid;
+    gap: 0.375rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .gt-etiqueta {
+    padding: 0;
+    font-weight: 700;
+  }
+  .gt-etiqueta--chica {
+    font-size: 0.875rem;
+  }
+
+  .gt-campo :is(input:not([type="radio"])) {
+    font-size: 1rem;
+  }
+  .gt-fecha {
+    max-width: 16rem;
+  }
+  .gt-numero {
+    max-width: 8rem;
+  }
+
+  .gt-ayuda,
+  .gt-error {
+    max-width: 60ch;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .gt-ayuda {
+    color: var(--gris);
+  }
+  .gt-error {
+    color: var(--destructive);
+    font-weight: 600;
+  }
+  .gt-error[hidden],
+  .gt-otro[hidden],
+  .gt-aviso[hidden],
+  .gt-plazo[hidden] {
+    display: none;
+  }
+
+  .gt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+  .gt-chip {
+    position: relative;
+    cursor: pointer;
+  }
+  .gt-chip input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .gt-chip span {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.75rem;
+    min-height: 44px;
+    padding: 0 0.625rem;
+    border: 2px solid var(--tinta);
+    border-radius: 0.875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color 0.2s var(--ease-soft),
+      color 0.2s var(--ease-soft);
+  }
+  .gt-chip input:checked + span {
+    background: var(--tinta);
+    color: var(--crema);
+  }
+  .gt-chip input:focus-visible + span {
+    outline: 3px solid var(--acento);
+    outline-offset: 2px;
+  }
+
+  .gt-otro {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+  }
+
+  .gt-resultado {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .gt-plazo {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 1rem 1.25rem 1.125rem;
+    border-radius: 1rem;
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+  }
+  .gt-plazo[data-plazo="devolucion"] {
+    background: var(--pieza);
+    color: var(--tinta-fija);
+  }
+  .gt-plazo p {
+    margin: 0;
+  }
+
+  .gt-plazo__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .gt-plazo__titulo {
+    margin: 0;
+    font-size: var(--t-s);
+    font-weight: 700;
+  }
+
+  /* El sello, como en la app: un recuadro de tinta con el estado. */
+  .gt-sello {
+    padding: 0.125rem 0.5rem;
+    border: 2px solid currentColor;
+    border-radius: 0.375rem;
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .gt-plazo[data-sello="vencido"] .gt-sello,
+  .gt-plazo[data-sello="hoy"] .gt-sello {
+    background: var(--coral);
+    color: var(--tinta-fija);
+    border-color: var(--coral);
+  }
+
+  .gt-plazo__fecha {
+    font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+    font-weight: 800;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  .gt-plazo__queda {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .gt-plazo__queda:empty {
+    display: none;
+  }
+  .gt-plazo[data-sello="vencido"] .gt-plazo__queda {
+    font-weight: 800;
+  }
+  .gt-plazo__nota {
+    font-size: 0.875rem;
+    opacity: 0.85;
+  }
+
+  .gt-aviso {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 0.875rem 1.125rem;
+    border: 2px solid var(--tinta);
+    border-radius: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  .gt-aviso--error {
+    border-color: var(--destructive);
+  }
+
+  .gt-nota {
+    max-width: 66ch;
+    margin: 0;
+    color: var(--gris);
+    font-size: var(--t-s);
+    line-height: 1.5;
+  }
+
+  /* ---------- La guía ---------- */
+
+  .guia {
+    display: grid;
+    gap: clamp(2.25rem, 5vw, 3.25rem);
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .guia p,
+  .guia li {
+    max-width: 66ch;
+    line-height: 1.55;
+  }
+
+  .guia > section > p {
+    margin: 0 0 0.75rem;
+  }
+
+  .guia__indice {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+  .guia__indice p {
+    margin: 0;
+  }
+  .guia__indice ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .guia__indice a {
+    display: inline-block;
+    padding-block: 0.6rem;
+    font-weight: 700;
+  }
+
+  .guia__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+    scroll-margin-top: 1rem;
+  }
+
+  .guia__sub {
+    margin: 1.75rem 0 0.6rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .guia__pasos,
+  .guia__lista {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0 0 0.75rem;
+    padding-left: 1.4rem;
+    list-style: decimal;
+  }
+  .guia__lista {
+    list-style: disc;
+  }
+
+  .cita {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0 0 0.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--crema-honda);
+    border-left: 4px solid var(--tinta);
+    border-radius: 0 1rem 1rem 0;
+  }
+  .cita p {
+    margin: 0;
+  }
+
+  .guia .cita__fuente {
+    margin-bottom: 1.25rem;
+    color: var(--gris);
+    font-size: var(--t-s);
+  }
+
+  .guia .guia__aviso {
+    margin: 1.25rem 0 0;
+    padding: 0.875rem 1.125rem;
+    border: 2px solid var(--tinta);
+    border-radius: 1rem;
+    font-size: var(--t-s);
+  }
+
+  /* El puente a la app: un bloque oscuro, como el de las apps del inicio. */
+  .puente {
+    display: grid;
+    gap: 0.875rem;
+    justify-items: start;
+    padding: clamp(1.125rem, 2.5vw, 1.75rem);
+    background: var(--bloque-oscuro);
+    color: var(--crema-fija);
+    border-radius: var(--radio-pieza);
+  }
+
+  .puente__titulo {
+    margin: 0;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1.05;
+  }
+
+  .guia .puente__texto {
+    margin: 0;
+  }
+
+  .puente__estado {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .puente__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    background: var(--pieza);
+    color: var(--tinta-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+  }
+
+  .puente__mas {
+    font-weight: 700;
+  }
+  @media (hover: hover) {
+    .puente__mas:hover {
+      color: var(--tinta-fija);
+    }
+  }
+</style>

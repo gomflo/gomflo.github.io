@@ -253,6 +253,25 @@
   transition: stroke-dashoffset 0.35s var(--ease-out);
 }
 
+/* ---------- Garantía: el ticket se ladea y el sello se marca con una palomita ---------- */
+.motif[data-motif="garantia"] .m-gar-ticket {
+  transform-box: view-box;
+  transform-origin: 24px 8px;
+  transition: transform 0.45s var(--ease-spring);
+}
+.motif[data-motif="garantia"] .m-gar-sello {
+  transform-box: view-box;
+  transform-origin: 46px 44px;
+  transition:
+    transform 0.4s var(--ease-spring),
+    stroke 0.25s var(--ease-out);
+}
+.motif[data-motif="garantia"] .m-gar-palomita {
+  stroke-dasharray: 17;
+  stroke-dashoffset: 17;
+  transition: stroke-dashoffset 0.35s var(--ease-out) 0.1s;
+}
+
 /* ---------- Días hábiles: se encienden los cinco días de la semana ---------- */
 .motif[data-motif="dias-habiles"] .m-wk-on {
   fill: transparent;
@@ -410,6 +429,11 @@
   & .m-sus-vuelta { transform: rotate(-30deg); }
   & .m-sus-moneda { stroke: var(--acento-dibujo, var(--acento)); }
   & .m-sus-tache { stroke-dashoffset: 0; stroke: var(--acento-dibujo, var(--acento)); }
+
+  /* garantia */
+  & .m-gar-ticket { transform: rotate(-6deg); }
+  & .m-gar-sello { transform: scale(1.12); stroke: var(--acento-dibujo, var(--acento)); }
+  & .m-gar-palomita { stroke-dashoffset: 0; stroke: var(--acento-dibujo, var(--acento)); }
 
   /* dias-habiles */
   & .m-wk-on { fill: var(--acento-dibujo, var(--acento)); animation: motif-hop 0.35s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }

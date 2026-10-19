@@ -66,6 +66,12 @@ const SALIDAS: Record<string, Salida> = {
   "calculadora-iva": (t) => `$${largo(t)}.00 + IVA = $${(largo(t) * 1.16).toFixed(2)}`,
   "calculadora-aguinaldo": (t) => `$${largo(t) * 25}/día × 15 días = $${(largo(t) * 375).toLocaleString("es-MX")}`,
   "cancelar-suscripcion": (t) => `$${largo(t) * 10}/mes = $${(largo(t) * 120).toLocaleString("es-MX")} al año`,
+  garantia: () => {
+    const hoy = new Date();
+    const fin = new Date(hoy.getFullYear() + 1, hoy.getMonth(), hoy.getDate());
+    if (fin.getDate() !== hoy.getDate()) fin.setDate(0); // 29 de febrero + 1 año: el 28
+    return `comprado hoy: garantía hasta el ${fin.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}`;
+  },
   "dias-habiles": () => {
     const d = new Date().getDay();
     return `hoy es ${DIAS[d]}: ${d === 0 || d === 6 ? "fin de semana" : "entre semana"}`;
