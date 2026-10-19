@@ -58,7 +58,7 @@ public/                  # Static assets (favicon, fonts/ propias en woff2, robo
 - Cada página de herramienta usa `ToolLayout.astro` con `slug`, `metaTitle` (≤ 60 caracteres), `description` (140–160), `heading`, `lead`, `sectionLabel` y `faq` (3 preguntas) y envuelve un componente React con `client:load`
 - `faq` acepta `fuentes` (enlaces debajo de la respuesta); el slot `despues` pone contenido entre el panel y las preguntas; `avisos={false}` quita el Toaster de Sonner para que una herramienta sin React no cargue React
 - `ToolLayout` genera JSON-LD (WebApplication, BreadcrumbList, FAQPage) y agrega `og:image` solo si existe `public/img/<slug>.jpeg`
-- Imágenes para compartir (1200×630): `npm run build && npm run og` las genera desde `dist/` con Chrome sin interfaz (`scripts/og-images.mjs`), también para herramientas un nivel abajo (`/guardadito/calculadora-aguinaldo/` → `public/img/calculadora-aguinaldo.jpeg`). Córrelo al agregar páginas y cada enero (días feriados lleva el año)
+- Imágenes para compartir (1200×630): `npm run build && npm run og` las genera desde `dist/` con Chrome sin interfaz (`scripts/og-images.mjs`), también para herramientas un nivel abajo (`/guardadito/calculadora-aguinaldo/` → `public/img/calculadora-aguinaldo.jpeg`). Córrelo al agregar páginas y cada enero (días feriados lleva el año). Con slugs genera solo esas (`npm run og -- garantia`; el inicio solo si pides `inicio`)
 - `trailingSlash: 'always'`: GitHub Pages redirige `/ruta` a `/ruta/` con 301, así que todos los enlaces internos llevan barra final
 - Páginas satélite (`variants` en `tools.ts`): reutilizan una herramienta para otra búsqueda (`/contador-de-palabras/`, `/dias-feriados/`). Usan `ToolLayout` con `variant`, no cuentan para el panel del inicio y se enlazan desde la herramienta madre
 - El inicio (`index.astro`) arma la portada (título y mesa de pruebas), la caja de piezas con buscador a partir de `src/lib/tools.ts` y las apps; publica WebSite + ItemList
@@ -143,6 +143,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/guardadito/calculadora-aguinaldo` | Astro + script (sin React) | mexico |
 | `/garabato/que-dibujar` | Astro + script (sin React) | generadores |
 | `/canica/cancelar-suscripcion` | Astro + script (sin React) | mexico |
+| `/tiliches/garantia` | Astro + script (sin React) | mexico |
 | `/dias-habiles` | BusinessDays | mexico |
 | `/numeros-romanos` | RomanNumerals | conversores |
 | `/codigo-morse` | MorseCode | conversores |
@@ -157,6 +158,7 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/garabato` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 | `/pastillero` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 | `/canica` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
+| `/tiliches` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 
 ### Apps para Android (`/android/`)
 - "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
@@ -189,6 +191,14 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - Reglas de Canica: no cancela nada, no ve los cobros del banco ni el correo y no hace cumplir la ley; no lo digas. Avisa antes de cada cobro (el mismo día, uno o tres días antes) y dos días antes de que termine una prueba gratis
 - `CANICA_EN_PLAY` (`src/lib/canica.ts`) está en `false` mientras la app esté en revisión: las dos páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones con `canicaPlay` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=canica|cancelar-suscripcion`) y `data-umami-event="play-canica"` + `data-umami-event-pagina`, el `installUrl` del JSON-LD de `/canica/` y el botón de `/android/`
 - Umami: `suscripciones-calcula`, una vez por visita, sin nada de lo que se escribe
+
+### Tiliches y la calculadora de garantía (`/tiliches/`)
+- `/tiliches/` es la página corta de la app de tickets y garantías para Android (`~/code/tiliches`): solo dice lo que dice su ficha (`docs/TIENDA.md` y `PRODUCT.md` de la app; palabras de búsqueda en `~/code/ventas-pro/aso/tiliches.md`). Usa `Layout.astro`. **Sin capturas**: las de la ficha (y su gráfico) traen nombres de tiendas y marcas como datos de ejemplo, y estas páginas no nombran ninguna; si la app saca capturas sin marcas, agrégalas como en `/canica/` (con su copia de 270 px). Icono en `public/img/android/tiliches/` (`icono-192.webp` para la cabeza). La imagen para compartir `public/img/tiliches.jpeg` es la parte izquierda del gráfico de la ficha (`docs/tienda/grafico-1024x500-es.png`: icono, nombre y lema, sin la etiqueta con marcas) a 630 px de alto sobre su fondo `rgb(43,74,66)`; `npm run og` no la genera. El aviso de privacidad sigue en `public/tiliches/privacidad/`
+- `/tiliches/garantia/` es una herramienta de la caja (categoría `mexico`, `href` fuera de la raíz en `tools.ts`) con `ToolLayout`, `avisos={false}` y `tituloLargo`. Sin React: el HTML sale calculado con un ejemplo (una compra de hace 12 días, con la fecha del despliegue en la Ciudad de México; el despliegue de cada 3 horas la mantiene al día) y un `<script>` (en `astro:page-load`) recalcula al cargar y al teclear con la fecha del dispositivo. No guarda nada (ni servidor ni `localStorage`), y la página lo dice. Resultados arriba en el teléfono y a la derecha en pantalla ancha. Lógica en `src/lib/garantia.ts` con pruebas en `garantia.test.ts`: fechas ISO contadas como días UTC; garantía en meses de calendario (31 de enero + 1 mes = 28 o 29 de febrero, como la app), devolución en días naturales, mínimo legal de 90 días desde la entrega (art. 77 LFPC)
+- La guía cita tal cual el texto vigente de la LFPC en diputados.gob.mx (arts. 77, 78, 79, 83, 84, 92, 51, 56 y 14; última reforma DOF 12-12-2025), la Revista del Consumidor de noviembre de 2025 (p. 19, «no podrá ser inferior a 90 días contados a partir de la entrega») y comunicados de Profeco en gob.mx (tickets, 27-09-2025; Buen Fin, 8 y 9-11-2025; «Cómo presentar mi queja»). gob.mx pone un reto anti-robots: léelas con un navegador. Si cambian, manda la fuente. Dice una sola vez que no es asesoría legal. **Los 30 días para devolver no son ley**: devolver depende de la política de la tienda, salvo los casos del art. 92 y las ventas fuera del establecimiento (art. 56). El Buen Fin 2026 es del 13 al 17 de noviembre (elbuenfin.org); cada año cambia la fecha en la sección y en `buenFin` del frontmatter, y las recomendaciones de Profeco cuando publique las del año
+- Reglas de Tiliches: no habla con la tienda ni promete que acepte un reclamo; sus plazos sugeridos (12 meses, 30 días) no son ley. Avisa 30 y 7 días antes de la garantía y 3 antes del último día para devolver. Sin tiendas ni marcas en el texto
+- `TILICHES_EN_PLAY` (`src/lib/tiliches.ts`) está en `false` mientras la app esté en revisión: las dos páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones con `tilichesPlay` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=tiliches|garantia`) y `data-umami-event="play-tiliches"` + `data-umami-event-pagina`, el `installUrl` del JSON-LD de `/tiliches/` y el botón de `/android/`
+- Umami: `garantia-calcula`, una vez por visita, sin nada de lo que se escribe
 
 ### Pastillero en la web (`/pastillero/`)
 - Página corta del recordatorio de medicinas para Android (`~/code/pastillero`, en Google Play desde octubre de 2026): solo dice lo que dice su ficha (`docs/TIENDA.md` y `PRODUCT.md` de la app; palabras de búsqueda en `~/code/ventas-pro/aso/pastillero.md`). Usa `Layout.astro`. El aviso de privacidad sigue en `public/pastillero/privacidad/` (estático, enlazado con `data-astro-reload`)
