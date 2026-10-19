@@ -1,0 +1,358 @@
+---
+/**
+ * Coperacha, la app para dividir la cuenta entre amigos para Android (~/code/coperacha). Página corta con lo
+ * que dice su ficha de Google Play (docs/TIENDA.md y PRODUCT.md de la app; palabras de búsqueda en
+ * ~/code/ventas-pro/aso/coperacha.md), sin prometer más: la app anota y divide, no cobra ni mueve dinero.
+ * No se nombran otras apps para dividir cuentas. Usa la identidad del sitio (Layout.astro).
+ * Sin capturas: las de la ficha (y la parte derecha de su gráfico) traen nombres de restaurantes y marcas
+ * como datos de ejemplo. El aviso de privacidad sigue en public/coperacha/privacidad/.
+ */
+import Layout from "../../layouts/Layout.astro";
+import { COPERACHA_PLAY, coperachaPlay } from "@/lib/coperacha";
+
+const title = "Coperacha: divide la cuenta y la propina | gomflo.dev";
+const description =
+  "Coperacha es una app para Android para dividir la cuenta: foto al ticket, tocas quién pidió qué, pones la propina y cada quien ve cuánto le toca. Sin anuncios.";
+
+const play = coperachaPlay("coperacha");
+
+const ticket = [
+  "Lee el ticket en tu teléfono, sin internet: cantidades, precios con punto o con coma, subtotal, IVA, total, propina y descuentos.",
+  "Ignora el RFC, el folio y el «gracias por su visita».",
+  "Te avisa si la suma no cuadra con el total del ticket, para que revises antes de cobrar.",
+  "Si prefieres, captura a mano: escribe «2 tacos», el importe y listo. Sin límite.",
+];
+
+const justo = [
+  {
+    t: "Cada quien lo suyo",
+    d: "Toca la ficha de color de cada persona sobre lo que pidió. Un platillo de varios se parte en partes iguales, y «Todos» lo pone entre todos.",
+  },
+  {
+    t: "Calculadora de propinas",
+    d: "Propina de 0, 10, 15 o 20 %, o la que quieras, repartida en proporción a lo que consumió cada quien. También descuento, cargo por servicio e IVA aparte.",
+  },
+  {
+    t: "Redondeo sin pleitos",
+    d: "Si redondean a pesos, no se pierde ni sobra un centavo: la suma de lo que paga cada quien es el total de la cuenta.",
+  },
+  {
+    t: "Quién pagó",
+    d: "Anota quién pagó la cuenta y quién ya le pasó su parte, para que nadie se quede esperando.",
+  },
+];
+
+const faq = [
+  {
+    q: "¿Coperacha es gratis?",
+    a: "Sí. Dividir cualquier cuenta completa es gratis y sin anuncios: las fichas, la propina, el descuento, el redondeo, los talones y el resumen para el grupo. Sin Pro tienes 3 fotos de ticket al mes y la captura a mano siempre es ilimitada. Coperacha Pro es un solo pago, sin suscripción.",
+  },
+  {
+    q: "¿Necesita internet para leer el ticket?",
+    a: "No. El ticket se lee en tu teléfono y la app no pide permiso de internet. Tus cuentas, fotos y nombres se quedan ahí.",
+  },
+  {
+    q: "¿Coperacha cobra o manda el dinero?",
+    a: "No. Coperacha anota y divide la cuenta: dice cuánto le toca a cada quien y quién le pasa cuánto a quién. El dinero lo pasan ustedes como siempre, y «ya le pasó su parte» lo marca cada quien.",
+  },
+];
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const jsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "Coperacha",
+    description,
+    operatingSystem: "Android",
+    applicationCategory: "FinanceApplication",
+    inLanguage: "es-MX",
+    url: canonicalURL,
+    image: new URL("/img/android/coperacha/icono.png", site).href,
+    installUrl: COPERACHA_PLAY,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+      { "@type": "ListItem", position: 2, name: "Coperacha", item: canonicalURL },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+]).replace(/</g, "\\u003c");
+---
+
+<Layout
+  title={title}
+  description={description}
+  image="/img/coperacha.jpeg"
+  imageAlt="Coperacha: foto al ticket, fichas a cada platillo y cada quien sabe cuánto le toca."
+>
+  <main id="main-content" class="app contenedor" tabindex="-1">
+    <header class="pieza app__cabeza">
+      <img class="app__icono" src="/img/android/coperacha/icono-192.webp" width="96" height="96" alt="" />
+      <div>
+        <p class="etiqueta app__tipo">App para Android</p>
+        <h1 class="titular app__titulo">Coperacha: divide la cuenta entre amigos</h1>
+        <p class="app__entrada">
+          Tómale foto al ticket y los renglones salen solos. Toca quién pidió qué, pon la propina y cada quien ve
+          exactamente cuánto le toca. Sin pleitos, sin calculadora y sin anuncios.
+        </p>
+        <a class="app__play" href={play} rel="noopener" data-umami-event="play-coperacha" data-umami-event-pagina="coperacha">
+          Bájala en Google Play
+        </a>
+      </div>
+    </header>
+
+    <section class="bloque" aria-labelledby="mesa-heading">
+      <h2 id="mesa-heading" class="titular bloque__titulo">Del ticket a «cada quien paga», en la mesa</h2>
+      <p class="bloque__texto">
+        La cuenta del restaurante, de la fonda o de la tienda, dividida entre amigos. Tómale foto al ticket, toca la ficha
+        de color de cada persona sobre lo que pidió y pon la propina. Cada quien ve su parte, y el resumen se manda al chat
+        del grupo en un toque.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="ticket-heading">
+      <h2 id="ticket-heading" class="titular bloque__titulo">Foto al ticket y los renglones salen solos</h2>
+      <ul class="bloque__lista">
+        {ticket.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="justo-heading">
+      <h2 id="justo-heading" class="titular bloque__titulo">Cada quien paga lo que pidió, al centavo</h2>
+      <div class="partes">
+        {justo.map((c) => (
+          <div class="parte">
+            <h3 class="titular parte__titulo">{c.t}</h3>
+            <p>{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="talones-heading">
+      <h2 id="talones-heading" class="titular bloque__titulo">Cada quien su talón</h2>
+      <p class="bloque__texto">
+        El ticket se corta en talones, uno por persona, y cada talón se puede mandar como imagen. También sale un resumen en
+        texto para el chat del grupo y la imagen del ticket completo.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="viajes-heading">
+      <h2 id="viajes-heading" class="titular bloque__titulo">Viajes: dividir gastos entre amigos</h2>
+      <p class="bloque__texto">
+        Con Coperacha Pro juntas todas las cuentas de un viaje: quién pagó cuánto, y salen a mano con el mínimo de
+        transferencias, como «Ana le pasa $320 a Beto». Un viaje de cuatro amigos con nueve cuentas, que cuenta por cuenta
+        serían 27 transferencias, se arregla con 3.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="precio-heading">
+      <h2 id="precio-heading" class="titular bloque__titulo">Gratis, y Pro con un solo pago</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3 class="titular parte__titulo">Gratis</h3>
+          <ul>
+            <li>Divide cualquier cuenta completa</li>
+            <li>3 fotos de ticket al mes</li>
+            <li>Captura a mano sin límite</li>
+            <li>Propina, descuento, servicio, redondeo y quién pagó</li>
+            <li>Talones, resumen para el grupo y respaldo</li>
+            <li>Historial de las últimas 10 cuentas</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <h3 class="titular parte__titulo">Coperacha Pro</h3>
+          <ul>
+            <li>Fotos de ticket ilimitadas</li>
+            <li>Viajes y grupos, con el mínimo de transferencias</li>
+            <li>Historial completo</li>
+            <li>Grupos de amigos guardados y exportar a CSV</li>
+            <li>Sin suscripción</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="titular bloque__titulo">Tu información es tuya</h2>
+      <p class="bloque__texto">
+        Sin cuenta, sin anuncios y sin analítica. La app no pide permiso de internet: el ticket se lee en tu teléfono y tus
+        cuentas, fotos y nombres se quedan ahí.
+        <a class="enlace" href="/coperacha/privacidad/" data-astro-reload>Aviso de privacidad</a>.
+      </p>
+      <p class="bloque__texto bloque__texto--nombre">
+        La coperacha es el dinero que se junta entre todos para pagar algo.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="titular bloque__titulo">Preguntas frecuentes</h2>
+      <div class="preguntas">
+        {faq.map((f) => (
+          <div>
+            <h3 class="titular parte__titulo">{f.q}</h3>
+            <p class="bloque__texto">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="pieza remate" aria-labelledby="remate-heading">
+      <h2 id="remate-heading" class="titular bloque__titulo">Cada quien sabe cuánto le toca</h2>
+      <p class="bloque__texto">Hecha en México, con precios en pesos y tickets mexicanos en mente.</p>
+      <a class="app__play" href={play} rel="noopener" data-umami-event="play-coperacha" data-umami-event-pagina="coperacha">
+        Bájala en Google Play
+      </a>
+    </section>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .app {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    padding-top: var(--hueco);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .app__cabeza {
+    --pieza: var(--coral);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .app__icono {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 22%;
+  }
+
+  .app__tipo {
+    margin: 0 0 0.5rem;
+  }
+
+  .app__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+
+  .app__entrada {
+    max-width: 60ch;
+    margin: 1rem 0 0;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .app__play {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.25rem;
+    padding: 0 1.25rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+    transition: scale 0.2s var(--ease-soft);
+  }
+  .app__play:active {
+    scale: 0.97;
+  }
+
+  .bloque__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .bloque__lista {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 62ch;
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .bloque__texto {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+  .bloque__texto--nombre {
+    margin-top: 0.75rem;
+    color: var(--gris);
+  }
+
+  .partes,
+  .planes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--hueco);
+    margin-top: 1.25rem;
+  }
+
+  .parte,
+  .plan {
+    padding: 1.125rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .parte__titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .parte p,
+  .plan ul {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .plan ul {
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+
+  .preguntas {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .remate {
+    --pieza: var(--coral);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  }
+  .remate .app__play {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 560px) {
+    .app__cabeza {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
