@@ -31,8 +31,13 @@ export const guias: Guia[] = [
     resumen: "Del 1 al 100 o del 1 al 500: arma la ruleta de tu rifa con boletos numerados en un toque.",
   },
   {
+    slug: "amigo-secreto",
+    nombre: "Amigo secreto",
+    resumen: "Reparte el amigo secreto en el teléfono: a nadie le toca su nombre y cada quien ve solo a quién le regala.",
+  },
+  {
     slug: "intercambio-navideno",
     nombre: "Intercambio navideño y posada",
-    resumen: "El amigo secreto en el teléfono, el orden de los regalos robados y la rifa de la posada sin repetir.",
+    resumen: "El orden de los regalos robados, quién da su regalo primero y la rifa de la posada sin repetir.",
   },
 ];
