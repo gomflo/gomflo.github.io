@@ -329,6 +329,17 @@ const { slug, class: className } = Astro.props;
     </>
   )}
 
+  {slug === "garantia" && (
+    <>
+      <g class="m-gar-ticket">
+        <path d="M10 8h28v46l-4-3-3.5 3-3.5-3-3.5 3-3.5-3-3.5 3-3.5-3-3 3z" />
+        <path d="M16 18h16M16 26h11M16 34h14" stroke-width="3" />
+      </g>
+      <circle class="m-gar-sello" cx="46" cy="44" r="10" />
+      <path class="m-gar-palomita" d="M41.5 44.5l3.2 3.2 6-7" stroke-width="3.5" />
+    </>
+  )}
+
   {slug === "dias-habiles" && (
     <>
       {[0, 1, 2, 3, 4, 5, 6].map((i) => (

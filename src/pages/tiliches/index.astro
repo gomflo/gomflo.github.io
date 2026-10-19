@@ -1,0 +1,312 @@
+---
+/**
+ * Tiliches, las garantías y los tickets de lo que compras, para Android (~/code/tiliches). Página corta
+ * con lo que dice su ficha de Google Play (docs/TIENDA.md y PRODUCT.md de la app), sin prometer más:
+ * Tiliches no habla con la tienda ni promete que acepte un reclamo, y sus plazos sugeridos (12 meses,
+ * 30 días) no son ley. Usa la identidad del sitio (Layout.astro). Sin capturas: las de la ficha traen
+ * nombres de tiendas y marcas como datos de ejemplo, y estas páginas no nombran ninguna.
+ * El botón de Play sale solo con TILICHES_EN_PLAY (src/lib/tiliches.ts).
+ * El aviso de privacidad sigue en public/tiliches/privacidad/.
+ */
+import Layout from "../../layouts/Layout.astro";
+import { TILICHES_EN_PLAY, TILICHES_PLAY, tilichesPlay } from "@/lib/tiliches";
+
+const title = "Tiliches: tickets y garantías en Android | gomflo.dev";
+const description =
+  "Tiliches es una app para Android que guarda tus tickets y garantías y te avisa antes de que venzan la garantía o el plazo para devolver. Sin cuenta ni anuncios.";
+
+const anotar = [
+  "Nombre, tienda, precio y fecha.",
+  "La garantía a un toque (3, 6, 12, 24 o 36 meses) y la garantía extendida, si la compraste.",
+  "Los días para devolver (30 de entrada, los cambias por los de la tienda).",
+  "El número de serie o modelo, la categoría y tus notas.",
+];
+
+const avisos = [
+  "30 y 7 días antes de que venza una garantía.",
+  "3 días antes del último día para devolver algo.",
+  "Un solo aviso por fecha, sin promociones.",
+];
+
+const site = Astro.site!;
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const jsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "Tiliches",
+    description,
+    operatingSystem: "Android",
+    applicationCategory: "UtilitiesApplication",
+    inLanguage: "es-MX",
+    url: canonicalURL,
+    image: new URL("/img/android/tiliches/icono.png", site).href,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
+    author: { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" },
+    ...(TILICHES_EN_PLAY ? { installUrl: TILICHES_PLAY } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", site).href },
+      { "@type": "ListItem", position: 2, name: "Tiliches", item: canonicalURL },
+    ],
+  },
+]).replace(/</g, "\\u003c");
+---
+
+<Layout title={title} description={description} image="/img/tiliches.jpeg" imageAlt="Tiliches: tus compras con su ticket y su garantía">
+  <main id="main-content" class="app contenedor" tabindex="-1">
+    <header class="pieza app__cabeza">
+      <img class="app__icono" src="/img/android/tiliches/icono-192.webp" width="96" height="96" alt="" />
+      <div>
+        <p class="etiqueta app__tipo">App para Android</p>
+        <h1 class="titular app__titulo">Tiliches: garantías y tickets</h1>
+        <p class="app__entrada">
+          Guarda lo que compras con su ticket, su garantía y su número de serie, y te avisa antes de que se venza la garantía
+          o el plazo para devolverlo. Cuando algo falla, tienes todo a la mano. Sin cuenta y sin anuncios.
+        </p>
+        {
+          TILICHES_EN_PLAY ? (
+            <a class="app__play" href={tilichesPlay("tiliches")} rel="noopener" data-umami-event="play-tiliches" data-umami-event-pagina="tiliches">
+              Bájala en Google Play
+            </a>
+          ) : (
+            <p class="app__estado">Muy pronto en Google Play.</p>
+          )
+        }
+      </div>
+    </header>
+
+    <section class="bloque" aria-labelledby="pared-heading">
+      <h2 id="pared-heading" class="titular bloque__titulo">Tus cosas, colgadas en orden</h2>
+      <p class="bloque__texto">
+        Cada compra es una etiqueta de cartón colgada en la pared, con un sello que dice en qué va: «Devolución», «En
+        garantía», «Por vencer» o «Sin garantía». Lo que vence primero va arriba. Arriba de todo ves cuánto vale lo que hoy
+        tienes en garantía.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="anotar-heading">
+      <h2 id="anotar-heading" class="titular bloque__titulo">Anotar toma un minuto</h2>
+      <ul class="bloque__lista">
+        {anotar.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="ticket-heading">
+      <h2 id="ticket-heading" class="titular bloque__titulo">El ticket, siempre</h2>
+      <p class="bloque__texto">
+        Toma la foto del producto y la del ticket con la cámara, o escógela de tu galería. Se guardan reducidas, se ven a
+        pantalla completa con zoom y no se borran aunque el papel se despinte.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="avisos-heading">
+      <h2 id="avisos-heading" class="titular bloque__titulo">Avisos a tiempo</h2>
+      <ul class="bloque__lista">
+        {avisos.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="falla-heading">
+      <h2 id="falla-heading" class="titular bloque__titulo">Cuando algo falla</h2>
+      <p class="bloque__texto">
+        «Preparar el reclamo» arma la nota con lo que te van a preguntar en el mostrador: fecha de compra, tienda, precio,
+        serie y hasta cuándo cubre la garantía, más la lista de qué llevar. Comparte la foto del ticket o la nota con un
+        toque. Las condiciones de cada garantía las pone cada tienda y fabricante: Tiliches junta lo que piden, no decide si
+        te aceptan el reclamo.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="buscar-heading">
+      <h2 id="buscar-heading" class="titular bloque__titulo">Busca y filtra</h2>
+      <p class="bloque__texto">
+        Busca sin acentos por nombre, tienda o serie. Filtra por lo que se puede devolver, lo que está por vencer, lo que
+        sigue en garantía o por categoría: electrónica, línea blanca, celulares, cómputo, muebles, herramienta, ropa y otros.
+      </p>
+    </section>
+
+    <section class="bloque" aria-labelledby="precio-heading">
+      <h2 id="precio-heading" class="titular bloque__titulo">Gratis, y Pro con un solo pago</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3 class="titular parte__titulo">Gratis</h3>
+          <ul>
+            <li>Hasta 10 tiliches</li>
+            <li>Una foto del producto y una del ticket por tilich</li>
+            <li>Los avisos, la nota para reclamar y compartir el ticket, siempre</li>
+            <li>Búsqueda y filtros</li>
+          </ul>
+        </div>
+        <div class="plan">
+          <h3 class="titular parte__titulo">Tiliches Pro</h3>
+          <ul>
+            <li>Tiliches sin límite</li>
+            <li>Varias fotos por tilich, y el manual o la factura en PDF</li>
+            <li>Expediente en PDF de cada tilich, con fotos, datos y fechas, listo para mandar a la tienda</li>
+            <li>Inventario en PDF de todo lo que tienes con su valor total, para el seguro del hogar o una mudanza</li>
+            <li>Respaldo completo en ZIP, con fotos y PDF, para cambiar de teléfono</li>
+            <li>Escoges con cuánta anticipación te avisa</li>
+            <li>Un solo pago, sin suscripción</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="titular bloque__titulo">Tu información es tuya</h2>
+      <p class="bloque__texto">
+        Sin cuenta, sin anuncios y sin analítica. Todo se queda en tu teléfono: la app no pide permiso de internet ni de
+        cámara. <a class="enlace" href="/tiliches/privacidad/" data-astro-reload>Aviso de privacidad</a>.
+      </p>
+      <p class="bloque__texto bloque__texto--nombre">
+        «Tiliches» es como se dice en México a las cosas de uno. Aquí se juntan con su papelito.
+      </p>
+    </section>
+
+    <section class="pieza guia-enlace" aria-labelledby="guia-heading">
+      <h2 id="guia-heading" class="titular bloque__titulo">¿Hasta cuándo tienes garantía?</h2>
+      <p class="bloque__texto">
+        Calcula cuándo vence la garantía y el plazo para devolver lo que compraste, y lee qué dice la ley en México y cómo
+        reclamar.
+      </p>
+      <a class="guia-enlace__boton" href="/tiliches/garantia/">Calculadora de garantía</a>
+    </section>
+
+    <script type="application/ld+json" set:html={jsonLd} />
+  </main>
+</Layout>
+
+<style>
+  .app {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    padding-top: var(--hueco);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .app__cabeza {
+    --pieza: var(--menta);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .app__icono {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 22%;
+  }
+
+  .app__tipo {
+    margin: 0 0 0.5rem;
+  }
+
+  .app__titulo {
+    margin: 0;
+    font-size: var(--t-xl);
+    line-height: 0.95;
+  }
+
+  .app__entrada {
+    max-width: 60ch;
+    margin: 1rem 0 0;
+    font-size: var(--t-m);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .app__estado {
+    margin: 1.25rem 0 0;
+    font-weight: 700;
+  }
+
+  .app__play,
+  .guia-enlace__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.25rem;
+    padding: 0 1.25rem;
+    background: var(--tinta-fija);
+    color: var(--crema-fija);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0.875rem;
+    transition: scale 0.2s var(--ease-soft);
+  }
+  .app__play:active,
+  .guia-enlace__boton:active {
+    scale: 0.97;
+  }
+
+  .bloque__titulo {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+    line-height: 1;
+  }
+
+  .bloque__lista {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 62ch;
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .bloque__texto {
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+  .bloque__texto--nombre {
+    margin-top: 0.75rem;
+    color: var(--gris);
+  }
+
+  .planes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--hueco);
+    margin-top: 1.25rem;
+  }
+
+  .plan {
+    padding: 1.125rem 1.25rem;
+    border: 2px solid var(--tinta);
+    border-radius: var(--radio-pieza);
+  }
+
+  .parte__titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+  }
+
+  .plan ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 1.5;
+  }
+
+  .guia-enlace {
+    --pieza: var(--sol);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  }
+  .guia-enlace .guia-enlace__boton {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 560px) {
+    .app__cabeza {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
