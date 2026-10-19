@@ -3,10 +3,11 @@
 // y captura-1..3.webp (540 px de ancho, pantalla completa del teléfono).
 // Sin `play` la app sale como "muy pronto"; con la URL de su ficha, el botón se vuelve enlace.
 
-import { CANICA_EN_PLAY, CANICA_PLAY } from "../lib/canica";
+import { CANICA_PLAY } from "../lib/canica";
+import { COPERACHA_PLAY } from "../lib/coperacha";
 import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY } from "../lib/guardadito";
 import { PASTILLERO_PLAY } from "../lib/pastillero";
-import { TILICHES_EN_PLAY, TILICHES_PLAY } from "../lib/tiliches";
+import { TILICHES_PLAY } from "../lib/tiliches";
 
 export type AndroidApp = {
   slug: string;
@@ -63,10 +64,9 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Canicas de vidrio que ruedan en un frasco al inclinar el teléfono",
     color: "#13B5A6",
     group: "dinero",
+    play: CANICA_PLAY,
     pagina: "/canica/",
     privacy: "/canica/privacidad/",
-    // En revisión en Play: se prende con CANICA_EN_PLAY (src/lib/canica.ts).
-    ...(CANICA_EN_PLAY ? { play: CANICA_PLAY } : {}),
   },
   {
     slug: "tiliches",
@@ -77,10 +77,9 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Etiquetas de cartón colgadas de un riel que se mecen",
     color: "#2B4A42",
     group: "casa",
+    play: TILICHES_PLAY,
     pagina: "/tiliches/",
     privacy: "/tiliches/privacidad/",
-    // En revisión en Play: se prende con TILICHES_EN_PLAY (src/lib/tiliches.ts).
-    ...(TILICHES_EN_PLAY ? { play: TILICHES_PLAY } : {}),
   },
   {
     slug: "pastillero",
@@ -104,6 +103,8 @@ export const androidApps: AndroidApp[] = [
     metaphor: "Un ticket que se imprime renglón por renglón",
     color: "#C73A30",
     group: "juntos",
+    play: COPERACHA_PLAY,
+    pagina: "/coperacha/",
     privacy: "/coperacha/privacidad/",
   },
   {
