@@ -5,6 +5,7 @@
 
 import { CANICA_PLAY } from "../lib/canica";
 import { COPERACHA_PLAY } from "../lib/coperacha";
+import { GARABATO_PLAY } from "../lib/garabato";
 import { GUARDADITO_EN_PLAY, GUARDADITO_PLAY } from "../lib/guardadito";
 import { PASTILLERO_PLAY } from "../lib/pastillero";
 import { TILICHES_PLAY } from "../lib/tiliches";
@@ -152,6 +153,19 @@ export const androidApps: AndroidApp[] = [
     play: "https://play.google.com/store/apps/details?id=com.gomflo.frijolito",
     web: "/frijolito/",
     privacy: "/frijolito/privacidad/",
+  },
+  {
+    slug: "garabato",
+    name: "Garabato: dibujar y adivinar",
+    tagline: "Cuatro rivales adivinan tu dibujo",
+    desc: "Te toca una palabra, la dibujas con el dedo en una pizarra mágica y cuatro rivales gritan lo que creen que es mientras vas trazando. El primero que atina, gana.",
+    points: ["Cuatro rivales que adivinan en vivo", "Más de 300 palabras y un reto diario", "Funciona en modo avión"],
+    metaphor: "Una pizarra mágica de juguete con limaduras sobre panalitos",
+    color: "#D8352A",
+    group: "juntos",
+    play: GARABATO_PLAY,
+    pagina: "/garabato/",
+    privacy: "/garabato/privacidad/",
   },
 ];
 

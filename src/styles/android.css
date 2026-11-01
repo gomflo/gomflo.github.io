@@ -442,7 +442,7 @@ html.barra-fuera .barra {
   grid-template-rows: repeat(3, minmax(0, 1fr));
   grid-template-areas:
     "q q g t t"
-    "c o p p b"
+    "c o p r b"
     "m o f l b";
   gap: 10px;
   padding: 10px;
@@ -510,8 +510,7 @@ html.barra-fuera .barra {
 }
 .hueco--alto .hueco__que,
 .hueco[style*="area:q"] .hueco__que,
-.hueco[style*="area:t"] .hueco__que,
-.hueco[style*="area:p"] .hueco__que {
+.hueco[style*="area:t"] .hueco__que {
   display: block;
 }
 .hueco__nombre {
@@ -718,6 +717,15 @@ html.motion .is-lista ~ .portada__pie {
   margin-left: -0.05em;
   padding-bottom: 0.17em; /* lugar para la p, la g y la j */
   white-space: nowrap;
+}
+/* Lo que va después de los dos puntos del nombre («Garabato: dibujar y adivinar»), abajo y chico. */
+.cajon__sub {
+  display: block;
+  font-size: 0.32em;
+  font-stretch: 100%;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  white-space: normal;
 }
 .cajon__tagline {
   margin-top: 0.15rem;
@@ -1229,8 +1237,8 @@ a.tienda:focus-visible .tienda__relleno {
     grid-template-rows: repeat(5, 5.9rem);
     grid-template-areas:
       "q q g"
-      "t t c"
-      "o p p"
+      "t r r"
+      "o c p"
       "o b m"
       "f b l";
     aspect-ratio: auto;
@@ -1245,6 +1253,10 @@ a.tienda:focus-visible .tienda__relleno {
     left: 0.55rem;
     bottom: 0.4rem;
     font-size: 0.75rem;
+  }
+  /* Tiliches queda en un hueco chico: el nombre largo de Garabato toma el ancho. */
+  .hueco[style*="area:t"] .hueco__que {
+    display: none;
   }
   .portada__pie {
     text-align: left;

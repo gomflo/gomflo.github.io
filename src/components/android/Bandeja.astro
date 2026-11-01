@@ -8,14 +8,14 @@ const orden = bandeja.map((s) => apps.find((a) => a.slug === s)!);
 ---
 
 <div class="bandeja" data-bandeja>
-  <ul class="bandeja__fondo" aria-label="Las diez apps">
+  <ul class="bandeja__fondo" aria-label="Las once apps">
     {
       orden.map((app) => (
         <li class={`hueco${["o", "b"].includes(area[app.slug]) ? " hueco--alto" : ""}`} style={`grid-area:${area[app.slug]}`}>
           <a class="hueco__liga" href={`#${app.slug}`} style={`--app:${app.color}`}>
             <span class="objeto" data-objeto data-masa={app.masa}>
               <span class="objeto__alza" style={`--giro:${app.giro}deg`}>
-                <img src={`/img/android/${app.slug}/icono.png`} alt="" width="256" height="256" decoding="async" fetchpriority="high" />
+                <img src={`/img/android/${app.slug}/icono.png`} alt="" width="256" height="256" decoding="async" />
               </span>
             </span>
             <span class="hueco__rotulo">

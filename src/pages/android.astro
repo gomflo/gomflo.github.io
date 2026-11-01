@@ -9,7 +9,7 @@ import { apps, grupos, sinInternet } from "../components/android/contenido";
 
 const title = "Apps para Android de gomflo: el cajón de la casa";
 const description =
-  "Diez apps para Android hechas en México: la quincena, los sobres, la rifa, el intercambio, las medicinas. Sin anuncios, sin cuenta y sin servidor.";
+  "Once apps para Android hechas en México: la quincena, los sobres, la rifa, el intercambio, las medicinas. Sin anuncios, sin cuenta y sin servidor.";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
 const site = Astro.site!;
 const autor = { "@type": "Person", name: "Víctor Hugo Gómez Flores", alternateName: "gomflo", url: "https://gomflo.dev/" };
@@ -68,7 +68,7 @@ const year = new Date().getFullYear();
     <meta property="og:image" content={new URL("/img/android.jpeg", site).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Lo que guardabas en el cajón, ahora en tu teléfono: las diez apps para Android de gomflo" />
+    <meta property="og:image:alt" content="Lo que guardabas en el cajón, ahora en tu teléfono: las once apps para Android de gomflo" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL("/img/android.jpeg", site).href} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -113,12 +113,12 @@ const year = new Date().getFullYear();
     <main id="principal" tabindex="-1">
       <section class="portada marco" aria-labelledby="portada-titulo">
         <div class="portada__texto">
-          <p class="portada__antes">10 apps para Android, hechas en México por gomflo</p>
+          <p class="portada__antes">11 apps para Android, hechas en México por gomflo</p>
           <h1 class="portada__titulo" id="portada-titulo">
             Lo que guardabas en el cajón, ahora en tu&nbsp;teléfono.
           </h1>
           <p class="portada__lead">
-            Los sobres de la quincena, el talonario de la rifa, las medicinas de tu mamá, los tickets de la garantía. Diez
+            Los sobres de la quincena, el talonario de la rifa, las medicinas de tu mamá, los tickets de la garantía. Once
             apps sin anuncios y sin cuenta. Lo que anotas no sale de tu teléfono.
           </p>
           <div class="portada__acciones">
