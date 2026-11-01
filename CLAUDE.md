@@ -162,10 +162,10 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 | `/coperacha` | Página de la app (Astro, `Layout.astro`) | fuera del catálogo |
 
 ### Apps para Android (`/android/`)
-- "El cajón": landing de las 10 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
+- "El cajón": landing de las 11 apps de Android (repos en `~/code/<slug>`), con identidad propia como la guía de partidos: no usa `Layout.astro` ni `global.css`. Concepto y sistema en `docs/android.md`
 - Catálogo en `src/data/android-apps.ts`; el copy de la página en `src/components/android/contenido.ts`; estilos en `styles/android.css`; movimiento en `motion/android.ts` (usa `src/engine` sin ClientRouter)
 - Imágenes en `public/img/android/<slug>/` (`icono.png` cuadrado sin máscara, `captura-1..3.webp` de 540 px). Imagen para compartir: `public/img/android.jpeg` (captura del primer pliegue a 1200×630)
-- Tin Marín, Frijolito, Pastillero, Canica, Tiliches y Coperacha están en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
+- Tin Marín, Frijolito, Pastillero, Canica, Tiliches, Coperacha y Garabato están en Google Play: al publicar otra, pon su URL en `play` y el botón "Muy pronto" se vuelve enlace (la portada y el pie de `/android/` se ajustan solos)
 - `pagina` (opcional) es la página de la app en gomflo.dev cuando no tiene versión web (`web`); el cajón la enlaza con «Conoce la app»
 - El inicio la enlaza con el bloque oscuro de `#apps`
 
@@ -178,11 +178,11 @@ La lista completa y sus categorías viven en `src/lib/tools.ts`.
 - Umami: la calculadora manda `aguinaldo-calcula` una vez por visita al primer cambio, sin ningún dato de lo que se escribe
 
 ### Garabato y el generador de qué dibujar (`/garabato/`)
-- `/garabato/` es la página corta del juego de dibujar para Android (`~/code/garabato`): solo dice lo que dice su ficha (`docs/TIENDA.md` de la app). Usa `Layout.astro`. Icono y capturas en `public/img/android/garabato/` (como las del cajón, aunque Garabato aún no está en `android-apps.ts`). El aviso de privacidad sigue en `public/garabato/privacidad/`
+- `/garabato/` es la página corta del juego de dibujar para Android (`~/code/garabato`): solo dice lo que dice su ficha (`docs/TIENDA.md` de la app). Usa `Layout.astro`. Icono y capturas en `public/img/android/garabato/` (las mismas del cajón). El aviso de privacidad sigue en `public/garabato/privacidad/`
 - `/garabato/que-dibujar/` es una herramienta de la caja (categoría `generadores`, `href` fuera de la raíz en `tools.ts`) con `ToolLayout` y `avisos={false}`, sin React: el HTML sale con una idea fácil ya pintada (cambia con cada despliegue, no al cargar) y un `<script>` (en `astro:page-load`) da otra, filtra por categoría y dificultad, guarda las últimas cinco y arma la lista del modo fiesta (copiar e imprimir en recuadros para recortar, `html.qd-imprime` + `@media print`)
 - Ideas y lógica en `src/lib/que-dibujar.ts` con pruebas en `que-dibujar.test.ts`: `DE_GARABATO` son las palabras que la app pide (`words.tsv` con `prompt` 1 y exactitud ≥ 0.45, sin «botella de vino», «copa» ni «calzones»); `EXTRA`, lo que la app no tiene. Cada palabra va una sola vez y todas son de familia. Si la app cambia sus palabras, actualiza `DE_GARABATO` y el conteo de la prueba
 - Reglas de Garabato: no se nombran otros juegos de dibujo y en lo que habla de la app no se dice «IA», «modelo» ni «red neuronal» (los rivales son personajes; por eso tampoco va la captura de «Cómo adivinan» ni la línea del conjunto de datos de la ficha)
-- `GARABATO_EN_PLAY` (`src/lib/garabato.ts`) está en `false` mientras la app esté en revisión: las páginas dicen «Muy pronto en Google Play» sin enlace. **Al salir la app, pásala a `true`**: se prenden los botones de las dos páginas con `playLink` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=garabato|que-dibujar`) y `data-umami-event="play-garabato"` + `data-umami-event-pagina`, y el `installUrl` del JSON-LD. Considera también agregarla a `src/data/android-apps.ts`
+- Garabato ya está en Google Play: `GARABATO_EN_PLAY` (`src/lib/garabato.ts`) va en `true` y prende los botones de las dos páginas con `garabatoPlay` (`utm_source=gomflo.dev&utm_medium=web`, `utm_campaign=garabato|que-dibujar`) y `data-umami-event="play-garabato"` + `data-umami-event-pagina`, y el `installUrl` del JSON-LD. El botón de `/android/` usa `GARABATO_PLAY` directo en `android-apps.ts`. Si la ficha deja de existir, pásala a `false` y quita `play` ahí. El nombre visible es «Garabato: dibujar y adivinar» (hay otra app que se llama solo «Garabato»)
 - Umami: `que-dibujar-idea` y `que-dibujar-fiesta`, una vez por visita cada uno, sin ninguna palabra
 
 ### Canica y la guía para cancelar suscripciones (`/canica/`)

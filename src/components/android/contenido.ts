@@ -198,6 +198,23 @@ export const extras: Record<string, Extra> = {
     masa: 0.6,
     giro: 8,
   },
+  garabato: {
+    objeto: "La pizarra mágica de juguete",
+    frase: "Dibujas con el dedo y cuatro rivales gritan lo que creen que es.",
+    detalle:
+      "Tu trazo sale en limaduras sobre una pantalla de panalitos y para borrar jalas la barra. Chile grita desde el primer trazo, Nopal se toma su tiempo, Sandía ve borroso y Elote sale con cada cosa. Tus dibujos no salen de tu teléfono.",
+    capturas: [
+      { n: 1, alt: "La pizarra de Garabato con un caracol dibujado y los cuatro rivales abajo: Chile atinó en 3 segundos" },
+      { n: 2, alt: "La tabla de Garabato: qué tanto atina cada rival tus dibujos, tu racha y tu récord" },
+      { n: 3, alt: "El resumen del reto del día: las cinco palabras, quién atinó cada una y en cuánto" },
+    ],
+    red: "sin-permiso",
+    pro: true,
+    categoria: "GameApplication",
+    forma: "fila",
+    masa: 1.0,
+    giro: -6,
+  },
 };
 
 export type App = AndroidApp & Extra;
@@ -219,12 +236,12 @@ export const grupos: { id: AndroidApp["group"]; titulo: string; lead: string }[]
   {
     id: "juntos",
     titulo: "Para hacerlo entre todos",
-    lead: "La cuenta del restaurante, la rifa de la generación, el intercambio de la oficina y la lotería de la posada.",
+    lead: "La cuenta del restaurante, la rifa de la generación, el intercambio de la oficina, la lotería de la posada y los dibujos de la sobremesa.",
   },
 ];
 
 /** Orden de la bandeja (de izquierda a derecha y de arriba abajo) con su lugar en la retícula. */
-export const bandeja = ["quincena", "guardadito", "tiliches", "canica", "coperacha", "pastillero", "boletito", "tinmarin", "frijolito", "papelito"];
+export const bandeja = ["quincena", "guardadito", "tiliches", "canica", "coperacha", "pastillero", "garabato", "boletito", "tinmarin", "frijolito", "papelito"];
 export const area: Record<string, string> = {
   quincena: "q",
   guardadito: "g",
@@ -236,6 +253,7 @@ export const area: Record<string, string> = {
   tinmarin: "m",
   frijolito: "f",
   papelito: "l",
+  garabato: "r",
 };
 
 /** Tinta legible sobre el color de una app: la de más contraste entre blanco y casi negro. */

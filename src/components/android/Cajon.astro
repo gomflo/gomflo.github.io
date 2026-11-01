@@ -12,6 +12,8 @@ interface Props {
 }
 const { app, lado } = Astro.props;
 const tinta = tintaSobre(app.color);
+// «Garabato: dibujar y adivinar»: la marca va de rótulo y lo demás, abajo.
+const [marca, sub] = app.name.split(": ");
 const red =
   app.red === "sin-permiso"
     ? "No pide permiso de internet"
@@ -22,7 +24,7 @@ const red =
   <header class="cajon__frente">
     <img class="cajon__icono" src={`/img/android/${app.slug}/icono.png`} alt="" width="256" height="256" loading="lazy" decoding="async" />
     <div class="cajon__rotulo">
-      <h3 class="cajon__nombre" id={`${app.slug}-nombre`}>{app.name}</h3>
+      <h3 class="cajon__nombre" id={`${app.slug}-nombre`}>{marca}{sub && <><span class="sr">: </span><span class="cajon__sub">{sub}</span></>}</h3>
       <p class="cajon__tagline">{app.tagline}</p>
     </div>
     <span class="jaladera jaladera--frente" aria-hidden="true"></span>
