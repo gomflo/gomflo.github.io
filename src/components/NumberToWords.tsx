@@ -15,6 +15,14 @@ type Mode = "money" | "number";
 
 const EXAMPLES = ["1,500.00", "21", "1234.56", "1000000"];
 
+// Umami: una vez por visita, sin la cantidad.
+let contado = false;
+const contarCopia = () => {
+  if (contado) return;
+  contado = true;
+  (window as { umami?: { track: (e: string) => void } }).umami?.track("numeros-letras-copia");
+};
+
 const NumberToWords = () => {
   const [input, setInput] = useState("1234.56");
   const [mode, setMode] = useState<Mode>("money");
@@ -97,7 +105,7 @@ const NumberToWords = () => {
         <Card data-reveal style={{ animationDelay: "80ms" }} aria-live="polite">
           <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
             <CardTitle className="text-muted-foreground font-code text-sm font-normal tabular-nums">{formatted}</CardTitle>
-            <CopyButton value={result.text} what="la cantidad con letra" variant="default" />
+            <CopyButton value={result.text} what="la cantidad con letra" variant="default" onCopy={contarCopia} />
           </CardHeader>
           <CardContent>
             <p className="m-0 text-xl leading-snug font-semibold text-pretty sm:text-2xl">{result.text}</p>

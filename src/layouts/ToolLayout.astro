@@ -30,21 +30,22 @@ interface Props {
   avisos?: boolean;
   /** Título largo (una pregunta o un «cómo»): va más chico para que la herramienta quede a la vista. */
   tituloLargo?: boolean;
+  /** Herramientas de otras categorías que van primero en «Más de…» (la de números a letras enlaza al IVA). */
+  relacionadas?: ToolSlug[];
 }
 
-const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [], avisos = true, tituloLargo = false } = Astro.props;
+const { slug, variant, metaTitle, description, heading, lead, sectionLabel, faq = [], avisos = true, tituloLargo = false, relacionadas = [] } = Astro.props;
 const tool = getTool(slug);
 const category = getCategory(tool.category);
 const pageSlug = variant ?? slug;
 // La madre enlaza a sus variantes y la variante a su madre, antes que al resto de la categoría.
 const siblings = variant
-  ? [{ slug, href: tool.href, title: tool.title }]
-  : variantsOf(slug).map((v) => ({ slug, href: v.href, title: v.title }));
+  ? [{ slug, href: tool.href, title: tool.title, category: tool.category }]
+  : variantsOf(slug).map((v) => ({ slug, href: v.href, title: v.title, category: tool.category }));
 const related = [
   ...siblings,
-  ...toolsIn(tool.category)
-    .filter((t) => t.slug !== slug)
-    .map((t) => ({ slug: t.slug, href: t.href, title: t.title })),
+  ...relacionadas.map(getTool),
+  ...toolsIn(tool.category).filter((t) => t.slug !== slug && !relacionadas.includes(t.slug)),
 ];
 const headingId = `${pageSlug}-heading`;
 
@@ -157,11 +158,11 @@ const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
       </div>
 
       <nav class="cuerpo__mas" aria-labelledby="more-heading">
-        <h2 id="more-heading" class="seccion-titulo titular">Más de {category.title.charAt(0).toLowerCase() + category.title.slice(1)}</h2>
+        <h2 id="more-heading" class="seccion-titulo titular">{relacionadas.length ? "Te puede servir" : `Más de ${category.title.charAt(0).toLowerCase() + category.title.slice(1)}`}</h2>
         <ul class="mas-lista" role="list">
           {related.map((t) => (
             <li>
-              <a href={t.href} class="pieza pieza--chica motif-trigger" data-cat={tool.category}>
+              <a href={t.href} class="pieza pieza--chica motif-trigger" data-cat={t.category}>
                 <Motif slug={t.slug} class="pieza__dibujo" />
                 <span class="pieza__nombre">{t.title}</span>
               </a>

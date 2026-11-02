@@ -145,3 +145,7 @@ export const sumarHabiles = (inicio: Date, n: number, bancario: boolean): Date =
   }
   return d;
 };
+
+/** Días hábiles de cada mes del año (índice 0 = enero), con el mes completo. */
+export const habilesPorMes = (y: number, bancario: boolean): number[] =>
+  Array.from({ length: 12 }, (_, m) => contarDias(utc(y, m + 1, 1), utc(y, m + 2, 0), { bancario, incluirInicio: true }).habiles);
