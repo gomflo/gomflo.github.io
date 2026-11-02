@@ -1,6 +1,28 @@
 ---
 import ToolLayout from "../layouts/ToolLayout.astro";
 import BusinessDays from "../components/BusinessDays";
+import { aFecha, feriadosDe, habilesPorMes } from "@/lib/dias-habiles";
+import "@/styles/guia.css";
+
+const LFT = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf";
+
+// El año sale del build: cada despliegue actualiza las tablas.
+const year = new Date().getFullYear();
+const anios = [year, year + 1];
+const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+const suma = (n: number[]) => n.reduce((a, b) => a + b, 0);
+
+const porMes = anios.map((y) => {
+  const ley = habilesPorMes(y, false);
+  const bancos = habilesPorMes(y, true);
+  return { y, meses: MESES.map((mes, i) => ({ mes, ley: ley[i], bancos: bancos[i] })), ley: suma(ley), bancos: suma(bancos) };
+});
+
+// El año en curso ya sale en la herramienta; aquí va el siguiente.
+const feriadosSiguiente = feriadosDe(year + 1, false).map((f) => ({
+  ...f,
+  fechaLarga: aFecha(f.fecha)!.toLocaleDateString("es-MX", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long" }),
+}));
 
 const faq = [
   { q: "¿Qué días son inhábiles en México?", a: "Los sábados, domingos y los descansos obligatorios del artículo 74 de la Ley Federal del Trabajo: 1 de enero, primer lunes de febrero, tercer lunes de marzo, 1 de mayo, 16 de septiembre, tercer lunes de noviembre, 25 de diciembre y el 1 de octubre del año en que cambia el Poder Ejecutivo." },
@@ -11,12 +33,82 @@ const faq = [
 
 <ToolLayout
   slug="dias-habiles"
-  metaTitle={"Calcular días hábiles entre fechas en México | gomflo.dev"}
-  description={"Cuenta los días hábiles y naturales entre dos fechas con los feriados oficiales de México, calcula cuándo vence un plazo y usa el calendario bancario."}
+  metaTitle={"Calculadora de días hábiles en México | gomflo.dev"}
+  description={`Cuenta los días hábiles entre dos fechas con los feriados oficiales de México, calcula cuándo vence un plazo y mira cuántos días hábiles tiene cada mes de ${year}.`}
   heading={"Días hábiles"}
   lead={"Cuenta días hábiles entre dos fechas o averigua cuándo vence un plazo, sin fines de semana ni feriados."}
   sectionLabel={"Calculadora de días hábiles"}
   faq={faq}
 >
   <BusinessDays client:load />
+
+  <div slot="despues" class="guia">
+    <nav class="guia__indice" aria-label="En esta guía">
+      <p class="etiqueta">En esta guía</p>
+      <ol role="list">
+        <li><a class="enlace" href="#por-mes">Días hábiles por mes</a></li>
+        <li><a class="enlace" href="#habiles-naturales">Hábiles y naturales</a></li>
+        <li><a class="enlace" href="#feriados">Feriados {year + 1}</a></li>
+      </ol>
+    </nav>
+
+    <section aria-labelledby="por-mes">
+      <h2 id="por-mes" class="titular guia__titulo">Días hábiles por mes en {year} y {year + 1}</h2>
+      <p>
+        De lunes a viernes, sin los descansos obligatorios de la Ley Federal del Trabajo. La columna de bancos quita además los
+        días en que la CNBV los cierra: Jueves y Viernes Santo, 2 de noviembre y 12 de diciembre.
+      </p>
+      <div class="guia__tablas">
+        {porMes.map(({ y, meses, ley, bancos }) => (
+          <table class="guia__tabla">
+            <caption>Días hábiles {y}</caption>
+            <thead>
+              <tr><th scope="col">Mes</th><th scope="col" class="num">Por ley</th><th scope="col" class="num">Bancos</th></tr>
+            </thead>
+            <tbody>
+              {meses.map((m) => (
+                <tr><th scope="row">{m.mes}</th><td class="num">{m.ley}</td><td class="num">{m.bancos}</td></tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr><th scope="row">Total</th><td class="num">{ley}</td><td class="num">{bancos}</td></tr>
+            </tfoot>
+          </table>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="habiles-naturales">
+      <h2 id="habiles-naturales" class="titular guia__titulo">Días hábiles y días naturales</h2>
+      <p>
+        Los días naturales son todos los del calendario, con sábados, domingos y feriados. Los días hábiles son los de trabajo:
+        de lunes a viernes, sin feriados. Un plazo de 10 días naturales dura diez días; uno de 10 días hábiles, dos semanas o más.
+      </p>
+      <p>
+        Qué cuenta como hábil lo decide la ley o el contrato del trámite. Los bancos siguen el calendario de la CNBV; un juicio o un
+        trámite de gobierno sigue su propia ley, que puede sumar vacaciones del tribunal o suspensiones publicadas en el Diario
+        Oficial. Si tu plazo tiene reglas propias, compruébalas antes de contar.
+      </p>
+    </section>
+
+    <section aria-labelledby="feriados">
+      <h2 id="feriados" class="titular guia__titulo">Días feriados {year + 1} en México</h2>
+      <p>Los de {year} están arriba, en la herramienta. Estos son los descansos obligatorios de {year + 1}, del artículo 74 de la Ley Federal del Trabajo:</p>
+      <table class="guia__tabla">
+        <tbody>
+          {feriadosSiguiente.map((f) => (
+            <tr><td class="num">{f.fechaLarga}</td><td>{f.nombre}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={LFT} rel="noopener">Ley Federal del Trabajo</a> en la Cámara de Diputados, artículo 74. La
+        fracción IX suma el día de la jornada electoral, cuando hay elecciones ordinarias.
+      </p>
+      <p>
+        Los puentes, los días en que cierran los bancos y cuánto falta para el próximo feriado están en el
+        <a class="enlace" href="/dias-feriados/">calendario de días feriados</a>.
+      </p>
+    </section>
+  </div>
 </ToolLayout>

@@ -35,6 +35,7 @@ export const CopyButton = ({
   variant = "outline",
   size = "sm",
   className,
+  onCopy,
 }: {
   value: string;
   label?: string;
@@ -43,6 +44,8 @@ export const CopyButton = ({
   variant?: "outline" | "default" | "ghost";
   size?: "sm" | "default" | "icon-sm";
   className?: string;
+  /** Después de copiar bien (para contar en Umami). */
+  onCopy?: () => void;
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -50,9 +53,10 @@ export const CopyButton = ({
     if (!value) return;
     const ok = await copyToClipboard(value, what ? `Copiaste ${what}` : undefined);
     if (!ok) return;
+    onCopy?.();
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1400);
-  }, [value, what]);
+  }, [value, what, onCopy]);
 
   const Icon = copied ? Check : Copy;
   const isIcon = size === "icon-sm";

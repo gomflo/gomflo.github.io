@@ -1,6 +1,20 @@
 ---
 import ToolLayout from "../layouts/ToolLayout.astro";
 import NumberToWords from "../components/NumberToWords";
+import { aLetrasMoneda, leerNumero, type Moneda } from "@/lib/numeros-letras";
+import "@/styles/guia.css";
+
+const LGTOC = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LGTOC.pdf";
+const CFF = "https://www.diputados.gob.mx/LeyesBiblio/pdf/CFF.pdf";
+
+// Los ejemplos salen de la misma lógica que la herramienta: nunca la contradicen.
+const conLetra = (cantidad: string, moneda: Moneda = "MXN") => aLetrasMoneda(leerNumero(cantidad)!, moneda).toLocaleUpperCase("es");
+const ejemplos = ["1", "21", "100", "101", "500", "1000", "1500", "2001.05", "15750.50", "100000", "1000000", "1500000", "0.99"].map(
+  (c) => ({
+    cifra: new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(Number(c)),
+    letra: conLetra(c),
+  })
+);
 
 const faq = [
   { q: "¿Cómo se escribe una cantidad en pesos con letra?", a: "Se escribe la parte entera con letra, seguida de la palabra pesos, los centavos como fracción de 100 y las siglas M.N. (moneda nacional). Por ejemplo, 1,234.56 se escribe MIL DOSCIENTOS TREINTA Y CUATRO PESOS 56/100 M.N." },
@@ -11,12 +25,127 @@ const faq = [
 
 <ToolLayout
   slug="numeros-a-letras"
-  metaTitle={"Convertir números a letras (pesos M.N.) | gomflo.dev"}
-  description={"Convierte cantidades a letras para cheques, facturas y pagarés: MIL DOSCIENTOS PESOS 50/100 M.N. También en dólares, en euros o como número sin moneda."}
+  metaTitle={"Números a letras en pesos (cantidad con letra) | gomflo.dev"}
+  description={"Convierte un número a letra en pesos: 1,250.50 es MIL DOSCIENTOS CINCUENTA PESOS 50/100 M.N. Para cheques, facturas y pagarés; también en USD y EUR."}
   heading={"Números a letras"}
-  lead={"Escribe cualquier cantidad con letra, en el formato que se usa en cheques, facturas y pagarés, o como número simple."}
+  lead={"Escribe cualquier cantidad con letra, en pesos M.N. como se usa en cheques, facturas y pagarés, o como número simple."}
   sectionLabel={"Convertidor de números a letras"}
   faq={faq}
+  relacionadas={["calculadora-iva", "validar-clabe", "calculadora-aguinaldo"]}
 >
   <NumberToWords client:load />
+
+  <div slot="despues" class="guia">
+    <nav class="guia__indice" aria-label="En esta guía">
+      <p class="etiqueta">En esta guía</p>
+      <ol role="list">
+        <li><a class="enlace" href="#como-se-escribe">Cómo se escribe</a></li>
+        <li><a class="enlace" href="#ejemplos">Ejemplos</a></li>
+        <li><a class="enlace" href="#documentos">Cheque, pagaré y factura</a></li>
+        <li><a class="enlace" href="#reglas">Reglas</a></li>
+      </ol>
+    </nav>
+
+    <section aria-labelledby="como-se-escribe">
+      <h2 id="como-se-escribe" class="titular guia__titulo">Cómo se escribe una cantidad con letra en pesos</h2>
+      <p>En México la cantidad con letra lleva cuatro partes, en este orden:</p>
+      <ol class="guia__pasos">
+        <li>La parte entera con letra: <strong>MIL DOSCIENTOS CINCUENTA</strong>.</li>
+        <li>La moneda: <strong>PESOS</strong>, o <strong>PESO</strong> si es uno.</li>
+        <li>Los centavos como fracción de 100, siempre con dos cifras: <strong>50/100</strong>. Sin centavos, <strong>00/100</strong>.</li>
+        <li>Las siglas <strong>M.N.</strong>, de moneda nacional, para que no se confunda con el peso de otro país.</li>
+      </ol>
+      <p>
+        Así, $1,250.50 queda <strong>{conLetra("1250.50")}</strong>. Se acostumbra escribirla en mayúsculas y, a mano,
+        cerrar la línea con una raya para que nadie agregue palabras después.
+      </p>
+      <p>
+        En dólares y en euros cambian la moneda y las siglas: <strong>{conLetra("1250.75", "USD")}</strong> o
+        <strong>{conLetra("1250.75", "EUR")}</strong>.
+      </p>
+    </section>
+
+    <section aria-labelledby="ejemplos">
+      <h2 id="ejemplos" class="titular guia__titulo">Ejemplos de cantidades con letra</h2>
+      <table class="guia__tabla">
+        <thead>
+          <tr><th scope="col">Cantidad</th><th scope="col">Con letra</th></tr>
+        </thead>
+        <tbody>
+          {ejemplos.map((e) => (
+            <tr><td class="num">{e.cifra}</td><td>{e.letra}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="documentos">
+      <h2 id="documentos" class="titular guia__titulo">En cheques, pagarés y facturas</h2>
+
+      <h3 class="titular guia__sub">Cheque</h3>
+      <p>
+        El cheque lleva el importe dos veces: en número, en el recuadro, y con letra, en la línea de abajo. Si no coinciden,
+        manda la letra. La Ley General de Títulos y Operaciones de Crédito lo dice así:
+      </p>
+      <blockquote class="cita" cite={LGTOC}>
+        <p>
+          Artículo 16.- El título de crédito cuyo importe estuviere escrito a la vez en palabras y en cifras, valdrá, en caso de
+          diferencia, por la suma escrita en palabras.
+        </p>
+      </blockquote>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={LGTOC} rel="noopener">Ley General de Títulos y Operaciones de Crédito</a> en la Cámara de
+        Diputados (última reforma DOF 26-03-2024).
+      </p>
+      <p>Por eso conviene escribir la cantidad completa, con sus centavos, tal como sale arriba.</p>
+
+      <h3 class="titular guia__sub">Pagaré</h3>
+      <p>
+        El pagaré también es un título de crédito, así que aplica la misma regla: si la letra y el número no coinciden, vale la
+        letra. La ley pide que contenga «la promesa incondicional de pagar una suma determinada de dinero» (artículo 170,
+        fracción II), y la suma con letra es la que la deja sin dudas.
+      </p>
+
+      <h3 class="titular guia__sub">Factura</h3>
+      <p>
+        En la factura electrónica (CFDI) la cantidad con letra no es obligatoria. El Código Fiscal de la Federación pide
+        «el importe total consignado en número o letra» (artículo 29-A, fracción VII). Muchos sistemas la imprimen en el PDF de
+        todos modos; si el tuyo te la pide, cópiala de aquí.
+      </p>
+      <p class="cita__fuente">
+        Fuente: <a class="enlace" href={CFF} rel="noopener">Código Fiscal de la Federación</a> en la Cámara de Diputados (última
+        reforma DOF 09-04-2026).
+      </p>
+      <p>
+        ¿Primero necesitas el total con IVA? Sácalo con la <a class="enlace" href="/calculadora-iva/">calculadora de IVA</a>. Y si
+        en lugar de un cheque vas a hacer una transferencia, revisa antes la cuenta con
+        <a class="enlace" href="/validar-clabe/">validar CLABE</a>.
+      </p>
+      <p class="guia__aviso">Esto es información general, no asesoría legal ni fiscal.</p>
+    </section>
+
+    <section aria-labelledby="reglas">
+      <h2 id="reglas" class="titular guia__titulo">Reglas para escribir números con letra</h2>
+      <ul class="guia__lista">
+        <li>
+          <strong>Uno se acorta a un</strong> antes de un sustantivo: UN PESO, VEINTIÚN PESOS, TREINTA Y UN MIL PESOS. Sin
+          moneda se escribe completo: veintiuno.
+        </li>
+        <li>
+          <strong>Los millones exactos llevan «de»</strong>: UN MILLÓN DE PESOS, DOS MILLONES DE PESOS. Si siguen más cifras,
+          no: UN MILLÓN QUINIENTOS MIL PESOS.
+        </li>
+        <li><strong>Cien es solo el 100 exacto.</strong> Del 101 al 199 es ciento: CIEN PESOS, CIENTO UN PESOS.</li>
+        <li>
+          <strong>Del 16 al 29 van en una sola palabra</strong> y algunos llevan tilde: DIECISÉIS, VEINTIDÓS, VEINTITRÉS,
+          VEINTISÉIS.
+        </li>
+        <li>
+          <strong>Desde el 31 se escriben con «y»</strong>, que solo va entre decenas y unidades: TREINTA Y UNO, NOVENTA Y
+          NUEVE, pero CIENTO CINCO, no «ciento y cinco».
+        </li>
+        <li><strong>Los centavos no se escriben con letra</strong> en el formato M.N.: van como fracción, 50/100.</li>
+      </ul>
+    </section>
+  </div>
 </ToolLayout>
