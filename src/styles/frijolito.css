@@ -593,6 +593,15 @@ a {
   }
 }
 
+/* La captura de la tele, a lo ancho del texto. */
+.fj-tele {
+  width: 100%;
+  max-width: 44rem;
+  height: auto;
+  margin-top: 1.5rem;
+  border-radius: 18px;
+}
+
 .fj-pequena {
   margin-top: 1rem;
   max-width: 44rem;
