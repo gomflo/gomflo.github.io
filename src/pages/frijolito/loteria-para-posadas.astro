@@ -46,6 +46,10 @@ const faq = [
     q: "¿Puedo dejar que cante solo mientras atiendo la cena?",
     a: "Sí. Toca el botón redondo y canta una carta cada 2 a 8 segundos, según la pausa que elijas en «Cómo se canta». Se detiene en cuanto alguien grita ¡Lotería! y tocas el botón otra vez.",
   },
+  {
+    q: "¿Se puede usar en la tele?",
+    a: "Sí. La app Frijolito se instala desde Google Play en teles con Google TV o Android TV y se usa con el control remoto: OK canta la siguiente carta, las flechas repasan las que ya salieron y la tecla de reproducir la pone a cantar sola. La mesa se ve en horizontal, con la carta grande, y la voz sale por las bocinas de la tele. No se transmite desde el teléfono: es la app en la tele. Las tablas en PDF se hacen desde el teléfono.",
+  },
 ];
 ---
 
@@ -132,5 +136,26 @@ const faq = [
     <p class="fj-pequena">
       ¿Prefieres una baraja navideña en papel? Cantala, también nuestra, tiene una <a class="fj-enlace" href={cantala} rel="noopener">lotería navideña para imprimir</a>.
     </p>
+  </section>
+
+  <section slot="despues" class="fj-seccion fj-marco" aria-labelledby="tele-titulo">
+    <h2 id="tele-titulo" class="fj-seccion__titulo">En la tele</h2>
+    <p class="fj-seccion__lead">
+      Frijolito también se instala desde Google Play en teles con Google TV o Android TV. La mesa se ve en horizontal, con la carta grande de un lado y
+      su nombre y verso del otro, para que toda la posada la vea desde lejos, y la voz sale por las bocinas de la tele. Se usa con el control remoto:
+      OK canta, las flechas repasan las que ya salieron y la tecla de reproducir la pone a cantar sola.
+    </p>
+    <img
+      class="fj-tele"
+      src="/img/frijolito/tele/mesa-1080.webp"
+      srcset="/img/frijolito/tele/mesa-480.webp 480w, /img/frijolito/tele/mesa-720.webp 720w, /img/frijolito/tele/mesa-1080.webp 1080w, /img/frijolito/tele/mesa.webp 1440w"
+      sizes="(min-width: 48rem) 44rem, calc(100vw - 2rem)"
+      alt="Frijolito en una tele: a la izquierda la carta 46, El Sol, y a la derecha su nombre, el verso «La cobija de los pobres», la cuenta 9 de 54 y el botón Siguiente carta con el foco del control remoto."
+      width="1440"
+      height="810"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="fj-pequena">No se transmite desde el teléfono: es la app en la tele. Las tablas en PDF se hacen desde el teléfono.</p>
   </section>
 </FrijolitoGuia>
